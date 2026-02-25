@@ -1,10 +1,87 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Productores | EcoMarket</title>
+
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/productores.css">
 </head>
 <body>
+
+<div id="header-placeholder"></div>
+
+<main class="content-wrapper">
+
+    <section class="text-section">
+        <h2>Lorem ipsum dolor sit amet, consectetur</h2>
+        <p>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. In vitae orci ut nulla molestie auctor id at velit. Fusce vitae nisi egestas, fringilla lacus vel, sagittis nibh.
+        </p>
+    </section>
+
+    <div class="grey-container">
+        <div class="card">
+            <h3>Proin ut lacinia</h3>
+            <p>Quisque ac</p>
+            <p>Sed venenatis egestas</p>
+            <p>Praesent nec vehicula leo, at vehicula dui. Mauris non felis justo. Sed tempus arcu nec magna ornare rhoncus.</p>
+        </div>
+
+        <div class="card">
+            <h3>Proin ut lacinia</h3>
+            <p>Quisque ac</p>
+            <p>Sed venenatis egestas</p>
+            <p>Praesent nec vehicula leo, at vehicula dui. Mauris non felis justo. Sed tempus arcu nec magna ornare rhoncus.</p>
+        </div>
+
+        <div class="card">
+            <h3>Proin ut lacinia</h3>
+            <p>Quisque ac</p>
+            <p>Sed venenatis egestas</p>
+            <p>Praesent nec vehicula leo, at vehicula dui. Mauris non felis justo. Sed tempus arcu nec magna ornare rhoncus.</p>
+        </div>
+
+        <div class="card">
+            <h3>Proin ut lacinia</h3>
+            <p>Quisque ac</p>
+            <p>Sed venenatis egestas</p>
+            <p>Praesent nec vehicula leo, at vehicula dui. Mauris non felis justo. Sed tempus arcu nec magna ornare rhoncus.</p>
+        </div>
+    </div>
+
+    <section class="text-section">
+        <h2>Lorem ipsum dolor sit amet, consectetur</h2>
+        <p>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. In vitae orci ut nulla molestie auctor id at velit. Fusce vitae nisi egestas, fringilla lacus vel, sagittis nibh.
+        </p>
+    </section>
+
+</main>
+
+<div id="footer-placeholder"></div>
+
+<script>
+    function loadComponent(url, elementId) {
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error al cargar ' + url);
+                }
+                return response.text();
+            })
+            .then(data => {
+                document.getElementById(elementId).innerHTML = data;
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    // Cargar el header y el footer desde la carpeta "templates" al cargar la página
+    document.addEventListener("DOMContentLoaded", () => {
+        loadComponent('templates/header.html', 'header-placeholder');
+        loadComponent('templates/footer.html', 'footer-placeholder');
+    });
+</script>
 
 </body>
 </html>
