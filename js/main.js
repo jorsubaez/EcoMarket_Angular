@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 productor: "AgroTierra Norte",
                 precio: "2,00 €/kg",
                 unidad: "kg",
-                imagen: "Imagenes_Catálogo/naranja.png"
+                imagen: "Imagenes/naranja.png"
             },
             {
                 nombre: "Plátanos ecológicos",
@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 productor: "EcoPlatanera La Palma",
                 precio: "2,50 €/kg",
                 unidad: "kg",
-                imagen: "Imagenes_Catálogo/platano.png"
+                imagen: "Imagenes/platano.png"
             },
             {
                 nombre: "Tomates de rama",
@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 productor: "Finca La Vega",
                 precio: "3,10 €/kg",
                 unidad: "kg",
-                imagen: "Imagenes_Catálogo/tomate.png"
+                imagen: "Imagenes/tomate.png"
             },
             {
                 nombre: "Lechuga ecológica",
@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 productor: "Finca La Vega",
                 precio: "1,70 €/unidad",
                 unidad: "unid.",
-                imagen: "Imagenes_Catálogo/lechuga.png"
+                imagen: "Imagenes/lechuga.png"
             }
         ];
 
