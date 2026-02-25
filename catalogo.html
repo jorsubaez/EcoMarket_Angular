@@ -4,11 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Catálogo - EcoIsla Market</title>
+
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/header.css">
+
     <link rel="stylesheet" href="css/catalogo.css">
 </head>
 <body>
-<div id="template-header"></div>
+
+<div id="header-placeholder"></div>
 
 <main class="contenedor-principal">
     <section class="cabecera-catalogo">
@@ -20,7 +24,7 @@
 
         <article class="producto-card-mockup">
             <div class="imagen-producto-dummy">
-                <img src="Imagenes_Catálogo/naranja.png" alt="Naranjas ecológicas">
+                <img src="Imagenes/naranja.png" alt="Naranjas ecológicas">
             </div>
             <div class="info-producto">
                 <h4>Naranjas ecológicas</h4>
@@ -38,7 +42,7 @@
 
         <article class="producto-card-mockup">
             <div class="imagen-producto-dummy">
-                <img src="Imagenes_Catálogo/platano.png" alt="Plátanos ecológicos">
+                <img src="Imagenes/platano.png" alt="Plátanos ecológicos">
             </div>
             <div class="info-producto">
                 <h4>Plátanos ecológicos</h4>
@@ -56,7 +60,7 @@
 
         <article class="producto-card-mockup">
             <div class="imagen-producto-dummy">
-                <img src="Imagenes_Catálogo/tomate.png" alt="Tomates de rama">
+                <img src="Imagenes/tomate.png" alt="Tomates de rama">
             </div>
             <div class="info-producto">
                 <h4>Tomates de rama</h4>
@@ -74,7 +78,7 @@
 
         <article class="producto-card-mockup">
             <div class="imagen-producto-dummy">
-                <img src="Imagenes_Catálogo/lechuga.png" alt="Lechuga ecológica">
+                <img src="Imagenes/lechuga.png" alt="Lechuga ecológica">
             </div>
             <div class="info-producto">
                 <h4>Lechuga ecológica</h4>
@@ -93,7 +97,27 @@
     </section>
 </main>
 
-<div id="template-footer"></div>
-<script src="js/main.js"></script>
+<div id="footer-placeholder"></div>
+
+<script>
+    function loadComponent(url, elementId) {
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error al cargar ' + url);
+                }
+                return response.text();
+            })
+            .then(data => {
+                document.getElementById(elementId).innerHTML = data;
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        loadComponent('templates/header.html', 'header-placeholder');
+        loadComponent('templates/footer.html', 'footer-placeholder');
+    });
+</script>
 </body>
 </html>
