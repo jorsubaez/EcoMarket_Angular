@@ -3,8 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link rel="stylesheet" href="css/perfil.css">
+    <link rel="stylesheet" href="templates/header.css">
 </head>
 <body>
+
+<div id="header-placeholder"></div>
+
+<div class="central-container">
+    <div class="sidebar-panel">
+        <a href="#" class="sidebar-button">Cras risus</a>
+        <a href="#" class="sidebar-button">Cras risus</a>
+        <a href="#" class="sidebar-button">Cras risus</a>
+        <a href="#" class="sidebar-button">Cras risus</a>
+    </div>
+    <div class="main-content">
+        <div class="profile-pic">
+            <span>×</span>
+        </div>
+        <h3>Donec vel purus ut</h3>
+        <h4>Maecenas feugiat</h4>
+        <p class="description-text">
+            Praesent et arcu pharetra, placerat tortor a, faucibus mi. Maecenas porta ornare neque, at condimentum urna molestie vitae. Nam vehicula posuere ex, sed feugiat purus dignissim ac. Proin consectetur eros nisi, ut dictum diam tristique sit amet. Aliquam imperdiet non lectus non convallis. Donec in finibus erat. Maecenas nec arcu non est venenatis auctor. Phasellus facilisis dui vitae leo viverra suscipit. Proin ultricies in ipsum et auctor. Aliquam dictum blandit nunc vel rhoncus. Etiam porta sapien leo, sit amet accumsan quam porttitor vel. Aliquam finibus tempus arcu, eget luctus elit pulvinar eu. Sed hendrerit nunc ac laoreet suscipit
+        </p>
+    </div>
+</div>
+
+<div id="footer-placeholder"></div>
+
+<script>
+    function loadComponent(url, elementId) {
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error al cargar ' + url);
+                }
+                return response.text();
+            })
+            .then(data => {
+                document.getElementById(elementId).innerHTML = data;
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    // Cargar el header y el footer desde la carpeta "templates"
+    document.addEventListener("DOMContentLoaded", () => {
+        loadComponent('templates/header.html', 'header-placeholder');
+        loadComponent('templates/footer.html', 'footer-placeholder');
+    });
+</script>
 
 </body>
 </html>
