@@ -4,11 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Catálogo - EcoIsla Market</title>
+
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/header.css">
+
     <link rel="stylesheet" href="css/catalogo.css">
 </head>
 <body>
-<div id="template-header"></div>
+
+<div id="header-placeholder"></div>
 
 <main class="contenedor-principal">
     <section class="cabecera-catalogo">
@@ -93,7 +97,28 @@
     </section>
 </main>
 
-<div id="template-footer"></div>
-<script src="js/main.js"></script>
+<div id="footer-placeholder"></div>
+
+<script>
+    function loadComponent(url, elementId) {
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error al cargar ' + url);
+                }
+                return response.text();
+            })
+            .then(data => {
+                document.getElementById(elementId).innerHTML = data;
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    // Cargar el header y el footer desde la carpeta "templates"
+    document.addEventListener("DOMContentLoaded", () => {
+        loadComponent('templates/header.html', 'header-placeholder');
+        loadComponent('templates/footer.html', 'footer-placeholder');
+    });
+</script>
 </body>
 </html>
