@@ -1,16 +1,41 @@
-<div class="header-mockup">
-    <div class="logo">
-        <h2>[LOGO] EcoIsla</h2>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoMarket</title>
+
+    <link rel="stylesheet" href="header.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+<header class="main-header">
+    <div class="header-container">
+        <div class="logo-section">
+            <img src="templates/logo.jpg" alt="EcoMarket" class="logo-img">
+            <div class="logo-text">
+                <h1>EcoIsla Market</h1>
+                <p>Sabor local, raíz ecológica</p>
+            </div>
+        </div>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="#">Inicio</a></li>
+                <li><a href="#">Catalogo</a></li>
+                <li><a href="#" class="active">Productores</a></li>
+                <li><a href="#">Contacto</a></li>
+            </ul>
+        </nav>
+        <div class="user-actions">
+            <a href="#" class="login-link">Iniciar sesión</a>
+            <a href="#" class="cart-link">
+                <i class="fas fa-shopping-cart"></i>
+                <span class="cart-count">(0)</span>
+            </a>
+        </div>
     </div>
-    <nav>
-        <ul>
-            <li><a href="index.html">Inicio</a></li>
-            <li><a href="catalogo.html">Catálogo</a></li>
-            <li><a href="productores.html">Productores</a></li>
-            <li><a href="contacto.html">Contacto</a></li>
-        </ul>
-    </nav>
-    <div class="user-actions">
-        <span>Iniciar sesión</span> | <span>🛒 (0)</span>
-    </div>
-</div>
+</header>
+</body>
+</html>
