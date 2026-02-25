@@ -30,17 +30,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 nombre: "Naranjas ecológicas",
                 origen: "Tenerife",
                 productor: "AgroTierra Norte",
-                precio: "2,50 €/kg",
+                precio: "2,00 €/kg",
                 unidad: "kg",
-                imagen: "https://placehold.co/400x300/ff9800/white?text=Naranjas"
+                imagen: "Imagenes_Catálogo/naranja.png"
             },
             {
                 nombre: "Plátanos ecológicos",
                 origen: "La Palma",
                 productor: "EcoPlatanera La Palma",
-                precio: "2,80 €/kg",
+                precio: "2,50 €/kg",
                 unidad: "kg",
-                imagen: "https://placehold.co/400x300/fbc02d/black?text=Plátanos"
+                imagen: "Imagenes_Catálogo/platano.png"
             },
             {
                 nombre: "Tomates de rama",
@@ -48,15 +48,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 productor: "Finca La Vega",
                 precio: "3,10 €/kg",
                 unidad: "kg",
-                imagen: "https://placehold.co/400x300/e53935/white?text=Tomates"
+                imagen: "Imagenes_Catálogo/tomate.png"
             },
             {
                 nombre: "Lechuga ecológica",
-                origen: "Fuerteventura",
+                origen: "Lanzarote",
                 productor: "Finca La Vega",
                 precio: "1,70 €/unidad",
                 unidad: "unid.",
-                imagen: "https://placehold.co/400x300/4caf50/white?text=Lechuga"
+                imagen: "Imagenes_Catálogo/lechuga.png"
             }
         ];
 
