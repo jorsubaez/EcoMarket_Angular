@@ -1,10 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Perfil | EcoIsla Market</title>
+
     <link rel="stylesheet" href="css/perfil.css">
-    <link rel="stylesheet" href="css/header.css">
+
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
 
@@ -46,7 +48,7 @@
             .catch(error => console.error('Error:', error));
     }
 
-    // Cargar el header y el footer desde la carpeta "templates"
+    // Cargar el header y el footer desde la carpeta "templates" al cargar la página
     document.addEventListener("DOMContentLoaded", () => {
         loadComponent('templates/header.html', 'header-placeholder');
         loadComponent('templates/footer.html', 'footer-placeholder');

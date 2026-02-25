@@ -1,11 +1,3 @@
-body, h3, h4, p, a {
-    margin: 0;
-    padding: 0;
-    text-decoration: none;
-    font-family: sans-serif;
-    color: black;
-}
-
 .central-container {
     display: flex;
     max-width: 1200px;
