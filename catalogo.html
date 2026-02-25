@@ -5,110 +5,95 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Catálogo - EcoIsla Market</title>
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/catalogo.css">
 </head>
 <body>
-
 <div id="template-header"></div>
 
 <main class="contenedor-principal">
-
     <section class="cabecera-catalogo">
-        <div class="titulo-catalogo">
-            <div>
-                <h2>Catálogo de productos</h2>
-                <p>Frutas, verduras, miel, huevos y otros productos ecológicos procedentes de agricultores de las distintas islas.</p>
-            </div>
-        </div>
-        <div class="filtros-dummy">
-            <span><strong>Categoría:</strong> Todos ▾</span>
-            <span><strong>Isla de origen:</strong> Todas ▾</span>
-        </div>
+        <h2>Catálogo de productos</h2>
+        <p>Frutas, verduras, miel, huevos y otros productos ecológicos procedentes de agricultores de las distintas islas.</p>
     </section>
 
     <section class="grid-productos-mockup">
 
         <article class="producto-card-mockup">
             <div class="imagen-producto-dummy">
-                <img src="Imagenes_Catálogo/naranja.png" alt="Naranjas ecológicas" style="width:100%; height:100%; object-fit: cover;">
+                <img src="Imagenes_Catálogo/naranja.png" alt="Naranjas ecológicas">
             </div>
-            <h4 style="margin: 5px 0 10px 0;">Naranjas ecológicas</h4>
-            <div style="text-align: left; font-size: 0.85rem; color: #555; line-height: 1.4;">
-                <p style="margin: 0;">Origen: Tenerife</p>
-                <p style="margin: 0;">Productor: AgroTierra Norte</p>
+            <div class="info-producto">
+                <h4>Naranjas ecológicas</h4>
+                <p>Origen: Tenerife</p>
+                <p>Productor: AgroTierra Norte</p>
+                <p class="precio-destacado">2,50 €/kg</p>
+                <div class="controles-compra">
+                    <label>Cant.</label>
+                    <input type="number" value="1" min="1" class="input-cantidad">
+                    <span>kg</span>
+                </div>
+                <button class="btn-verde-comprar">Añadir al carrito</button>
             </div>
-            <p style="font-weight: bold; font-size: 1.1rem; margin: 15px 0 10px 0; text-align: left;">2,00 €/kg</p>
-
-            <div style="display: flex; gap: 5px; align-items: center; margin-bottom: 15px; font-size: 0.9rem;">
-                <label>Cantidad</label>
-                <input type="number" value="1" min="1" style="width: 40px; padding: 2px; border: 1px solid #ccc; border-radius: 4px;">
-                <span>kg</span>
-            </div>
-            <button class="btn-verde-dummy">Añadir al carrito</button>
         </article>
 
         <article class="producto-card-mockup">
             <div class="imagen-producto-dummy">
-                <img src="Imagenes_Catálogo/platano.png" alt="Plátanos ecológicos" style="width:100%; height:100%; object-fit: cover;">
+                <img src="Imagenes_Catálogo/platano.png" alt="Plátanos ecológicos">
             </div>
-            <h4 style="margin: 5px 0 10px 0;">Plátanos ecológicos</h4>
-            <div style="text-align: left; font-size: 0.85rem; color: #555; line-height: 1.4;">
-                <p style="margin: 0;">Origen: La Palma</p>
-                <p style="margin: 0;">Productor: EcoPlatanera La Palma</p>
+            <div class="info-producto">
+                <h4>Plátanos ecológicos</h4>
+                <p>Origen: La Palma</p>
+                <p>Productor: EcoPlatanera La Palma</p>
+                <p class="precio-destacado">2,80 €/kg</p>
+                <div class="controles-compra">
+                    <label>Cant.</label>
+                    <input type="number" value="1" min="1" class="input-cantidad">
+                    <span>kg</span>
+                </div>
+                <button class="btn-verde-comprar">Añadir al carrito</button>
             </div>
-            <p style="font-weight: bold; font-size: 1.1rem; margin: 15px 0 10px 0; text-align: left;">2,50 €/kg</p>
-
-            <div style="display: flex; gap: 5px; align-items: center; margin-bottom: 15px; font-size: 0.9rem;">
-                <label>Cantidad</label>
-                <input type="number" value="1" min="1" style="width: 40px; padding: 2px; border: 1px solid #ccc; border-radius: 4px;">
-                <span>kg</span>
-            </div>
-            <button class="btn-verde-dummy">Añadir al carrito</button>
         </article>
 
         <article class="producto-card-mockup">
             <div class="imagen-producto-dummy">
-                <img src="Imagenes_Catálogo/tomate.png" alt="Tomates de rama" style="width:100%; height:100%; object-fit: cover;">
+                <img src="Imagenes_Catálogo/tomate.png" alt="Tomates de rama">
             </div>
-            <h4 style="margin: 5px 0 10px 0;">Tomates de rama</h4>
-            <div style="text-align: left; font-size: 0.85rem; color: #555; line-height: 1.4;">
-                <p style="margin: 0;">Origen: Gran Canaria</p>
-                <p style="margin: 0;">Productor: Finca La Vega</p>
+            <div class="info-producto">
+                <h4>Tomates de rama</h4>
+                <p>Origen: Gran Canaria</p>
+                <p>Productor: Finca La Vega</p>
+                <p class="precio-destacado">3,10 €/kg</p>
+                <div class="controles-compra">
+                    <label>Cant.</label>
+                    <input type="number" value="1" min="1" class="input-cantidad">
+                    <span>kg</span>
+                </div>
+                <button class="btn-verde-comprar">Añadir al carrito</button>
             </div>
-            <p style="font-weight: bold; font-size: 1.1rem; margin: 15px 0 10px 0; text-align: left;">3,10 €/kg</p>
-
-            <div style="display: flex; gap: 5px; align-items: center; margin-bottom: 15px; font-size: 0.9rem;">
-                <label>Cantidad</label>
-                <input type="number" value="1" min="1" style="width: 40px; padding: 2px; border: 1px solid #ccc; border-radius: 4px;">
-                <span>kg</span>
-            </div>
-            <button class="btn-verde-dummy">Añadir al carrito</button>
         </article>
 
         <article class="producto-card-mockup">
             <div class="imagen-producto-dummy">
-                <img src="Imagenes_Catálogo/lechuga.png" alt="Lechuga ecológica" style="width:100%; height:100%; object-fit: cover;">
+                <img src="Imagenes_Catálogo/lechuga.png" alt="Lechuga ecológica">
             </div>
-            <h4 style="margin: 5px 0 10px 0;">Lechuga ecológica</h4>
-            <div style="text-align: left; font-size: 0.85rem; color: #555; line-height: 1.4;">
-                <p style="margin: 0;">Origen: Lanzarote</p>
-                <p style="margin: 0;">Productor: Finca La Vega</p>
+            <div class="info-producto">
+                <h4>Lechuga ecológica</h4>
+                <p>Origen: Fuerteventura</p>
+                <p>Productor: Finca La Vega</p>
+                <p class="precio-destacado">1,70 €/unidad</p>
+                <div class="controles-compra">
+                    <label>Cant.</label>
+                    <input type="number" value="1" min="1" class="input-cantidad">
+                    <span>unid.</span>
+                </div>
+                <button class="btn-verde-comprar">Añadir al carrito</button>
             </div>
-            <p style="font-weight: bold; font-size: 1.1rem; margin: 15px 0 10px 0; text-align: left;">1,70 €/unidad</p>
-
-            <div style="display: flex; gap: 5px; align-items: center; margin-bottom: 15px; font-size: 0.9rem;">
-                <label>Cantidad</label>
-                <input type="number" value="1" min="1" style="width: 40px; padding: 2px; border: 1px solid #ccc; border-radius: 4px;">
-                <span>unid.</span>
-            </div>
-            <button class="btn-verde-dummy">Añadir al carrito</button>
         </article>
 
     </section>
-
 </main>
 
 <div id="template-footer"></div>
-
 <script src="js/main.js"></script>
 </body>
 </html>
