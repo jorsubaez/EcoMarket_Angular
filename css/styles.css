@@ -1,9 +1,17 @@
 :root {
-    --primary-green: #4CAF50;
-    --dark-grey: #333;
-    --light-grey: #666;
+    /* Paleta Ecomarket "Raíz Canaria" */
+    --primary-green: #2E7D32; /* Verde Bosque (Aporta más profundidad) */
+    --secondary-green: #4CAF50; /* Verde Brote (Tu verde original para detalles) */
+    --accent-color: #E67E22; /* Naranja Tierra / Sol Canario (Llamadas a la acción) */
+    --bg-color: #FAF8F5; /* Blanco Roto / Crema (Fondo orgánico) */
+
+    /* Grises y Neutros */
+    --dark-grey: #333333; /* Tierra Volcánica (Para textos, no cansa la vista) */
+    --light-grey: #666666;
     --white: #ffffff;
     --border-color: #eee;
+
+    /* Tipografía */
     --font-family: 'Outfit', sans-serif;
 }
 
@@ -15,8 +23,9 @@
 
 body {
     font-family: var(--font-family), sans-serif;
-    background-color: #f9f9f9;
-    color: black;
+    /* Aplicamos el fondo crema orgánico y el gris oscuro en vez de negro puro */
+    background-color: var(--bg-color);
+    color: var(--dark-grey);
 }
 
 a {
@@ -24,6 +33,7 @@ a {
     color: inherit;
 }
 
+/* --- CABECERA --- */
 .main-header {
     background-color: var(--white);
     border-bottom: 2px solid var(--border-color);
@@ -137,6 +147,7 @@ a {
     }
 }
 
+/* --- FOOTER --- */
 .footer {
     background: #111;
     color: #eee;
