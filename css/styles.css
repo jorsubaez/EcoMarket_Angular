@@ -151,7 +151,7 @@ a {
 .footer {
     background: #111;
     color: #eee;
-    padding: 3rem 2.5rem;
+    padding: 1.5rem 2.5rem;
     margin-top: 2rem;
 }
 
@@ -187,7 +187,7 @@ a {
 
 .footer__bottom{
     max-width: 1200px;
-    margin: 2rem auto 0;
+    margin: 1rem auto 0;
     padding-top: 1.2rem;
     border-top: 1px solid #333;
     text-align: center;
