@@ -51,7 +51,6 @@
 <div id="footer-placeholder"></div>
 
 <script>
-    // Le hemos añadido un parámetro extra llamado "callback" para ejecutar código extra cuando termine de cargar
     function loadComponent(url, elementId, callback) {
         fetch(url)
             .then(response => {
@@ -62,22 +61,18 @@
             })
             .then(data => {
                 document.getElementById(elementId).innerHTML = data;
-                if (callback) callback(); // Si hay código extra, lo ejecuta aquí
+                if (callback) callback();
             })
             .catch(error => console.error('Error:', error));
     }
 
     document.addEventListener("DOMContentLoaded", () => {
 
-        // Cargamos el header y le pasamos instrucciones para que arregle la pestaña activa
         loadComponent('templates/header.html', 'header-placeholder', () => {
-            // Buscamos todos los enlaces del menú
             const navLinks = document.querySelectorAll('.main-nav a');
 
-            // Le quitamos la clase "active" a todos (incluyendo el de Productores de tu compañero)
             navLinks.forEach(link => link.classList.remove('active'));
 
-            // Le ponemos la clase "active" SOLO al que dice "Inicio"
             navLinks.forEach(link => {
                 if (link.textContent.trim() === 'Inicio') {
                     link.classList.add('active');
