@@ -2,13 +2,15 @@ body {
     font-family: Arial, sans-serif;
     line-height: 1.4;
     color: #000;
-    margin: 40px;
+    margin: 0;
     background-color: #fff;
 }
 
 .container {
     max-width: 1000px;
     margin: 0 auto;
+    padding: 40px 20px;
+    box-sizing: border-box;
 }
 
 h1 {
@@ -23,10 +25,10 @@ h2 {
 
 .content-wrapper {
     display: flex;
-    gap: 60px; /* Espacio entre columnas */
+    gap: 60px;
 }
 
-/* Columna Izquierda (Formulario) */
+
 .main-content {
     flex: 2;
 }
@@ -48,6 +50,14 @@ label {
 
 select {
     font-size: 14px;
+    font-family: inherit;
+    width: 100%; /* Para que ocupe el mismo ancho que los inputs */
+    padding: 10px; /* Esto añade el espacio interno que buscas */
+    background-color: #d9d9d9;
+    border: 1px solid #767676;
+    border-radius: 8px;
+    box-sizing: border-box; /* Muy importante: evita que el padding "ensanche" el elemento */
+    cursor: pointer;
 }
 
 input[type="text"],
@@ -76,10 +86,10 @@ textarea {
     font-size: 14px;
 }
 
-/* Columna Derecha (Información) */
+
 .side-content {
     flex: 1;
-    padding-top: 100px; /* Alineación con los inputs */
+    padding-top: 100px;
 }
 
 .side-content h3 {

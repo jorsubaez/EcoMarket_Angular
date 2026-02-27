@@ -5,10 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EcoMarket - Contacto</title>
 
-    <link rel="stylesheet" href="css/contacto.css">
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/contacto.css">
 </head>
 <body>
+
+<div id="header-placeholder"></div>
 
 <div class="container">
     <h1>Contacto</h1>
@@ -73,6 +75,43 @@
         </aside>
     </div>
 </div>
+
+<div id="footer-placeholder"></div>
+
+<script>
+    function loadComponent(url, elementId, callback) {
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error al cargar ' + url);
+                }
+                return response.text();
+            })
+            .then(data => {
+                document.getElementById(elementId).innerHTML = data;
+                if (callback) callback();
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        // Cargar Header y marcar "Contacto" como activo
+        loadComponent('templates/header.html', 'header-placeholder', () => {
+            const navLinks = document.querySelectorAll('.main-nav a');
+            navLinks.forEach(link => link.classList.remove('active'));
+
+            navLinks.forEach(link => {
+                // Aquí cambiamos 'Inicio' por 'Contacto'
+                if (link.textContent.trim() === 'Contacto') {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // Cargar Footer
+        loadComponent('templates/footer.html', 'footer-placeholder');
+    });
+</script>
 
 </body>
 </html>
