@@ -1,7 +1,7 @@
 body {
     font-family: Arial, sans-serif;
     line-height: 1.4;
-    color: #000;
+    color: #444;
     margin: 0;
     background-color: #fff;
 }
@@ -11,6 +11,10 @@ body {
     margin: 0 auto;
     padding: 40px 20px;
     box-sizing: border-box;
+}
+
+h1, h2, h3 {
+    color: #2E7D32;
 }
 
 h1 {
@@ -73,6 +77,8 @@ textarea {
 textarea {
     height: 100px;
     resize: none;
+    font-size: 16px;
+    font-family: inherit;
 }
 
 .btn-submit {
@@ -83,7 +89,8 @@ textarea {
     border-radius: 20px;
     cursor: pointer;
     margin-top: 10px;
-    font-size: 14px;
+    font-size: 16px;
+    font-family: inherit;
 }
 
 
