@@ -36,7 +36,7 @@ Según la especificación de requisitos, el sistema implementa las siguientes fu
 ---
 
 ## Páginas HTML del Proyecto
-A continuación se detallan las páginas que componen la aplicación, su relación con los mockups y la indicación de la página de inicio.
+A continuación se detallan las páginas que componen la aplicación junto al mockup implementado.
 
 | Archivo HTML | Mockup |
 | :--- | :--- |
