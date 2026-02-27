@@ -1,30 +1,47 @@
 /* --- css/index.css --- */
+
+/* Contenedor principal */
 .inicio-container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 40px 20px;
 }
+
+/* Layout de 2 columnas para el Hero */
 .hero-split-container {
     display: flex;
     align-items: center;
     gap: 50px;
     margin-bottom: 60px;
 }
-.hero-texto-columna { flex: 1; }
+
+.hero-texto-columna {
+    flex: 1;
+}
+
 .titulo-principal {
     font-size: 2.5rem;
-    color: #2E7D32;
+    color: var(--primary-green, #2E7D32);
     margin-bottom: 20px;
     line-height: 1.2;
 }
+
 .subtitulo-principal {
     font-size: 1.1rem;
-    color: #555;
+    color: var(--light-grey, #555);
     margin-bottom: 30px;
     line-height: 1.6;
 }
-.botones-izquierda { display: flex; gap: 15px; }
-.hero-imagen-columna { flex: 1; }
+
+.botones-izquierda {
+    display: flex;
+    gap: 15px;
+}
+
+.hero-imagen-columna {
+    flex: 1;
+}
+
 .imagen-hero-real {
     width: 100%;
     height: auto;
@@ -32,17 +49,63 @@
     box-shadow: 0 10px 20px rgba(0,0,0,0.1);
     object-fit: cover;
 }
+
+/* Sección Inferior de Valores */
 .valores-container {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 30px;
     text-align: left;
     padding: 30px;
-    background-color: #f9f9f9;
+    background-color: var(--white, #ffffff);
     border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
 }
-.valores-container h3 { color: #2E7D32; margin-top: 0; }
 
+.valores-container h3 {
+    color: var(--primary-green, #2E7D32);
+    margin-top: 0;
+}
+
+
+/* --- ESTILOS DE LOS BOTONES DEL HERO --- */
+
+/* Estilos compartidos por los dos botones */
+.btn-primario-dummy,
+.btn-secundario-dummy {
+    padding: 12px 30px;
+    border-radius: 50px; /* Esto les da la forma de píldora redondita */
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.3s ease; /* Transición suave para el color y el tamaño */
+    font-family: var(--font-family, sans-serif);
+}
+
+/* Botón Principal (Verde Fuerte) */
+.btn-primario-dummy {
+    background-color: var(--primary-green, #2E7D32);
+    color: var(--white, #ffffff);
+}
+
+.btn-primario-dummy:hover {
+    background-color: #1B5E20; /* Un verde aún más oscuro para el hover */
+    transform: scale(1.03); /* Efecto de crecer un poquito al pasar el ratón */
+}
+
+/* Botón Secundario (Verde Clarito) */
+.btn-secundario-dummy {
+    background-color: var(--secondary-green, #4CAF50);
+    color: var(--white, #ffffff);
+}
+
+.btn-secundario-dummy:hover {
+    background-color: var(--primary-green, #2E7D32); /* Se vuelve verde oscuro al pasar el ratón */
+    transform: scale(1.03);
+}
+
+/* Ajuste para móviles */
 @media (max-width: 768px) {
     .hero-split-container { flex-direction: column; }
     .hero-imagen-columna { order: -1; }
