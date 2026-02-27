@@ -1,4 +1,4 @@
-# EcoMarket
+# Eco Market
 
 <p align="center">
    <img src="css/logo.JPG" alt="Logo EcoMarket" width="500">
@@ -29,36 +29,37 @@ Según la especificación de requisitos, el sistema implementa las siguientes fu
 
 ---
 
-## Diseño (Mockups y Storyboard)
-* **Nombre del archivo:** `[[INSERTAR_NOMBRE_DEL_PDF_DE_MOCKUPS]]`
-* **Ubicación:** `[[INSERTAR_RUTA_DEL_ARCHIVO_POR_EJEMPLO_/docs/design/]]`
+## Diseño de la Web
+* **Mockups:** docs/mockups.pdf ➯ [Acceso rápido](docs/mockups.pdf)
+* **Storyboard:** docs/storyboard.png ➯ [Acceso rápido](docs/storyboard.png)
 
 ---
 
 ## Páginas HTML del Proyecto
 A continuación se detallan las páginas que componen la aplicación, su relación con los mockups y la indicación de la página de inicio.
 
-| Archivo HTML | Mockup que implementa |
+| Archivo HTML | Mockup |
 | :--- | :--- |
-| `[[nombre_inicio]].html` | `[[nombre_mockup_inicio]]` |
-| `[[archivo_2]].html` | `[[nombre_mockup_2]]` |
-| `[[archivo_3]].html` | `[[nombre_mockup_3]]` |
+| `index.html` (Página de inicio) | `INICIO` |
+| `catalogo.html` | `CATÁLOGO` |
+| `productores.html` | `PRODUCTORES` |
+| `contacto.html` | `CONTACTO` |
+| `login.html` | `INICIO SESIÓN` |
+| `registro.html` | `REGISTRO` |
+| `panel-productor.html` | `PANEL PRODUCTOR` |
+| `perfil.html` | `VER PERFIL` |
 
 ---
 
 ## Templates Identificados
 Listado de componentes reutilizables y el archivo encargado de su carga:
 
-* **Template:** `[[NOMBRE_DEL_TEMPLATE_1]]`
-    * **Cargado en:** `[[ARCHIVO_DONDE_SE_CARGA_1]]`
-* **Template:** `[[NOMBRE_DEL_TEMPLATE_2]]`
-    * **Cargado en:** `[[ARCHIVO_DONDE_SE_CARGA_2]]`
-
----
-
-## Restricciones Tecnológicas
-* **Persistencia de datos:** Uso de archivos **JSON** para los datos del servidor.
-* **Almacenamiento en cliente:** Uso de **localStorage** para la persistencia del carrito.
+* **Template:** `header.html`
+    * **Cargado en:** `index.html`, `catalogo.html`, `productores.html`, `contacto.html`, `panel-productor.html` y `perfil.html`
+* **Template:** `footer.html`
+    * **Cargado en:** `index.html`, `catalogo.html`, `productores.html`, `contacto.html`, `panel-productor.html` y `perfil.html`
+* **Template:** `formulario.html`
+    * **Cargado en:** `login.html` y `registro.html`
 
 ---
 
