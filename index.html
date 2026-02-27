@@ -6,7 +6,7 @@
     <title>Inicio - EcoIsla Market</title>
 
     <link rel="stylesheet" href="css/styles.css">
-
+    <link rel="stylesheet" href="css/header.css">
     <link rel="stylesheet" href="css/index.css">
 </head>
 <body>
@@ -51,7 +51,8 @@
 <div id="footer-placeholder"></div>
 
 <script>
-    function loadComponent(url, elementId) {
+    // Le hemos añadido un parámetro extra llamado "callback" para ejecutar código extra cuando termine de cargar
+    function loadComponent(url, elementId, callback) {
         fetch(url)
             .then(response => {
                 if (!response.ok) {
@@ -61,12 +62,29 @@
             })
             .then(data => {
                 document.getElementById(elementId).innerHTML = data;
+                if (callback) callback(); // Si hay código extra, lo ejecuta aquí
             })
             .catch(error => console.error('Error:', error));
     }
 
     document.addEventListener("DOMContentLoaded", () => {
-        loadComponent('templates/header.html', 'header-placeholder');
+
+        // Cargamos el header y le pasamos instrucciones para que arregle la pestaña activa
+        loadComponent('templates/header.html', 'header-placeholder', () => {
+            // Buscamos todos los enlaces del menú
+            const navLinks = document.querySelectorAll('.main-nav a');
+
+            // Le quitamos la clase "active" a todos (incluyendo el de Productores de tu compañero)
+            navLinks.forEach(link => link.classList.remove('active'));
+
+            // Le ponemos la clase "active" SOLO al que dice "Inicio"
+            navLinks.forEach(link => {
+                if (link.textContent.trim() === 'Inicio') {
+                    link.classList.add('active');
+                }
+            });
+        });
+
         loadComponent('templates/footer.html', 'footer-placeholder');
     });
 </script>
