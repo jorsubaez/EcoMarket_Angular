@@ -100,7 +100,6 @@
 <div id="footer-placeholder"></div>
 
 <script>
-    // Añadimos el parámetro "callback" para ejecutar código extra al terminar de inyectar
     function loadComponent(url, elementId, callback) {
         fetch(url)
             .then(response => {
@@ -111,21 +110,18 @@
             })
             .then(data => {
                 document.getElementById(elementId).innerHTML = data;
-                if (callback) callback(); // Se ejecuta nuestra lógica del menú aquí
+                if (callback) callback();
             })
             .catch(error => console.error('Error:', error));
     }
 
     document.addEventListener("DOMContentLoaded", () => {
 
-        // Cargamos el header y le pasamos la instrucción de arreglar el subrayado
         loadComponent('templates/header.html', 'header-placeholder', () => {
             const navLinks = document.querySelectorAll('.main-nav a');
 
-            // Quitamos la clase 'active' de todos los enlaces primero
             navLinks.forEach(link => link.classList.remove('active'));
 
-            // Buscamos el enlace de "Catálogo" o "Catalogo" (por si no tiene tilde) y lo marcamos
             navLinks.forEach(link => {
                 if (link.textContent.trim() === 'Catálogo' || link.textContent.trim() === 'Catalogo') {
                     link.classList.add('active');
@@ -133,7 +129,6 @@
             });
         });
 
-        // El footer carga sin callbacks extra
         loadComponent('templates/footer.html', 'footer-placeholder');
     });
 </script>

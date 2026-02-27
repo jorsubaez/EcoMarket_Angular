@@ -1,5 +1,3 @@
-/* --- css/index.css --- */
-
 /* Contenedor principal */
 .inicio-container {
     max-width: 1200px;
@@ -7,7 +5,7 @@
     padding: 40px 20px;
 }
 
-/* Layout de 2 columnas para el Hero */
+/* Layout de 2 columnas */
 .hero-split-container {
     display: flex;
     align-items: center;
@@ -68,18 +66,18 @@
 }
 
 
-/* --- ESTILOS DE LOS BOTONES DEL HERO --- */
+/* --- ESTILOS DE LOS BOTONES --- */
 
-/* Estilos compartidos por los dos botones */
+
 .btn-primario-dummy,
 .btn-secundario-dummy {
     padding: 12px 30px;
-    border-radius: 50px; /* Esto les da la forma de píldora redondita */
+    border-radius: 50px;
     font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
     border: none;
-    transition: all 0.3s ease; /* Transición suave para el color y el tamaño */
+    transition: all 0.3s ease;
     font-family: var(--font-family, sans-serif);
 }
 
@@ -90,8 +88,8 @@
 }
 
 .btn-primario-dummy:hover {
-    background-color: #1B5E20; /* Un verde aún más oscuro para el hover */
-    transform: scale(1.03); /* Efecto de crecer un poquito al pasar el ratón */
+    background-color: #1B5E20;
+    transform: scale(1.03);
 }
 
 /* Botón Secundario (Verde Clarito) */
