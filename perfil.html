@@ -41,18 +41,33 @@
     function loadComponent(url, elementId) {
         fetch(url)
             .then(response => {
-                if (!response.ok) {
-                    throw new Error('Error al cargar ' + url);
-                }
+                if (!response.ok) throw new Error('Error al cargar ' + url);
                 return response.text();
             })
             .then(data => {
                 document.getElementById(elementId).innerHTML = data;
+
+                if (elementId === 'header-placeholder') {
+                    marcarEnlaceActivo();
+                }
             })
             .catch(error => console.error('Error:', error));
     }
 
-    // Cargar el header y el footer desde la carpeta "templates" al cargar la página
+    function marcarEnlaceActivo() {
+        const currentPage = window.location.pathname.split("/").pop();
+
+        const navLinks = document.querySelectorAll('.main-nav a');
+
+        navLinks.forEach(link => {
+            const linkPage = link.getAttribute('href');
+
+            if (currentPage === linkPage) {
+                link.classList.add('active');
+            }
+        });
+    }
+
     document.addEventListener("DOMContentLoaded", () => {
         loadComponent('templates/header.html', 'header-placeholder');
         loadComponent('templates/footer.html', 'footer-placeholder');
