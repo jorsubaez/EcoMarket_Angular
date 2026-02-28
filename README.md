@@ -58,8 +58,6 @@ Listado de componentes reutilizables y el archivo encargado de su carga:
     * **Cargado en:** `index.html`, `catalogo.html`, `productores.html`, `contacto.html`, `panel-productor.html` y `perfil.html`
 * **Template:** `footer.html`
     * **Cargado en:** `index.html`, `catalogo.html`, `productores.html`, `contacto.html`, `panel-productor.html` y `perfil.html`
-* **Template:** `formulario.html`
-    * **Cargado en:** `login.html` y `registro.html`
 
 ---
 
