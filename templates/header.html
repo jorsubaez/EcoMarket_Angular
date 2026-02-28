@@ -2,7 +2,7 @@
     <div class="header-container">
 
         <div class="logo-section">
-            <a href="index.html" class="logo-link" aria-label="Ir al inicio">
+            <a href="index.html" class="logo-link">
                 <img src="css/logo.JPG" alt="EcoMarket" class="logo-img">
             </a>
             <div class="logo-text">
@@ -11,19 +11,25 @@
             </div>
         </div>
 
-        <nav class="main-nav" aria-label="Navegación principal">
+        <nav class="main-nav">
             <ul>
                 <li><a class="nav-link" data-page="index" href="index.html">Inicio</a></li>
                 <li><a class="nav-link" data-page="catalogo" href="catalogo.html">Catálogo</a></li>
                 <li><a class="nav-link" data-page="productores" href="productores.html">Productores</a></li>
                 <li><a class="nav-link" data-page="contacto" href="contacto.html">Contacto</a></li>
+
+                <!-- Solo visible si role = producer -->
+                <li id="nav-producer-panel" class="nav-hidden">
+                    <a class="nav-link" data-page="panel-productor" href="panel-productor.html">
+                        Panel productor
+                    </a>
+                </li>
             </ul>
         </nav>
 
         <div class="user-actions">
             <a href="login.html" class="login-link">Iniciar sesión</a>
-
-            <a href="carrito.html" class="cart-link" aria-label="Carrito">
+            <a href="#" class="cart-link">
                 <i class="fas fa-shopping-cart"></i>
                 <span class="cart-count">(0)</span>
             </a>

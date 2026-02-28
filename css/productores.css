@@ -61,6 +61,14 @@
     margin: 8px 0;
 }
 
+/* Botones sección "Cómo unirte" sin inline styles */
+.producer-actions{
+    margin-top:18px;
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+}
+
 @media (max-width: 1024px){
     .grey-container{
         grid-template-columns: repeat(2, minmax(0, 1fr));
