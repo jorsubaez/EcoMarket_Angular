@@ -3,69 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EcoMarket - Contacto</title>
+    <title>Contacto - EcoMarket</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/contacto.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
 
 <div id="header-placeholder"></div>
 
-<div class="container">
-    <h1>Contacto</h1>
+<main class="contacto-page">
+    <h1 class="contacto-title">Contacto</h1>
 
-    <div class="content-wrapper">
-        <main class="main-content">
+    <div class="contacto-layout">
+
+        <section class="contacto-card">
             <h2>Envíanos tu consulta</h2>
-            <p class="description">
+            <p class="contacto-desc">
                 Si tienes dudas sobre los pedidos, quieres proponer un nuevo punto de recogida o estás interesado en
-                colaborar como productor, rellena el siguiente formulario y nos pondremos en contacto contigo.
+                colaborar como productor, rellena el formulario y nos pondremos en contacto contigo.
             </p>
 
             <form>
-                <div class="form-group">
-                    <label>Nombre
-                        <input type="text">
-                    </label>
-                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="nombre">Nombre</label>
+                        <input id="nombre" type="text" placeholder="Tu nombre">
+                    </div>
 
-                <div class="form-group">
-                    <label>Email
-                        <input type="text">
-                    </label>
-                </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input id="email" type="email" placeholder="tuemail@ejemplo.com">
+                    </div>
 
-                <div class="form-group">
-                    <label>Motivo</label>
-                    <label>
-                        <select>
-                            <option value="valor1">Información general</option>
-                            <option value="valor2">Dudas sobre pedidos</option>
-                            <option value="valor3">Nuevo punto de recogida</option>
-                            <option value="valor4">Colaborar como productor</option>
-                            <option value="valor5">Otro (indicar en el mensaje)</option>
+                    <div class="form-group full">
+                        <label for="motivo">Motivo</label>
+                        <select id="motivo">
+                            <option>Información general</option>
+                            <option>Dudas sobre pedidos</option>
+                            <option>Nuevo punto de recogida</option>
+                            <option>Colaborar como productor</option>
+                            <option>Otro (indicar en el mensaje)</option>
                         </select>
-                    </label>
+                    </div>
+
+                    <div class="form-group full">
+                        <label for="mensaje">Mensaje</label>
+                        <textarea id="mensaje" placeholder="Cuéntanos en qué podemos ayudarte..."></textarea>
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label>Mensaje
-                        <textarea></textarea>
-                    </label>
+                <div class="contacto-actions">
+                    <button type="button" class="btn-submit">Enviar consulta</button>
                 </div>
-
-                <button type="button" class="btn-submit">Enviar consulta</button>
             </form>
-        </main>
+        </section>
 
-        <aside class="side-content">
+        <aside class="contacto-side">
             <h3>Datos de contacto</h3>
-
             <ul class="info-list">
-                <li><strong>Email: </strong>info@eco-market.com</li>
-                <li><strong>Teléfono: </strong>+34 600 000 000</li>
-                <li><strong>Ubicación: </strong>Gran Canaria, Las Palmas, España</li>
+                <li><strong>Email:</strong> info@eco-market.com</li>
+                <li><strong>Teléfono:</strong> +34 600 000 000</li>
+                <li><strong>Ubicación:</strong> España</li>
             </ul>
 
             <p>
@@ -73,43 +77,48 @@
                 los puntos físicos de recogida o las zonas de reparto disponibles.
             </p>
         </aside>
+
     </div>
-</div>
+</main>
 
 <div id="footer-placeholder"></div>
 
 <script>
-    function loadComponent(url, elementId, callback) {
-        fetch(url)
+    function loadComponent(url, elementId) {
+        return fetch(url)
             .then(response => {
-                if (!response.ok) {
-                    throw new Error('Error al cargar ' + url);
-                }
+                if (!response.ok) throw new Error('Error al cargar ' + url);
                 return response.text();
             })
-            .then(data => {
-                document.getElementById(elementId).innerHTML = data;
-                if (callback) callback();
-            })
-            .catch(error => console.error('Error:', error));
+            .then(html => {
+                document.getElementById(elementId).innerHTML = html;
+            });
     }
 
-    document.addEventListener("DOMContentLoaded", () => {
-        // Cargar Header y marcar "Contacto" como activo
-        loadComponent('templates/header.html', 'header-placeholder', () => {
-            const navLinks = document.querySelectorAll('.main-nav a');
-            navLinks.forEach(link => link.classList.remove('active'));
+    function setActiveNavLink() {
+        const file = window.location.pathname.split('/').pop() || 'index.html';
 
-            navLinks.forEach(link => {
-                // Aquí cambiamos 'Inicio' por 'Contacto'
-                if (link.textContent.trim() === 'Contacto') {
-                    link.classList.add('active');
-                }
-            });
+        const pageMap = {
+            'index.html': 'index',
+            'catalogo.html': 'catalogo',
+            'productores.html': 'productores',
+            'contacto.html': 'contacto',
+            'perfil.html': 'perfil',
+            'login.html': null,
+            'registro.html': null
+        };
+
+        const current = pageMap[file] || null;
+
+        document.querySelectorAll('.nav-link').forEach(a => {
+            a.classList.toggle('active', current && a.dataset.page === current);
         });
+    }
 
-        // Cargar Footer
-        loadComponent('templates/footer.html', 'footer-placeholder');
+    document.addEventListener("DOMContentLoaded", async () => {
+        await loadComponent('templates/header.html', 'header-placeholder');
+        await loadComponent('templates/footer.html', 'footer-placeholder');
+        setActiveNavLink();
     });
 </script>
 

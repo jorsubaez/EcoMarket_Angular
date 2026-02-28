@@ -3,12 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catálogo - EcoIsla Market</title>
+    <title>Catálogo - EcoMarket</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="css/header.css">
-
     <link rel="stylesheet" href="css/catalogo.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
 
@@ -17,7 +20,7 @@
 <main class="contenedor-principal">
     <section class="cabecera-catalogo">
         <h2>Catálogo de productos</h2>
-        <p>Frutas, verduras, miel, huevos y otros productos ecológicos procedentes de agricultores de las distintas islas.</p>
+        <p>Frutas, verduras, miel, huevos y otros productos ecológicos de productores locales.</p>
     </section>
 
     <section class="grid-productos-mockup">
@@ -100,37 +103,41 @@
 <div id="footer-placeholder"></div>
 
 <script>
-    function loadComponent(url, elementId, callback) {
-        fetch(url)
+    function loadComponent(url, elementId) {
+        return fetch(url)
             .then(response => {
-                if (!response.ok) {
-                    throw new Error('Error al cargar ' + url);
-                }
+                if (!response.ok) throw new Error('Error al cargar ' + url);
                 return response.text();
             })
-            .then(data => {
-                document.getElementById(elementId).innerHTML = data;
-                if (callback) callback();
-            })
-            .catch(error => console.error('Error:', error));
+            .then(html => {
+                document.getElementById(elementId).innerHTML = html;
+            });
     }
 
-    document.addEventListener("DOMContentLoaded", () => {
+    function setActiveNavLink() {
+        const file = window.location.pathname.split('/').pop() || 'index.html';
 
-        loadComponent('templates/header.html', 'header-placeholder', () => {
-            const navLinks = document.querySelectorAll('.main-nav a');
+        const pageMap = {
+            'index.html': 'index',
+            'catalogo.html': 'catalogo',
+            'productores.html': 'productores',
+            'contacto.html': 'contacto',
+            'perfil.html': 'perfil'
+        };
 
-            navLinks.forEach(link => link.classList.remove('active'));
+        const current = pageMap[file] || 'index';
 
-            navLinks.forEach(link => {
-                if (link.textContent.trim() === 'Catálogo' || link.textContent.trim() === 'Catalogo') {
-                    link.classList.add('active');
-                }
-            });
+        document.querySelectorAll('.nav-link').forEach(a => {
+            a.classList.toggle('active', a.dataset.page === current);
         });
+    }
 
-        loadComponent('templates/footer.html', 'footer-placeholder');
+    document.addEventListener("DOMContentLoaded", async () => {
+        await loadComponent('templates/header.html', 'header-placeholder');
+        await loadComponent('templates/footer.html', 'footer-placeholder');
+        setActiveNavLink();
     });
 </script>
+
 </body>
 </html>

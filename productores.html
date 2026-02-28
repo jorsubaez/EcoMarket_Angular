@@ -1,11 +1,17 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Productores | EcoMarket</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Productores - EcoMarket</title>
 
-    <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="css/productores.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="stylesheet" href="css/productores.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
 
@@ -14,67 +20,52 @@
 <main class="content-wrapper">
 
     <section class="text-section">
-        <h2>Productores que forman parte de EcoMarket</h2>
+        <h2>Trabajamos con productores ecológicos de toda España</h2>
         <p>
-            EcoMarket trabaja con productores seleccionados de distintas islas del
-            archipiélago. Antes de incorporarse a la plataforma, se revisan sus prácticas
-            agrícolas, autorizaciones sanitarias y compromiso con la sostenibilidad.
+            En EcoMarket seleccionamos proyectos agrícolas y ganaderos que apuestan por prácticas sostenibles,
+            producto de temporada y trazabilidad. Nuestro objetivo es que el productor gane más y el cliente reciba
+            calidad real, sin intermediarios innecesarios.
         </p>
     </section>
 
     <div class="grey-container">
         <div class="card">
-            <h3>Finca La Vega</h3>
-            <p><strong>Isla:</strong> Gran Canaria</p>
-            <p><strong>Especialidad:</strong> tomates, lechugas y verduras de hoja.</p>
-            <p>
-                Finca familiar con más de 20 años de experiencia en agricultura ecológica
-                certificada, centrada en productos de proximidad.
-            </p>
+            <h3>Cómo unirte a EcoMarket</h3>
+            <p><strong>1) Escríbenos</strong> con tu ubicación, qué produces y tu volumen aproximado.</p>
+            <p><strong>2) Validación</strong> de certificación ecológica o prácticas sostenibles verificables.</p>
+            <p><strong>3) Publicación</strong> de ficha del productor y catálogo inicial en la plataforma.</p>
         </div>
 
         <div class="card">
-            <h3>AgroTierra Norte</h3>
-            <p><strong>Isla:</strong> Tenerife</p>
-            <p><strong>Especialidad:</strong> naranjas, aguacates y cítricos.</p>
-            <p>
-                Cooperativa de pequeños productores de la zona norte, comprometidos con el
-                respeto al suelo y el uso eficiente del agua.
-            </p>
+            <h3>Qué buscamos</h3>
+            <p>Producto fresco o transformado con ingredientes limpios.</p>
+            <p>Compromiso con el entorno y el bienestar (suelo, agua, biodiversidad).</p>
+            <p>Capacidad mínima de preparación y entrega según calendario acordado.</p>
         </div>
 
         <div class="card">
-            <h3>EcoPlatanera La Palma</h3>
-            <p><strong>Isla:</strong> La Palma</p>
-            <p><strong>Especialidad:</strong> plátano ecológico de exportación.</p>
-            <p>
-                Fincas asociadas que han reconvertido sus cultivos a modelos sostenibles,
-                reduciendo el uso de fitosanitarios convencionales.
-            </p>
+            <h3>Logística y entregas</h3>
+            <p>Trabajamos con puntos de recogida y reparto por zonas según demanda.</p>
+            <p>Pedidos agrupados por fechas para optimizar transporte y mermas.</p>
+            <p>Siempre con información clara de origen, lote y fecha de recolección.</p>
         </div>
 
         <div class="card">
-            <h3>Granja Costa Azul</h3>
-            <p><strong>Isla:</strong> Fuerteventura</p>
-            <p><strong>Especialidad:</strong> huevos camperos y hortalizas.</p>
-            <p>
-                Granja con gallinas en semilibertad y huerto diversificado, enfocada en el
-                bienestar animal y la venta de proximidad.
-            </p>
+            <h3>Beneficios para el productor</h3>
+            <p>Más visibilidad online sin depender de grandes intermediarios.</p>
+            <p>Precios más justos y planificación por lotes / temporadas.</p>
+            <p>Soporte de publicación, catálogo y comunicación con clientes.</p>
         </div>
     </div>
 
     <section class="text-section">
-        <h2>¿Quieres ser productor en EcoMarket?</h2>
+        <h2>¿Te interesa colaborar?</h2>
         <p>
-            Si eres productor en Canarias y te interesa formar parte de la plataforma, ponte en
-            contacto con el equipo de EcoMarket. Revisaremos tu proyecto, documentación
-            sanitaria y modelo de producción para garantizar que cumple con los estándares de
-            calidad y sostenibilidad de la cooperativa.
+            No necesitas crear una cuenta para empezar. Envíanos tu información desde la página de contacto y te
+            responderemos con los requisitos y próximos pasos.
         </p>
-        <p>
-            Una vez validado, se te habilitará un perfil de productor desde el que podrás
-            gestionar tus productos (altas, bajas y modificaciones) dentro de la web.
+        <p style="margin-top: 12px;">
+            <a href="contacto.html" class="btn btn-primary">Contactar</a>
         </p>
     </section>
 
@@ -84,38 +75,40 @@
 
 <script>
     function loadComponent(url, elementId) {
-        fetch(url)
+        return fetch(url)
             .then(response => {
                 if (!response.ok) throw new Error('Error al cargar ' + url);
                 return response.text();
             })
-            .then(data => {
-                document.getElementById(elementId).innerHTML = data;
-
-                if (elementId === 'header-placeholder') {
-                    marcarEnlaceActivo();
-                }
-            })
-            .catch(error => console.error('Error:', error));
+            .then(html => {
+                document.getElementById(elementId).innerHTML = html;
+            });
     }
 
-    function marcarEnlaceActivo() {
-        const currentPage = window.location.pathname.split("/").pop();
+    function setActiveNavLink() {
+        const file = (window.location.pathname.split('/').pop() || 'index.html').toLowerCase();
 
-        const navLinks = document.querySelectorAll('.main-nav a');
+        const pageMap = {
+            'index.html': 'index',
+            'catalogo.html': 'catalogo',
+            'productores.html': 'productores',
+            'contacto.html': 'contacto',
+            'perfil.html': 'perfil',
+            'login.html': null,
+            'registro.html': null
+        };
 
-        navLinks.forEach(link => {
-            const linkPage = link.getAttribute('href');
+        const current = pageMap[file] || null;
 
-            if (currentPage === linkPage) {
-                link.classList.add('active');
-            }
+        document.querySelectorAll('.nav-link').forEach(a => {
+            a.classList.toggle('active', current && a.dataset.page === current);
         });
     }
 
-    document.addEventListener("DOMContentLoaded", () => {
-        loadComponent('templates/header.html', 'header-placeholder');
-        loadComponent('templates/footer.html', 'footer-placeholder');
+    document.addEventListener("DOMContentLoaded", async () => {
+        await loadComponent('templates/header.html', 'header-placeholder');
+        await loadComponent('templates/footer.html', 'footer-placeholder');
+        setActiveNavLink();
     });
 </script>
 

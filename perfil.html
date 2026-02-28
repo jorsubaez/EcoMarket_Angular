@@ -2,75 +2,60 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Perfil | EcoIsla Market</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil - EcoIsla Market</title>
 
-    <link rel="stylesheet" href="css/perfil.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/perfil.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
 
 <div id="header-placeholder"></div>
 
 <div class="central-container">
-    <div class="sidebar-panel">
-        <a href="#" class="sidebar-button">Ver perfil</a>
-        <a href="#" class="sidebar-button">Historial</a>
-        <a href="#" class="sidebar-button">Mensajes</a>
-        <a href="#" class="sidebar-button">Comunidad</a>
-    </div>
-    <div class="main-content">
-        <div class="profile-pic">
-            <img src="./Imagenes/Foto perfil.png" alt="Foto">
-        </div>
-        <h3>Carla Medina Robayna</h3>
-        <h4>Ingeniera Agrícola</h4>
-        <p class="description-text">
-            Soy ingeniera agrícola especializada en producción ecológica y gestión sostenible de cultivos en entornos insulares. A lo largo de mi trayectoria he trabajado en la optimización de sistemas de riego eficiente, mejora de suelos y transición de explotaciones convencionales hacia modelos agroecológicos certificados.
-
-            Me apasiona integrar la innovación tecnológica con el conocimiento tradicional del campo, aplicando técnicas de agricultura regenerativa, control biológico de plagas y planificación de cultivos orientada a la resiliencia climática.
-
-            Mi objetivo profesional es contribuir al desarrollo de sistemas agrícolas más sostenibles, rentables y respetuosos con el entorno, fortaleciendo el vínculo entre productor, territorio y consumidor.
-        </p>
-    </div>
+    <!-- tu contenido perfil -->
 </div>
 
 <div id="footer-placeholder"></div>
 
 <script>
     function loadComponent(url, elementId) {
-        fetch(url)
-            .then(response => {
-                if (!response.ok) throw new Error('Error al cargar ' + url);
-                return response.text();
+        return fetch(url)
+            .then(res => {
+                if (!res.ok) throw new Error("Error cargando " + url);
+                return res.text();
             })
-            .then(data => {
-                document.getElementById(elementId).innerHTML = data;
-
-                if (elementId === 'header-placeholder') {
-                    marcarEnlaceActivo();
-                }
-            })
-            .catch(error => console.error('Error:', error));
+            .then(html => {
+                document.getElementById(elementId).innerHTML = html;
+            });
     }
 
-    function marcarEnlaceActivo() {
-        const currentPage = window.location.pathname.split("/").pop();
+    function setActiveNavLink() {
+        const file = window.location.pathname.split('/').pop();
 
-        const navLinks = document.querySelectorAll('.main-nav a');
+        const pageMap = {
+            'index.html': 'index',
+            'catalogo.html': 'catalogo',
+            'productores.html': 'productores',
+            'contacto.html': 'contacto',
+            'perfil.html': 'perfil'
+        };
 
-        navLinks.forEach(link => {
-            const linkPage = link.getAttribute('href');
+        const current = pageMap[file];
 
-            if (currentPage === linkPage) {
-                link.classList.add('active');
-            }
+        document.querySelectorAll('.nav-link').forEach(a => {
+            a.classList.toggle('active', a.dataset.page === current);
         });
     }
 
-    document.addEventListener("DOMContentLoaded", () => {
-        loadComponent('templates/header.html', 'header-placeholder');
-        loadComponent('templates/footer.html', 'footer-placeholder');
+    document.addEventListener("DOMContentLoaded", async () => {
+        await loadComponent('/templates/header.html', 'header-placeholder');
+        await loadComponent('/templates/footer.html', 'footer-placeholder');
+        setActiveNavLink();
     });
 </script>
 
