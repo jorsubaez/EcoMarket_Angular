@@ -1,0 +1,221 @@
+/* =========================
+   Auth (login/registro)
+   ========================= */
+
+.auth-page{
+    min-height: calc(100vh - 160px);
+    display: grid;
+    place-items: center;
+    padding: 48px 18px;
+}
+
+.auth-card{
+    width: 100%;
+    max-width: 520px;
+    background: rgba(255,255,255,.75);
+    border: 1px solid rgba(20,20,20,.08);
+    border-radius: 18px;
+    box-shadow: 0 20px 40px rgba(0,0,0,.06);
+    padding: 26px;
+}
+
+.auth-header{
+    margin-bottom: 18px;
+}
+
+.auth-header h1{
+    font-size: 2rem;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: var(--dark-grey);
+    margin-bottom: 8px;
+}
+
+.auth-header p{
+    color: var(--light-grey);
+    line-height: 1.6;
+}
+
+.auth-form{
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.field label{
+    display: block;
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-bottom: 8px;
+    color: var(--dark-grey);
+}
+
+.input-wrap{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #fff;
+    border: 1px solid rgba(20,20,20,.12);
+    border-radius: 14px;
+    padding: 12px 14px;
+    transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+.input-wrap:focus-within{
+    border-color: rgba(46,125,50,.45);
+    box-shadow: 0 0 0 4px rgba(46,125,50,.12);
+}
+
+.input-wrap i{
+    color: rgba(46,125,50,.8);
+    min-width: 18px;
+}
+
+.input-wrap input{
+    width: 100%;
+    border: none;
+    outline: none;
+    font-size: 1rem;
+    font-family: var(--font-family), sans-serif;
+    background: transparent;
+    color: var(--dark-grey);
+}
+
+.input-wrap input::placeholder{
+    color: rgba(102,102,102,.75);
+}
+
+.icon-btn{
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 6px 8px;
+    border-radius: 10px;
+    color: rgba(51,51,51,.7);
+    transition: background .2s ease, color .2s ease;
+}
+
+.icon-btn:hover{
+    background: rgba(0,0,0,.05);
+    color: rgba(51,51,51,.9);
+}
+
+.hint{
+    display: block;
+    margin-top: 8px;
+    font-size: 0.85rem;
+    color: rgba(102,102,102,.9);
+    line-height: 1.4;
+}
+
+.auth-row{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 2px;
+}
+
+.checkbox{
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    user-select: none;
+    color: rgba(51,51,51,.85);
+    font-size: .95rem;
+}
+
+.checkbox input{
+    width: 18px;
+    height: 18px;
+    accent-color: var(--primary-green);
+}
+
+.checkbox-terms{
+    margin-top: 6px;
+}
+
+.auth-link{
+    color: var(--primary-green);
+    font-weight: 600;
+}
+
+.auth-link:hover{
+    text-decoration: underline;
+}
+
+.btn{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border-radius: 999px;
+    padding: 12px 16px;
+    font-weight: 700;
+    border: 1px solid transparent;
+    cursor: pointer;
+}
+
+.btn-block{
+    width: 100%;
+}
+
+.btn-primary{
+    background: var(--primary-green);
+    color: #fff;
+    box-shadow: 0 10px 18px rgba(46,125,50,.20);
+}
+
+.btn-primary:hover{
+    filter: brightness(.95);
+}
+
+.btn-secondary{
+    background: rgba(46,125,50,.10);
+    color: var(--primary-green);
+    border-color: rgba(46,125,50,.22);
+}
+
+.btn-secondary:hover{
+    background: rgba(46,125,50,.14);
+}
+
+.divider{
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    color: rgba(102,102,102,.9);
+    margin: 6px 0;
+}
+
+.divider::before,
+.divider::after{
+    content: "";
+    height: 1px;
+    flex: 1;
+    background: rgba(0,0,0,.10);
+}
+
+.divider span{
+    font-size: .9rem;
+    font-weight: 600;
+}
+
+.auth-footer-text{
+    margin-top: 6px;
+    text-align: center;
+    color: rgba(51,51,51,.75);
+}
+
+/* Grid para registro */
+.grid-2{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+@media (max-width: 600px){
+    .auth-card{ padding: 20px; }
+    .grid-2{ grid-template-columns: 1fr; }
+}

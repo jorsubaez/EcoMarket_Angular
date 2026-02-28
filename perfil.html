@@ -2,56 +2,60 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Perfil | EcoIsla Market</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil - EcoIsla Market</title>
 
-    <link rel="stylesheet" href="css/perfil.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/perfil.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
 
 <div id="header-placeholder"></div>
 
 <div class="central-container">
-    <div class="sidebar-panel">
-        <a href="#" class="sidebar-button">Cras risus</a>
-        <a href="#" class="sidebar-button">Cras risus</a>
-        <a href="#" class="sidebar-button">Cras risus</a>
-        <a href="#" class="sidebar-button">Cras risus</a>
-    </div>
-    <div class="main-content">
-        <div class="profile-pic">
-            <span>×</span>
-        </div>
-        <h3>Donec vel purus ut</h3>
-        <h4>Maecenas feugiat</h4>
-        <p class="description-text">
-            Praesent et arcu pharetra, placerat tortor a, faucibus mi. Maecenas porta ornare neque, at condimentum urna molestie vitae. Nam vehicula posuere ex, sed feugiat purus dignissim ac. Proin consectetur eros nisi, ut dictum diam tristique sit amet. Aliquam imperdiet non lectus non convallis. Donec in finibus erat. Maecenas nec arcu non est venenatis auctor. Phasellus facilisis dui vitae leo viverra suscipit. Proin ultricies in ipsum et auctor. Aliquam dictum blandit nunc vel rhoncus. Etiam porta sapien leo, sit amet accumsan quam porttitor vel. Aliquam finibus tempus arcu, eget luctus elit pulvinar eu. Sed hendrerit nunc ac laoreet suscipit
-        </p>
-    </div>
+    <!-- tu contenido perfil -->
 </div>
 
 <div id="footer-placeholder"></div>
 
 <script>
     function loadComponent(url, elementId) {
-        fetch(url)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Error al cargar ' + url);
-                }
-                return response.text();
+        return fetch(url)
+            .then(res => {
+                if (!res.ok) throw new Error("Error cargando " + url);
+                return res.text();
             })
-            .then(data => {
-                document.getElementById(elementId).innerHTML = data;
-            })
-            .catch(error => console.error('Error:', error));
+            .then(html => {
+                document.getElementById(elementId).innerHTML = html;
+            });
     }
 
-    // Cargar el header y el footer desde la carpeta "templates" al cargar la página
-    document.addEventListener("DOMContentLoaded", () => {
-        loadComponent('templates/header.html', 'header-placeholder');
-        loadComponent('templates/footer.html', 'footer-placeholder');
+    function setActiveNavLink() {
+        const file = window.location.pathname.split('/').pop();
+
+        const pageMap = {
+            'index.html': 'index',
+            'catalogo.html': 'catalogo',
+            'productores.html': 'productores',
+            'contacto.html': 'contacto',
+            'perfil.html': 'perfil'
+        };
+
+        const current = pageMap[file];
+
+        document.querySelectorAll('.nav-link').forEach(a => {
+            a.classList.toggle('active', a.dataset.page === current);
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", async () => {
+        await loadComponent('/templates/header.html', 'header-placeholder');
+        await loadComponent('/templates/footer.html', 'footer-placeholder');
+        setActiveNavLink();
     });
 </script>
 
