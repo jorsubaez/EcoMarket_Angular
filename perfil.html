@@ -3,61 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Perfil - EcoIsla Market</title>
+    <title>Perfil - EcoMarket</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="/css/styles.css">
-    <link rel="stylesheet" href="/css/perfil.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/perfil.css">
 </head>
-<body>
+
+<body data-page="perfil">
 
 <div id="header-placeholder"></div>
 
-<div class="central-container">
-    <!-- tu contenido perfil -->
-</div>
+<main class="central-container">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar-panel">
+        <a class="sidebar-button" href="#">Mi perfil</a>
+        <a class="sidebar-button" href="#">Mis pedidos</a>
+        <a class="sidebar-button" href="#">Direcciones</a>
+        <a class="sidebar-button" href="#">Ajustes</a>
+        <a class="sidebar-button" href="#">Cerrar sesión</a>
+    </aside>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <section class="main-content">
+
+        <div class="profile-pic">
+            <img src="Imagenes/Foto%20perfil.png" alt="Foto de perfil">
+        </div>
+
+        <h3>Nombre del usuario</h3>
+        <h4>Tipo de cuenta</h4>
+
+        <!-- Tarjetas de información -->
+        <div class="profile-cards">
+            <div class="info-card">
+                <p class="info-label">Email</p>
+                <p class="info-value">email@ejemplo.com</p>
+            </div>
+
+            <div class="info-card">
+                <p class="info-label">Teléfono</p>
+                <p class="info-value">+34 600 000 000</p>
+            </div>
+
+            <div class="info-card">
+                <p class="info-label">Dirección principal</p>
+                <p class="info-value">Añade una dirección</p>
+            </div>
+        </div>
+
+        <!-- Descripción -->
+        <div class="description-text">
+            <p>
+                Información del perfil del usuario.
+            </p>
+
+            <div class="profile-actions">
+                <a class="btn btn-primary" href="#">Editar perfil</a>
+                <a class="btn btn-secondary" href="#">Ver pedidos</a>
+            </div>
+        </div>
+
+    </section>
+
+</main>
 
 <div id="footer-placeholder"></div>
 
-<script>
-    function loadComponent(url, elementId) {
-        return fetch(url)
-            .then(res => {
-                if (!res.ok) throw new Error("Error cargando " + url);
-                return res.text();
-            })
-            .then(html => {
-                document.getElementById(elementId).innerHTML = html;
-            });
-    }
-
-    function setActiveNavLink() {
-        const file = window.location.pathname.split('/').pop();
-
-        const pageMap = {
-            'index.html': 'index',
-            'catalogo.html': 'catalogo',
-            'productores.html': 'productores',
-            'contacto.html': 'contacto',
-            'perfil.html': 'perfil'
-        };
-
-        const current = pageMap[file];
-
-        document.querySelectorAll('.nav-link').forEach(a => {
-            a.classList.toggle('active', a.dataset.page === current);
-        });
-    }
-
-    document.addEventListener("DOMContentLoaded", async () => {
-        await loadComponent('/templates/header.html', 'header-placeholder');
-        await loadComponent('/templates/footer.html', 'footer-placeholder');
-        setActiveNavLink();
-    });
-</script>
+<script src="js/layout.js"></script>
 
 </body>
 </html>
