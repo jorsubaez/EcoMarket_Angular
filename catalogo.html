@@ -11,9 +11,9 @@
 
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/catalogo.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body>
+
+<body data-page="catalogo">
 
 <div id="header-placeholder"></div>
 
@@ -102,42 +102,7 @@
 
 <div id="footer-placeholder"></div>
 
-<script>
-    function loadComponent(url, elementId) {
-        return fetch(url)
-            .then(response => {
-                if (!response.ok) throw new Error('Error al cargar ' + url);
-                return response.text();
-            })
-            .then(html => {
-                document.getElementById(elementId).innerHTML = html;
-            });
-    }
-
-    function setActiveNavLink() {
-        const file = window.location.pathname.split('/').pop() || 'index.html';
-
-        const pageMap = {
-            'index.html': 'index',
-            'catalogo.html': 'catalogo',
-            'productores.html': 'productores',
-            'contacto.html': 'contacto',
-            'perfil.html': 'perfil'
-        };
-
-        const current = pageMap[file] || 'index';
-
-        document.querySelectorAll('.nav-link').forEach(a => {
-            a.classList.toggle('active', a.dataset.page === current);
-        });
-    }
-
-    document.addEventListener("DOMContentLoaded", async () => {
-        await loadComponent('templates/header.html', 'header-placeholder');
-        await loadComponent('templates/footer.html', 'footer-placeholder');
-        setActiveNavLink();
-    });
-</script>
-
+<!-- Un solo JS común (carga templates + active) -->
+<script src="js/layout.js"></script>
 </body>
 </html>
