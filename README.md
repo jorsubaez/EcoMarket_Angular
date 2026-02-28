@@ -1,7 +1,7 @@
 # Eco Market
 
 <p align="center">
-   <img src="css/logo.JPG" alt="Logo EcoMarket" width="500">
+   <img src="Imagenes/logo.JPG" alt="Logo EcoMarket" width="500">
 </p>
 
 ## Integrantes del Grupo
