@@ -11,11 +11,9 @@
     }
 
     try {
-        // Tu estructura: /templates/header.html y /templates/footer.html
         await inject(headerEl, "templates/header.html");
         await inject(footerEl, "templates/footer.html");
 
-        // Marca el link activo usando body[data-page]
         const current = document.body.getAttribute("data-page");
         if (current) {
             document.querySelectorAll(".main-nav a[data-page]").forEach((a) => {

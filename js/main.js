@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // --- 1. INYECCIÓN DE TEMPLATES GLOBALES (Header y Footer) ---
     const headerContainer = document.getElementById('template-header');
     if (headerContainer) {
         fetch('templates/header.html')
@@ -21,7 +20,6 @@ document.addEventListener('DOMContentLoaded', () => {
             .catch(error => console.error('Error cargando el footer:', error));
     }
 
-    // --- 2. LÓGICA ESPECÍFICA DEL CATÁLOGO ---
     const gridContainer = document.getElementById('template-grid-productos');
 
     if (gridContainer) {
