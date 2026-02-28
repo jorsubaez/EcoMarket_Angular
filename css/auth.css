@@ -1,7 +1,3 @@
-/* =========================
-   Auth (login/registro)
-   ========================= */
-
 .auth-page{
     min-height: calc(100vh - 160px);
     display: grid;

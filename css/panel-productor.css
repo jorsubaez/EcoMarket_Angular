@@ -221,7 +221,6 @@
     padding: 18px;
 }
 
-/* Responsive */
 @media (max-width: 900px){
     .producer-head{
         flex-direction: column;
