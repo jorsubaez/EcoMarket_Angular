@@ -77,7 +77,7 @@ Listado de componentes reutilizables y el archivo encargado de su carga:
 ---
 
 ## Observaciones
-Aspectos a tener en consideración para la evaluación del proyecto.
+Aspectos a tener en consideración para la evaluación del proyecto:
 
 * **Arquitectura de Layout:** Se ha implementado un layout compartido con JavaScript para centralizar el header y el footer. Además, se han añadido mejoras en la organización del código, facilitando la agregación de futuras modificaciones de manera escalable.
 
