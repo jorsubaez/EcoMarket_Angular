@@ -64,6 +64,13 @@ A continuación se detallan las páginas que componen la aplicación junto al mo
 | `panel-productor.html` | `PANEL PRODUCTOR` |
 | `perfil.html` | `VER PERFIL` |
 
+> [!NOTE]
+> Para facilitar la revisión de las secciones privadas y las funcionalidades de usuario sin necesidad de completar el formulario de registro, se han habilitado las siguientes credenciales de prueba:
+> * **Email:** `usuario@ejemplo.com`
+> * **Contraseña:** `123456`
+>
+> Al iniciar sesión con esta cuenta, se obtiene acceso automático tanto al perfil de usuario `perfil.html` como al panel de productor `panel-productor.html`, permitiendo testear la gestión de inventario y la visualización de datos personales.
+
 ---
 
 ## Templates Identificados
