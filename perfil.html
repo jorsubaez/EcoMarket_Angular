@@ -71,6 +71,47 @@
 
 <div id="footer-placeholder"></div>
 
+<script>
+    function getSession() {
+        try {
+            return JSON.parse(localStorage.getItem("ecomarket_session"));
+        } catch (e) {
+            return null;
+        }
+    }
+
+    function requireSession() {
+        const session = getSession();
+        if (!session) {
+            window.location.href = "login.html";
+            return null;
+        }
+        return session;
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const session = requireSession();
+        if (!session) return;
+
+        const userNameEl = document.querySelector(".main-content h3");
+        const userEmailEl = document.querySelector(".info-card:nth-child(1) .info-value");
+
+        if (userNameEl) userNameEl.textContent = session.name || "Usuario EcoMarket";
+        if (userEmailEl) userEmailEl.textContent = session.email || "email@ejemplo.com";
+
+        const sidebarButtons = document.querySelectorAll(".sidebar-button");
+        const logoutBtn = Array.from(sidebarButtons).find(btn => btn.textContent.includes("Cerrar sesión"));
+
+        if (logoutBtn) {
+            logoutBtn.addEventListener("click", (e) => {
+                e.preventDefault();
+                localStorage.removeItem("ecomarket_session");
+                window.location.href = "index.html";
+            });
+        }
+    });
+</script>
+
 <script src="js/layout.js"></script>
 
 </body>

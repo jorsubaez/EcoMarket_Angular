@@ -77,47 +77,54 @@
 <div id="footer-placeholder"></div>
 
 <script>
-    function loadComponent(url, elementId) {
-        return fetch(url)
-            .then(response => {
-                if (!response.ok) throw new Error('Error al cargar ' + url);
-                return response.text();
-            })
-            .then(html => {
-                document.getElementById(elementId).innerHTML = html;
-            });
-    }
-
-    function setActiveNavLink() {
-        const file = window.location.pathname.split('/').pop() || 'index.html';
-        const pageMap = {
-            'index.html': 'index',
-            'catalogo.html': 'catalogo',
-            'productores.html': 'productores',
-            'contacto.html': 'contacto',
-            'perfil.html': 'perfil',
-            'login.html': null,
-            'registro.html': null
-        };
-        const current = pageMap[file];
-
-        document.querySelectorAll('.nav-link').forEach(a => {
-            a.classList.toggle('active', current && a.dataset.page === current);
-        });
+    async function loadComponent(url, elementId) {
+        try {
+            const response = await fetch(url);
+            if (!response.ok) throw new Error('Error al cargar ' + url);
+            document.getElementById(elementId).innerHTML = await response.text();
+        } catch (err) {
+            console.error("No se pudo cargar el componente:", err);
+        }
     }
 
     document.addEventListener("DOMContentLoaded", async () => {
+        const loginForm = document.querySelector('.auth-form');
+        const btnToggle = document.getElementById('togglePassword');
+        const inputPass = document.getElementById('password');
+
+        if (loginForm) {
+            loginForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+
+                if (email === "usuario@ejemplo.com" && password === "123456") {
+
+                    const sessionData = {
+                        name: "Usuario EcoMarket",
+                        email: email,
+                        role: "producer",
+                        id: "user_01"
+                    };
+
+                    localStorage.setItem("ecomarket_session", JSON.stringify(sessionData));
+
+                    window.location.replace("perfil.html");
+                } else {
+                    alert("Email o contraseña incorrectos");
+                }
+            });
+        }
+
         await loadComponent('templates/header.html', 'header-placeholder');
         await loadComponent('templates/footer.html', 'footer-placeholder');
-        setActiveNavLink();
 
-        const btn = document.getElementById('togglePassword');
-        const input = document.getElementById('password');
-        if (btn && input) {
-            btn.addEventListener('click', () => {
-                const isPassword = input.type === 'password';
-                input.type = isPassword ? 'text' : 'password';
-                btn.innerHTML = isPassword
+        if (btnToggle && inputPass) {
+            btnToggle.addEventListener('click', () => {
+                const isPassword = inputPass.type === 'password';
+                inputPass.type = isPassword ? 'text' : 'password';
+                btnToggle.innerHTML = isPassword
                     ? '<i class="fa-regular fa-eye-slash"></i>'
                     : '<i class="fa-regular fa-eye"></i>';
             });

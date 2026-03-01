@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="css/panel-productor.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body>
+<body data-page="panel-productor">
 
 <div id="header-placeholder"></div>
 
@@ -122,42 +122,6 @@
         return session;
     }
 
-    function loadComponent(url, elementId) {
-        return fetch(url)
-            .then(r => { if (!r.ok) throw new Error("Error al cargar " + url); return r.text(); })
-            .then(html => { document.getElementById(elementId).innerHTML = html; });
-    }
-
-    function setActiveNavLink() {
-        const file = (window.location.pathname.split('/').pop() || 'index.html').toLowerCase();
-        const pageMap = {
-            'index.html': 'index',
-            'catalogo.html': 'catalogo',
-            'productores.html': 'productores',
-            'contacto.html': 'contacto',
-            'panel-productor.html': 'panel-productor'
-        };
-        const current = pageMap[file] || null;
-
-        document.querySelectorAll('.nav-link').forEach(a => {
-            a.classList.toggle('active', current && a.dataset.page === current);
-        });
-    }
-
-    function applyRoleUI() {
-        const session = getSession();
-        const liPanel = document.getElementById("nav-producer-panel");
-        if (liPanel) {
-            if (session && session.role === "producer") {
-                liPanel.classList.remove("nav-hidden");
-                liPanel.classList.add("nav-visible");
-            } else {
-                liPanel.classList.add("nav-hidden");
-                liPanel.classList.remove("nav-visible");
-            }
-        }
-    }
-
     function loadProducts(ownerId) {
         const key = `ecomarket_products_${ownerId}`;
         try { return JSON.parse(localStorage.getItem(key)) || []; }
@@ -218,12 +182,6 @@
     document.addEventListener("DOMContentLoaded", async () => {
         const session = requireProducer();
         if (!session) return;
-
-        await loadComponent('templates/header.html', 'header-placeholder');
-        await loadComponent('templates/footer.html', 'footer-placeholder');
-
-        applyRoleUI();
-        setActiveNavLink();
 
         document.getElementById("producerName").textContent = session.name || "Productor";
 
@@ -314,6 +272,8 @@
         });
     });
 </script>
+
+<script src="js/layout.js"></script>
 
 </body>
 </html>
