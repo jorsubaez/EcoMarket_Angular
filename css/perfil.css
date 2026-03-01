@@ -18,7 +18,7 @@ body {
 .central-container {
     display: flex;
     max-width: 1000px;
-    margin: 60px 200px;
+    margin: 60px auto;
     padding: 0 30px;
     gap: 20px;
     align-items: flex-start;
