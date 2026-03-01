@@ -77,9 +77,9 @@ A continuación se detallan las páginas que componen la aplicación junto al mo
 Listado de componentes reutilizables y el archivo encargado de su carga:
 
 * **Template:** `header.html`
-    * **Cargado en:** `index.html`, `catalogo.html`, `productores.html`, `contacto.html`, `panel-productor.html` y `perfil.html`
+    * **Cargado en:** `index.html`, `catalogo.html`, `productores.html`, `contacto.html`, `login.html`, `registro.html`, `panel-productor.html` y `perfil.html`
 * **Template:** `footer.html`
-    * **Cargado en:** `index.html`, `catalogo.html`, `productores.html`, `contacto.html`, `panel-productor.html` y `perfil.html`
+    * **Cargado en:** `index.html`, `catalogo.html`, `productores.html`, `contacto.html`, `login.html`, `registro.html`, `panel-productor.html` y `perfil.html`
 
 ---
 
