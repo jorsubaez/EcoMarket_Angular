@@ -1,24 +1,8 @@
+// main.js
 document.addEventListener('DOMContentLoaded', () => {
 
-    const headerContainer = document.getElementById('template-header');
-    if (headerContainer) {
-        fetch('templates/header.html')
-            .then(response => response.text())
-            .then(data => {
-                headerContainer.innerHTML = data;
-            })
-            .catch(error => console.error('Error cargando el header:', error));
-    }
-
-    const footerContainer = document.getElementById('template-footer');
-    if (footerContainer) {
-        fetch('templates/footer.html')
-            .then(response => response.text())
-            .then(data => {
-                footerContainer.innerHTML = data;
-            })
-            .catch(error => console.error('Error cargando el footer:', error));
-    }
+    // --- SE HAN ELIMINADO LOS FETCH DE HEADER Y FOOTER ---
+    // Esa tarea ahora la gestiona exclusivamente layout.js
 
     const gridContainer = document.getElementById('template-grid-productos');
 
