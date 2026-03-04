@@ -1,0 +1,32 @@
+{
+  "usuarios": [
+    {
+      "id": "1",
+      "email": "admin@ecomarket.com",
+      "password": "Password123",
+      "nombre": "Administradora Ana",
+      "rol": "admin"
+    },
+    {
+      "id": "2",
+      "email": "agricultor@ecomarket.com",
+      "password": "Password123",
+      "nombre": "Huerta San Juan",
+      "rol": "productor"
+    },
+    {
+      "id": "3",
+      "email": "cliente1@gmail.com",
+      "password": "Password123",
+      "nombre": "Carlos Cliente",
+      "rol": "cliente"
+    },
+    {
+      "id": "4",
+      "email": "cliente2@hotmail.com",
+      "password": "Password123",
+      "nombre": "Laura Compradora",
+      "rol": "cliente"
+    }
+  ]
+}
