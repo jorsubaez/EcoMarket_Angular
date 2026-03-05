@@ -77,6 +77,8 @@
 <div id="footer-placeholder"></div>
 
 <script>
+    const API_URL = "http://localhost:3000";
+
     async function loadComponent(url, elementId) {
         try {
             const response = await fetch(url);
@@ -87,39 +89,38 @@
         }
     }
 
+    function saveSession(user) {
+        // Guardamos solo lo necesario (demo)
+        const sessionData = {
+            id: user.id,
+            name: user.nombre,
+            email: user.email,
+            role: user.rol, // admin | productor | cliente
+            loginAt: new Date().toISOString()
+        };
+        localStorage.setItem("ecomarket_session", JSON.stringify(sessionData));
+    }
+
+    function redirectByRole(role) {
+        // Ajusta los nombres si tus páginas se llaman diferente
+        if (role === "admin") {
+            window.location.replace("admin.html");
+        } else if (role === "productor") {
+            window.location.replace("panel-productor.html");
+        } else {
+            window.location.replace("perfil.html"); // cliente
+        }
+    }
+
     document.addEventListener("DOMContentLoaded", async () => {
         const loginForm = document.querySelector('.auth-form');
         const btnToggle = document.getElementById('togglePassword');
         const inputPass = document.getElementById('password');
 
-        if (loginForm) {
-            loginForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-
-                const email = document.getElementById('email').value;
-                const password = document.getElementById('password').value;
-
-                if (email === "usuario@ejemplo.com" && password === "123456") {
-
-                    const sessionData = {
-                        name: "Usuario EcoMarket",
-                        email: email,
-                        role: "producer",
-                        id: "user_01"
-                    };
-
-                    localStorage.setItem("ecomarket_session", JSON.stringify(sessionData));
-
-                    window.location.replace("perfil.html");
-                } else {
-                    alert("Email o contraseña incorrectos");
-                }
-            });
-        }
-
         await loadComponent('templates/header.html', 'header-placeholder');
         await loadComponent('templates/footer.html', 'footer-placeholder');
 
+        // Toggle password
         if (btnToggle && inputPass) {
             btnToggle.addEventListener('click', () => {
                 const isPassword = inputPass.type === 'password';
@@ -127,6 +128,38 @@
                 btnToggle.innerHTML = isPassword
                     ? '<i class="fa-regular fa-eye-slash"></i>'
                     : '<i class="fa-regular fa-eye"></i>';
+            });
+        }
+
+        // LOGIN contra db.json (JSON Server)
+        if (loginForm) {
+            loginForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const email = document.getElementById('email').value.trim();
+                const password = document.getElementById('password').value;
+
+                try {
+                    const url = `${API_URL}/usuarios?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`;
+                    const res = await fetch(url);
+
+                    if (!res.ok) throw new Error("HTTP " + res.status);
+
+                    const users = await res.json();
+
+                    if (!users || users.length === 0) {
+                        alert("Email o contraseña incorrectos");
+                        return;
+                    }
+
+                    const user = users[0];
+                    saveSession(user);
+                    redirectByRole(user.rol);
+
+                } catch (err) {
+                    console.error(err);
+                    alert("No se pudo conectar con el servidor de usuarios. ¿Tienes JSON Server en http://localhost:3000?");
+                }
             });
         }
     });
