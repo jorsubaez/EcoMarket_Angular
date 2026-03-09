@@ -18,14 +18,14 @@
       "id": "3",
       "email": "cliente1@gmail.com",
       "password": "Password123",
-      "nombre": "Carlos Cliente",
+      "nombre": "Cliente1",
       "rol": "cliente"
     },
     {
       "id": "4",
       "email": "cliente2@hotmail.com",
       "password": "Password123",
-      "nombre": "Laura Compradora",
+      "nombre": "Cliente2",
       "rol": "cliente"
     }
   ]
