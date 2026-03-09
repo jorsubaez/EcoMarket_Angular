@@ -18,7 +18,7 @@ body {
 .central-container {
     display: flex;
     max-width: 1000px;
-    margin: 60px auto;
+    margin: 60px 200px;
     padding: 0 30px;
     gap: 20px;
     align-items: flex-start;
@@ -35,6 +35,28 @@ body {
     box-shadow: 0 4px 15px rgba(46, 125, 50, 0.08);
     border: 1px solid rgba(76, 175, 80, 0.15);
     margin-top: 60px;
+}
+
+.slider-arrow {
+    display: none;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--primary-green);
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+    z-index: 5;
+}
+
+.sidebar-scroll-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
 }
 
 .sidebar-button {
@@ -63,13 +85,14 @@ body {
     flex-direction: column;
     align-items: center;
     text-align: center;
-    padding: 28px;
-    padding-right: 40px;
+    padding: 40px;
     border-radius: var(--radius-lg);
     border: 1px solid var(--border);
-    background: rgba(255,255,255,.75);
+    background: rgba(255, 255, 255, 0.9);
     box-shadow: var(--shadow-sm);
     max-width: 820px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .profile-pic {
@@ -125,8 +148,8 @@ body {
 
 .info-card {
     text-align: left;
-    background: rgba(255,255,255,.85);
-    border: 1px solid rgba(0,0,0,0.08);
+    background: rgba(255, 255, 255, .85);
+    border: 1px solid rgba(0, 0, 0, 0.08);
     border-radius: 14px;
     padding: 14px;
 }
@@ -151,8 +174,8 @@ body {
     max-width: 760px;
     width: 100%;
     color: #444;
-    background: rgba(255,255,255,.7);
-    border: 1px solid rgba(20,20,20,.06);
+    background: rgba(255, 255, 255, .7);
+    border: 1px solid rgba(20, 20, 20, .06);
     border-radius: 14px;
     padding: 16px;
 }
@@ -168,19 +191,107 @@ body {
     .central-container {
         flex-direction: column;
         align-items: center;
-    }
-
-    .main-content {
-        padding-right: 28px;
-        align-items: stretch;
+        margin: 20px auto;
+        padding: 0 15px;
+        gap: 20px;
+        width: 100%;
     }
 
     .sidebar-panel {
         width: 100%;
+        max-width: 500px;
         margin-top: 0;
+
+        background-color: var(--surface);
+        padding: 15px 10px;
+        border-radius: 16px;
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow-sm);
+
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 5px;
+        position: relative;
+    }
+
+    .slider-arrow {
+        display: flex;
+    }
+
+    .sidebar-scroll-container {
+        flex-direction: row;
+        overflow-x: auto;
+        scroll-behavior: smooth;
+        scrollbar-width: none;
+        gap: 10px;
+        padding: 5px 0;
+        mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+    }
+
+    .sidebar-scroll-container::-webkit-scrollbar {
+        display: none;
+    }
+
+    .sidebar-button {
+        flex: 0 0 calc(33.33% - 10px);
+        text-align: center;
+        padding: 10px 5px;
+        border-bottom: 2px solid transparent;
+        font-size: 15px;
+        min-width: 100px;
+    }
+
+    .sidebar-button:hover {
+        transform: none;
+        border-bottom: 2px solid var(--accent-color);
+    }
+
+    .main-content {
+        padding: 25px 15px;
+        max-width: 100%;
+        width: 100%;
+        border-radius: 18px;
+        margin: 0;
+    }
+
+    .profile-cards {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        width: 100%;
+    }
+
+    .profile-pic {
+        width: 110px;
+        height: 110px;
+    }
+
+    .main-content h3 {
+        font-size: 1.4rem;
+    }
+}
+
+@media (max-width: 600px) {
+    .sidebar-panel {
+        max-width: 100%;
+    }
+
+    .sidebar-button {
+        flex: 0 0 calc(33.33% - 8px);
+        font-size: 12px;
+        min-width: 90px;
     }
 
     .profile-cards {
         grid-template-columns: 1fr;
+    }
+
+    .profile-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .profile-actions .btn {
+        width: 100%;
     }
 }

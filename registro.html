@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -7,7 +8,8 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
 
     <link rel="stylesheet" href="css/styles.css" />
     <link rel="stylesheet" href="css/auth.css" />
@@ -15,131 +17,104 @@
 </head>
 
 <body>
-<div id="header-placeholder"></div>
+    <div id="header-placeholder"></div>
 
-<main class="auth-page">
-    <section class="auth-card">
-        <header class="auth-header">
-            <h1>Crear cuenta</h1>
-            <p>Regístrate en EcoMarket y empieza a comprar productos ecológicos.</p>
-        </header>
+    <main class="auth-page">
+        <section class="auth-card">
+            <header class="auth-header">
+                <h1>Crear cuenta</h1>
+                <p>Regístrate en EcoMarket y empieza a comprar productos ecológicos.</p>
+            </header>
 
-        <form class="auth-form" action="#" method="post" autocomplete="on">
-            <div class="grid-2">
-                <div class="field">
-                    <label for="name">Nombre</label>
-                    <div class="input-wrap">
-                        <i class="fa-regular fa-user"></i>
-                        <input id="name" name="name" type="text" placeholder="" required />
+            <form class="auth-form" action="#" method="post" autocomplete="on">
+                <div class="grid-2">
+                    <div class="field">
+                        <label for="name">Nombre</label>
+                        <div class="input-wrap">
+                            <i class="fa-regular fa-user"></i>
+                            <input id="name" name="name" type="text" placeholder="" required />
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label for="surname">Apellidos</label>
+                        <div class="input-wrap">
+                            <i class="fa-regular fa-id-card"></i>
+                            <input id="surname" name="surname" type="text" placeholder="" required />
+                        </div>
                     </div>
                 </div>
 
                 <div class="field">
-                    <label for="surname">Apellidos</label>
+                    <label for="email">Email</label>
                     <div class="input-wrap">
-                        <i class="fa-regular fa-id-card"></i>
-                        <input id="surname" name="surname" type="text" placeholder="" required />
+                        <i class="fa-regular fa-envelope"></i>
+                        <input id="email" name="email" type="email" placeholder="tuemail@ejemplo.com" required />
                     </div>
                 </div>
-            </div>
 
-            <div class="field">
-                <label for="email">Email</label>
-                <div class="input-wrap">
-                    <i class="fa-regular fa-envelope"></i>
-                    <input id="email" name="email" type="email" placeholder="tuemail@ejemplo.com" required />
-                </div>
-            </div>
-
-            <div class="grid-2">
-                <div class="field">
-                    <label for="password">Contraseña</label>
-                    <div class="input-wrap">
-                        <i class="fa-solid fa-lock"></i>
-                        <input id="password" name="password" type="password" placeholder="Mínimo 6 caracteres" required minlength="6" />
-                        <button class="icon-btn" type="button" aria-label="Mostrar/ocultar contraseña" id="togglePassword">
-                            <i class="fa-regular fa-eye"></i>
-                        </button>
+                <div class="grid-2">
+                    <div class="field">
+                        <label for="password">Contraseña</label>
+                        <div class="input-wrap">
+                            <i class="fa-solid fa-lock"></i>
+                            <input id="password" name="password" type="password" placeholder="Mínimo 6 caracteres"
+                                required minlength="6" />
+                            <button class="icon-btn" type="button" aria-label="Mostrar/ocultar contraseña"
+                                id="togglePassword">
+                                <i class="fa-regular fa-eye"></i>
+                            </button>
+                        </div>
+                        <small class="hint">Usa al menos 6 caracteres (mejor si combinas letras y números).</small>
                     </div>
-                    <small class="hint">Usa al menos 6 caracteres (mejor si combinas letras y números).</small>
-                </div>
 
-                <div class="field">
-                    <label for="password2">Repite la contraseña</label>
-                    <div class="input-wrap">
-                        <i class="fa-solid fa-lock"></i>
-                        <input id="password2" name="password2" type="password" placeholder="Repite tu contraseña" required minlength="6" />
+                    <div class="field">
+                        <label for="password2">Repite la contraseña</label>
+                        <div class="input-wrap">
+                            <i class="fa-solid fa-lock"></i>
+                            <input id="password2" name="password2" type="password" placeholder="Repite tu contraseña"
+                                required minlength="6" />
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <label class="checkbox checkbox-terms">
-                <input type="checkbox" required />
-                <span>Acepto los <a class="auth-link" href="#">Términos</a> y la <a class="auth-link" href="#">Política de privacidad</a>.</span>
-            </label>
+                <label class="checkbox checkbox-terms">
+                    <input type="checkbox" required />
+                    <span>Acepto los <a class="auth-link" href="#">Términos</a> y la <a class="auth-link"
+                            href="#">Política de privacidad</a>.</span>
+                </label>
 
-            <button class="btn btn-primary btn-block" type="submit">
-                Crear cuenta
-            </button>
+                <button class="btn btn-primary btn-block" type="submit">
+                    Crear cuenta
+                </button>
 
-            <p class="auth-footer-text">
-                ¿Ya tienes cuenta?
-                <a class="auth-link" href="login.html">Inicia sesión</a>
-            </p>
-        </form>
-    </section>
-</main>
+                <p class="auth-footer-text">
+                    ¿Ya tienes cuenta?
+                    <a class="auth-link" href="login.html">Inicia sesión</a>
+                </p>
+            </form>
+        </section>
+    </main>
 
-<div id="footer-placeholder"></div>
+    <div id="footer-placeholder"></div>
 
-<script>
-    function loadComponent(url, elementId) {
-        return fetch(url)
-            .then(response => {
-                if (!response.ok) throw new Error('Error al cargar ' + url);
-                return response.text();
-            })
-            .then(html => {
-                document.getElementById(elementId).innerHTML = html;
-            });
-    }
-
-    function setActiveNavLink() {
-        const file = window.location.pathname.split('/').pop() || 'index.html';
-        const pageMap = {
-            'index.html': 'index',
-            'catalogo.html': 'catalogo',
-            'productores.html': 'productores',
-            'contacto.html': 'contacto',
-            'perfil.html': 'perfil',
-            'login.html': null,
-            'registro.html': null
-        };
-        const current = pageMap[file];
-
-        document.querySelectorAll('.nav-link').forEach(a => {
-            a.classList.toggle('active', current && a.dataset.page === current);
+    <script src="js/layout.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const btn = document.getElementById('togglePassword');
+            const input = document.getElementById('password');
+            if (btn && input) {
+                btn.addEventListener('click', () => {
+                    const isPassword = input.type === 'password';
+                    input.type = isPassword ? 'text' : 'password';
+                    btn.innerHTML = isPassword
+                        ? '<i class="fa-regular fa-eye-slash"></i>'
+                        : '<i class="fa-regular fa-eye"></i>';
+                });
+            }
         });
-    }
-
-    document.addEventListener("DOMContentLoaded", async () => {
-        await loadComponent('templates/header.html', 'header-placeholder');
-        await loadComponent('templates/footer.html', 'footer-placeholder');
-        setActiveNavLink();
-
-        const btn = document.getElementById('togglePassword');
-        const input = document.getElementById('password');
-        if (btn && input) {
-            btn.addEventListener('click', () => {
-                const isPassword = input.type === 'password';
-                input.type = isPassword ? 'text' : 'password';
-                btn.innerHTML = isPassword
-                    ? '<i class="fa-regular fa-eye-slash"></i>'
-                    : '<i class="fa-regular fa-eye"></i>';
-            });
-        }
-    });
-</script>
+    </script>
 
 </body>
+
 </html>

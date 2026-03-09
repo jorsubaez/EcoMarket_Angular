@@ -76,18 +76,9 @@
 
 <div id="footer-placeholder"></div>
 
+<script src="js/layout.js"></script>
 <script>
-    async function loadComponent(url, elementId) {
-        try {
-            const response = await fetch(url);
-            if (!response.ok) throw new Error('Error al cargar ' + url);
-            document.getElementById(elementId).innerHTML = await response.text();
-        } catch (err) {
-            console.error("No se pudo cargar el componente:", err);
-        }
-    }
-
-    document.addEventListener("DOMContentLoaded", async () => {
+    document.addEventListener("DOMContentLoaded", () => {
         const loginForm = document.querySelector('.auth-form');
         const btnToggle = document.getElementById('togglePassword');
         const inputPass = document.getElementById('password');
@@ -100,25 +91,19 @@
                 const password = document.getElementById('password').value;
 
                 if (email === "usuario@ejemplo.com" && password === "123456") {
-
                     const sessionData = {
                         name: "Usuario EcoMarket",
                         email: email,
                         role: "producer",
                         id: "user_01"
                     };
-
                     localStorage.setItem("ecomarket_session", JSON.stringify(sessionData));
-
                     window.location.replace("perfil.html");
                 } else {
                     alert("Email o contraseña incorrectos");
                 }
             });
         }
-
-        await loadComponent('templates/header.html', 'header-placeholder');
-        await loadComponent('templates/footer.html', 'footer-placeholder');
 
         if (btnToggle && inputPass) {
             btnToggle.addEventListener('click', () => {

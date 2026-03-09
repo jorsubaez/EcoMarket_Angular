@@ -14,19 +14,36 @@
         await inject(headerEl, "templates/header.html");
         await inject(footerEl, "templates/footer.html");
 
-        // --- NUEVA LÓGICA DEL MENÚ MÓVIL ---
-        // Se ejecuta solo después de que el header se haya inyectado correctamente
         const menuBtn = document.getElementById('menu-toggle-btn');
         const mainNav = document.getElementById('main-nav');
 
         if (menuBtn && mainNav) {
-            menuBtn.addEventListener('click', () => {
+            // Función para cerrar el menú
+            const closeMenu = () => {
+                mainNav.classList.remove('active');
+            };
+
+            menuBtn.addEventListener('click', (e) => {
+                e.stopPropagation(); // Evita que el click se propague al document
                 mainNav.classList.toggle('active');
             });
-        }
-        // -----------------------------------
 
-        // Lógica que ya tenías para marcar la página actual
+            document.addEventListener('click', (e) => {
+                const isClickInsideMenu = mainNav.contains(e.target);
+                const isClickOnButton = menuBtn.contains(e.target);
+
+                if (!isClickInsideMenu && !isClickOnButton && mainNav.classList.contains('active')) {
+                    closeMenu();
+                }
+            });
+
+            mainNav.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', () => {
+                    closeMenu();
+                });
+            });
+        }
+
         const current = document.body.getAttribute("data-page");
         if (current) {
             document.querySelectorAll(".main-nav a[data-page]").forEach((a) => {
