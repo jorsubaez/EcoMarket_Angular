@@ -84,23 +84,36 @@
         const inputPass = document.getElementById('password');
 
         if (loginForm) {
-            loginForm.addEventListener('submit', (e) => {
+            loginForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
 
-                const email = document.getElementById('email').value;
-                const password = document.getElementById('password').value;
+                const email = document.getElementById('email').value.trim();
+                const password = document.getElementById('password').value.trim();
 
-                if (email === "usuario@ejemplo.com" && password === "123456") {
-                    const sessionData = {
-                        name: "Usuario EcoMarket",
-                        email: email,
-                        role: "producer",
-                        id: "user_01"
-                    };
-                    localStorage.setItem("ecomarket_session", JSON.stringify(sessionData));
-                    window.location.replace("perfil.html");
-                } else {
-                    alert("Email o contraseña incorrectos");
+                try {
+                    const response = await fetch('db.json');
+                    const data = await response.json();
+
+                    const usuarioEncontrado = data.usuarios.find(usuario =>
+                        usuario.email === email && usuario.password === password
+                    );
+
+                    if (usuarioEncontrado) {
+                        const sessionData = {
+                            id: usuarioEncontrado.id,
+                            name: usuarioEncontrado.nombre,
+                            email: usuarioEncontrado.email,
+                            role: usuarioEncontrado.rol
+                        };
+
+                        localStorage.setItem("ecomarket_session", JSON.stringify(sessionData));
+                        window.location.replace("perfil.html");
+                    } else {
+                        alert("Email o contraseña incorrectos");
+                    }
+                } catch (error) {
+                    console.error("Error al cargar db.json:", error);
+                    alert("No se pudo iniciar sesión. Revisa que db.json esté bien ubicado.");
                 }
             });
         }
