@@ -102,7 +102,58 @@
     color: var(--muted);
 }
 
-@media (max-width: 768px){
-    .hero-split-container{ flex-direction: column; }
-    .hero-imagen-columna{ order: -1; width: 100%; }
+/* =========================================
+   ADAPTACIÓN RESPONSIVE (MÓVIL Y TABLET)
+   ========================================= */
+
+@media (max-width: 992px) {
+    .hero-split-container {
+        gap: 30px;
+    }
+    .titulo-principal {
+        font-size: clamp(1.8rem, 3vw, 2.5rem);
+    }
+    .valores-container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+        padding: 16px;
+    }
+}
+
+@media (max-width: 768px) {
+    .inicio-container {
+        padding: 30px 15px;
+    }
+    .hero-split-container {
+        flex-direction: column;
+        gap: 24px;
+        text-align: center;
+    }
+    .hero-imagen-columna {
+        order: -1;
+        width: 100%;
+    }
+    .subtitulo-principal {
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .botones-izquierda {
+        flex-direction: column;
+        gap: 16px;
+        width: 100%;
+    }
+    .btn-primario-dummy,
+    .btn-secundario-dummy {
+        width: 100%;
+    }
+    .valores-container {
+        grid-template-columns: 1fr;
+        padding: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .titulo-principal {
+        font-size: 1.7rem;
+    }
 }
