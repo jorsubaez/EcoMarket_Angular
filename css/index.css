@@ -138,13 +138,14 @@
         margin-right: auto;
     }
     .botones-izquierda {
-        flex-direction: column;
-        gap: 16px;
+        flex-direction: row;
+        justify-content: center;
+        gap: 12px;
         width: 100%;
     }
     .btn-primario-dummy,
     .btn-secundario-dummy {
-        width: 100%;
+        width: auto;
     }
     .valores-container {
         grid-template-columns: 1fr;
@@ -155,5 +156,10 @@
 @media (max-width: 480px) {
     .titulo-principal {
         font-size: 1.7rem;
+    }
+    .btn-primario-dummy,
+    .btn-secundario-dummy {
+        padding: 10px 12px;
+        font-size: 0.9rem;
     }
 }
