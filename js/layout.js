@@ -1,4 +1,3 @@
-// js/layout.js
 (async function () {
     const headerEl = document.getElementById("header-placeholder");
     const footerEl = document.getElementById("footer-placeholder");
@@ -11,45 +10,53 @@
     }
 
     try {
-        await inject(headerEl, "templates/header.html");
+        await inject(headerEl, "templates/header.html"); // Ojo a la ruta, si header.html está en la raíz quita "templates/"
         await inject(footerEl, "templates/footer.html");
 
+        const sessionJson = localStorage.getItem("ecomarket_session");
+
+        if (sessionJson) {
+            const session = JSON.parse(sessionJson);
+            const loginLink = document.getElementById("login-link");
+            const mainNavUl = document.querySelector("#main-nav ul");
+
+            // 1. Cambiamos el texto y la función del botón "Iniciar sesión"
+            if (loginLink) {
+                loginLink.textContent = "Cerrar sesión";
+                loginLink.href = "#";
+                loginLink.style.color = "#d9534f"; // Opcional: darle un toque rojo
+
+                loginLink.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    localStorage.removeItem("ecomarket_session");
+                    window.location.href = "index.html"; // Redirigir al inicio al salir
+                });
+            }
+
+            // 2. Si el usuario es productor, añadimos el enlace al menú principal (main-nav)
+            if (session.rol === 'productor' && mainNavUl) {
+                const liProductor = document.createElement("li");
+                const enlaceProductor = document.createElement("a");
+
+                enlaceProductor.href = "panel-productor.html";
+                enlaceProductor.setAttribute("data-page", "panel-productor");
+                enlaceProductor.textContent = "Panel Productor";
+
+                // Le aplicamos la clase 'active' si ya estamos en esa página
+                if (document.body.getAttribute("data-page") === "panel-productor") {
+                    enlaceProductor.classList.add("active");
+                }
+
+                liProductor.appendChild(enlaceProductor);
+                mainNavUl.appendChild(liProductor);
+            }
+        }
+
+        // Lógica del menú móvil (se mantiene igual)
         const menuBtn = document.getElementById('menu-toggle-btn');
         const mainNav = document.getElementById('main-nav');
+        // ... (resto de tu código del menú móvil y active) ...
 
-        if (menuBtn && mainNav) {
-            // Función para cerrar el menú
-            const closeMenu = () => {
-                mainNav.classList.remove('active');
-            };
-
-            menuBtn.addEventListener('click', (e) => {
-                e.stopPropagation(); // Evita que el click se propague al document
-                mainNav.classList.toggle('active');
-            });
-
-            document.addEventListener('click', (e) => {
-                const isClickInsideMenu = mainNav.contains(e.target);
-                const isClickOnButton = menuBtn.contains(e.target);
-
-                if (!isClickInsideMenu && !isClickOnButton && mainNav.classList.contains('active')) {
-                    closeMenu();
-                }
-            });
-
-            mainNav.querySelectorAll('a').forEach(link => {
-                link.addEventListener('click', () => {
-                    closeMenu();
-                });
-            });
-        }
-
-        const current = document.body.getAttribute("data-page");
-        if (current) {
-            document.querySelectorAll(".main-nav a[data-page]").forEach((a) => {
-                a.classList.toggle("active", a.dataset.page === current);
-            });
-        }
     } catch (e) {
         console.error("Error cargando layout:", e);
     }

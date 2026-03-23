@@ -115,7 +115,7 @@
 
     function requireProducer() {
         const session = getSession();
-        if (!session || session.role !== "producer") {
+        if (!session || session.rol !== "productor") {
             window.location.href = "login.html";
             return null;
         }
