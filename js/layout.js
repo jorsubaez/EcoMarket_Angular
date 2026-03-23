@@ -52,10 +52,25 @@
             }
         }
 
-        // Lógica del menú móvil (se mantiene igual)
+        // Lógica del menú móvil
         const menuBtn = document.getElementById('menu-toggle-btn');
         const mainNav = document.getElementById('main-nav');
-        // ... (resto de tu código del menú móvil y active) ...
+
+        if (menuBtn && mainNav) {
+            menuBtn.addEventListener('click', () => {
+                // Esto añade o quita la clase 'active' cada vez que pulsas el botón
+                mainNav.classList.toggle('active');
+            });
+        }
+
+        // Marcar la página activa en el menú
+        const currentPage = document.body.getAttribute("data-page");
+        if (currentPage && mainNav) {
+            const activeLink = mainNav.querySelector(`a[data-page="${currentPage}"]`);
+            if (activeLink) {
+                activeLink.classList.add("active");
+            }
+        }
 
     } catch (e) {
         console.error("Error cargando layout:", e);

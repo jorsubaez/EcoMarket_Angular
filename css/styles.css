@@ -401,7 +401,6 @@ a {
     /* 4. Menú Desplegable */
     .main-nav {
         display: none;
-        /* Oculto por defecto */
         position: absolute;
         top: 100%;
         left: 0;
