@@ -221,16 +221,105 @@
     padding: 18px;
 }
 
-@media (max-width: 900px){
-    .producer-head{
+@media (max-width: 900px) {
+    /* Ajustes generales de la cabecera y formulario */
+    .producer-head {
         flex-direction: column;
         align-items: flex-start;
     }
-    .producer-form{
+
+    .producer-form {
         grid-template-columns: 1fr;
     }
-    .search{
-        min-width: 200px;
+
+    .table-head {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .search {
+        min-width: 100%;
         width: 100%;
+    }
+
+    /* --- TRANSFORMACIÓN DE LA TABLA A TARJETAS --- */
+
+    /* Quitamos el borde y el scroll horizontal del contenedor */
+    .table-wrap {
+        border: none;
+        overflow: visible;
+        background: transparent;
+    }
+
+    /* Forzamos a la tabla y sus elementos a comportarse como bloques */
+    .producer-table,
+    .producer-table tbody,
+    .producer-table tr,
+    .producer-table td {
+        display: block;
+        width: 100%;
+    }
+
+    /* Ocultamos la cabecera de la tabla (Nombre, Origen, Precio, etc.) */
+    .producer-table thead {
+        display: none;
+    }
+
+    /* Cada fila (tr) se convierte en una tarjeta individual */
+    .producer-table tr {
+        margin-bottom: 24px;
+        border: 1px solid rgba(0,0,0,0.12);
+        border-radius: 16px;
+        padding: 16px;
+        background: #fff;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    }
+
+    /* Ajustamos el espaciado interior de las celdas (td) */
+    .producer-table td {
+        padding: 6px 0;
+        border-top: none; /* Quitamos las líneas separadoras por defecto */
+        text-align: left;
+    }
+
+    /* Modificamos la primera celda para que la imagen quede arriba y en grande */
+    .row-main {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .thumb {
+        width: 100%;
+        height: 200px; /* Altura fija para que todas se vean uniformes */
+        object-fit: cover;
+        border-radius: 12px;
+    }
+
+    /* Estilizamos el texto de origen y precio para que se vea integrado */
+    .producer-table td:nth-child(2),
+    .producer-table td:nth-child(3) {
+        font-size: 0.95rem;
+        color: var(--dark-grey);
+    }
+
+    /* Apilamos los botones de acción al final de la tarjeta */
+    .producer-table .td-actions {
+        display: flex;
+        flex-direction: column; /* Botones uno debajo del otro */
+        white-space: normal; /* ¡Clave! Anula la regla de escritorio que los mantenía en una línea */
+        gap: 10px;
+        margin-top: 16px;
+        padding-top: 16px;
+        border-top: 1px solid rgba(0,0,0,0.06);
+    }
+
+    .btn-mini {
+        width: 100%;
+        margin-left: 0 !important; /* Forzamos quitar el margen izquierdo del escritorio */
+        padding: 12px;
+        font-size: 1rem;
+        text-align: center;
+        box-sizing: border-box; /* Asegura que el padding no rompa el ancho del 100% */
     }
 }
