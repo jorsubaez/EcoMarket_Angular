@@ -29,7 +29,14 @@
                 <label for="email">Email</label>
                 <div class="input-wrap">
                     <i class="fa-regular fa-envelope"></i>
-                    <input id="email" name="email" type="email" placeholder="tuemail@ejemplo.com" required />
+                    <input
+                            id="email"
+                            name="email"
+                            type="email"
+                            inputmode="email"
+                            placeholder="tuemail@ejemplo.com"
+                            required
+                    />
                 </div>
             </div>
 
@@ -37,8 +44,20 @@
                 <label for="password">Contraseña</label>
                 <div class="input-wrap">
                     <i class="fa-solid fa-lock"></i>
-                    <input id="password" name="password" type="password" placeholder="••••••••" required minlength="6" />
-                    <button class="icon-btn" type="button" aria-label="Mostrar/ocultar contraseña" id="togglePassword">
+                    <input
+                            id="password"
+                            name="password"
+                            type="password"
+                            placeholder="••••••••"
+                            required
+                            minlength="6"
+                    />
+                    <button
+                            class="icon-btn"
+                            type="button"
+                            aria-label="Mostrar u ocultar contraseña"
+                            id="togglePassword"
+                    >
                         <i class="fa-regular fa-eye"></i>
                     </button>
                 </div>
