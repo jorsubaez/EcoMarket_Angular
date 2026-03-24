@@ -10,7 +10,7 @@
     }
 
     try {
-        await inject(headerEl, "templates/header.html"); // Ojo a la ruta, si header.html está en la raíz quita "templates/"
+        await inject(headerEl, "templates/header.html");
         await inject(footerEl, "templates/footer.html");
 
         const sessionJson = localStorage.getItem("ecomarket_session");
@@ -20,20 +20,18 @@
             const loginLink = document.getElementById("login-link");
             const mainNavUl = document.querySelector("#main-nav ul");
 
-            // 1. Cambiamos el texto y la función del botón "Iniciar sesión"
             if (loginLink) {
                 loginLink.textContent = "Cerrar sesión";
                 loginLink.href = "#";
-                loginLink.style.color = "#d9534f"; // Opcional: darle un toque rojo
+                loginLink.style.color = "#256628";
 
                 loginLink.addEventListener("click", (e) => {
                     e.preventDefault();
                     localStorage.removeItem("ecomarket_session");
-                    window.location.href = "index.html"; // Redirigir al inicio al salir
+                    window.location.href = "index.html";
                 });
             }
 
-            // 2. Si el usuario es productor, añadimos el enlace al menú principal (main-nav)
             if (session.rol === 'productor' && mainNavUl) {
                 const liProductor = document.createElement("li");
                 const enlaceProductor = document.createElement("a");
@@ -52,7 +50,6 @@
             }
         }
 
-        // Lógica del menú móvil
         const menuBtn = document.getElementById('menu-toggle-btn');
         const mainNav = document.getElementById('main-nav');
 
@@ -63,7 +60,6 @@
             });
         }
 
-        // Marcar la página activa en el menú
         const currentPage = document.body.getAttribute("data-page");
         if (currentPage && mainNav) {
             const activeLink = mainNav.querySelector(`a[data-page="${currentPage}"]`);

@@ -393,10 +393,8 @@ a {
     }
 
     .login-link {
-        display: none;
+        display: block;
     }
-
-    /* Ocultamos el texto "Iniciar sesión" en móvil para que quepa todo. Opcional. */
 
     /* 4. Menú Desplegable */
     .main-nav {
