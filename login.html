@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 
-<body>
+<body data-page="login">
 <div id="header-placeholder"></div>
 
 <main class="auth-page">
@@ -110,10 +110,15 @@
                 const password = document.getElementById('password').value.trim();
 
                 try {
-                    const response = await fetch('db.json');
-                    const data = await response.json();
+                    const response = await fetch('http://localhost:3000/usuarios');
 
-                    const usuarioEncontrado = data.usuarios.find(usuario =>
+                    if (!response.ok) {
+                        throw new Error('No se pudo conectar con json-server');
+                    }
+
+                    const usuarios = await response.json();
+
+                    const usuarioEncontrado = usuarios.find(usuario =>
                         usuario.email === email && usuario.password === password
                     );
 
@@ -126,13 +131,18 @@
                         };
 
                         localStorage.setItem("ecomarket_session", JSON.stringify(sessionData));
-                        window.location.replace("perfil.html");
+
+                        if (usuarioEncontrado.rol === "productor") {
+                            window.location.replace("panel-productor.html");
+                        } else {
+                            window.location.replace("perfil.html");
+                        }
                     } else {
                         alert("Email o contraseña incorrectos");
                     }
                 } catch (error) {
-                    console.error("Error al cargar db.json:", error);
-                    alert("No se pudo iniciar sesión. Revisa que db.json esté bien ubicado.");
+                    console.error("Error al conectar con json-server:", error);
+                    alert("No se pudo iniciar sesión.");
                 }
             });
         }

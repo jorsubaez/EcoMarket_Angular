@@ -1,8 +1,6 @@
-/* Tipografía base */
 :root {
     --font-family: "Outfit", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
 
-    /* Colores */
     --primary-green: #2E7D32;
     --secondary-green: #43A047;
 
@@ -261,18 +259,14 @@ a {
     align-items: center;
     justify-content: center;
     gap: 10px;
-
     padding: 12px 18px;
     border-radius: 999px;
-
     font-family: inherit;
     font-size: 15px;
     font-weight: 600;
     line-height: 1;
-
     text-decoration: none !important;
     cursor: pointer;
-
     border: 1px solid transparent;
     transition: transform .12s ease, box-shadow .12s ease, background-color .12s ease, border-color .12s ease;
 }
@@ -304,9 +298,6 @@ a {
     border-color: rgba(46, 125, 50, 0.35);
 }
 
-/* --- ESTILOS RESPONSIVE --- */
-
-/* Estilos base del botón menú (oculto en escritorio) */
 .menu-toggle {
     display: none;
     background: none;
@@ -321,7 +312,6 @@ a {
     background: rgba(0, 0, 0, 0.05);
 }
 
-/* Tablet (hasta 992px aprox) */
 @media (max-width: 992px) {
     .header-container {
         gap: 12px;
@@ -350,24 +340,18 @@ a {
     }
 }
 
-/* Móvil (hasta 768px) */
 @media (max-width: 768px) {
     .header-container {
         flex-wrap: nowrap;
-        /* Evita que salten de línea */
         justify-content: space-between;
         position: relative;
-        /* Clave para el menú desplegable absoluto */
     }
 
-    /* 1. Botón Hamburguesa a la izquierda */
     .menu-toggle {
         display: block;
         order: 1;
-        /* Fuerza a ser el primer elemento */
     }
 
-    /* 2. Logo al centro */
     .logo-section {
         order: 2;
         flex: 1;
@@ -384,9 +368,6 @@ a {
         display: none;
     }
 
-    /* Ocultamos el slogan para ganar espacio */
-
-    /* 3. Acciones a la derecha */
     .user-actions {
         order: 3;
         gap: 8px;
@@ -396,9 +377,6 @@ a {
         display: none;
     }
 
-    /* Ocultamos el texto "Iniciar sesión" en móvil para que quepa todo. Opcional. */
-
-    /* 4. Menú Desplegable */
     .main-nav {
         display: none;
         position: absolute;
@@ -412,7 +390,6 @@ a {
         border-bottom: 1px solid var(--border);
     }
 
-    /* Clase que activaremos con JavaScript para mostrar el menú */
     .main-nav.active {
         display: block;
     }
@@ -437,17 +414,14 @@ a {
 
     .main-nav a.active::after {
         display: none;
-        /* Quitamos la rayita de "activo" en móvil porque se ve raro en listas verticales */
     }
 
     .main-nav a.active {
         color: var(--primary-green);
         background: rgba(46, 125, 50, 0.05);
         border-left: 4px solid var(--primary-green);
-        /* Indique de página activa más claro */
     }
 
-    /* Mejora del Footer en móvil */
     .footer {
         padding: 40px 0 20px;
         margin-top: 50px;

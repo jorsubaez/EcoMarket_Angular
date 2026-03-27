@@ -9,67 +9,71 @@
         el.innerHTML = await res.text();
     }
 
+    function getSession() {
+        try {
+            return JSON.parse(localStorage.getItem("ecomarket_session"));
+        } catch {
+            return null;
+        }
+    }
+
     try {
-        await inject(headerEl, "templates/header.html"); // Ojo a la ruta, si header.html está en la raíz quita "templates/"
+        await inject(headerEl, "templates/header.html");
         await inject(footerEl, "templates/footer.html");
 
-        const sessionJson = localStorage.getItem("ecomarket_session");
+        const session = getSession();
+        const loginLink = document.getElementById("login-link");
+        const mainNav = document.getElementById("main-nav");
+        const mainNavUl = document.querySelector("#main-nav ul");
+        const currentPage = document.body.getAttribute("data-page");
 
-        if (sessionJson) {
-            const session = JSON.parse(sessionJson);
-            const loginLink = document.getElementById("login-link");
-            const mainNavUl = document.querySelector("#main-nav ul");
-
-            // 1. Cambiamos el texto y la función del botón "Iniciar sesión"
+        if (session) {
             if (loginLink) {
                 loginLink.textContent = "Cerrar sesión";
                 loginLink.href = "#";
-                loginLink.style.color = "#d9534f"; // Opcional: darle un toque rojo
+                loginLink.style.color = "#d9534f";
 
                 loginLink.addEventListener("click", (e) => {
                     e.preventDefault();
                     localStorage.removeItem("ecomarket_session");
-                    window.location.href = "index.html"; // Redirigir al inicio al salir
+                    window.location.href = "index.html";
                 });
             }
 
-            // 2. Si el usuario es productor, añadimos el enlace al menú principal (main-nav)
-            if (session.rol === 'productor' && mainNavUl) {
-                const liProductor = document.createElement("li");
-                const enlaceProductor = document.createElement("a");
+            if (session.rol === "productor" && mainNavUl) {
+                const yaExiste = mainNavUl.querySelector('a[data-page="panel-productor"]');
 
-                enlaceProductor.href = "panel-productor.html";
-                enlaceProductor.setAttribute("data-page", "panel-productor");
-                enlaceProductor.textContent = "Panel Productor";
+                if (!yaExiste) {
+                    const liProductor = document.createElement("li");
+                    const enlaceProductor = document.createElement("a");
 
-                // Le aplicamos la clase 'active' si ya estamos en esa página
-                if (document.body.getAttribute("data-page") === "panel-productor") {
-                    enlaceProductor.classList.add("active");
+                    enlaceProductor.href = "panel-productor.html";
+                    enlaceProductor.setAttribute("data-page", "panel-productor");
+                    enlaceProductor.textContent = "Panel Productor";
+
+                    if (currentPage === "panel-productor") {
+                        enlaceProductor.classList.add("active");
+                    }
+
+                    liProductor.appendChild(enlaceProductor);
+                    mainNavUl.appendChild(liProductor);
                 }
-
-                liProductor.appendChild(enlaceProductor);
-                mainNavUl.appendChild(liProductor);
             }
         }
 
-        // Lógica del menú móvil
-        const menuBtn = document.getElementById('menu-toggle-btn');
-        const mainNav = document.getElementById('main-nav');
-
-        if (menuBtn && mainNav) {
-            menuBtn.addEventListener('click', () => {
-                // Esto añade o quita la clase 'active' cada vez que pulsas el botón
-                mainNav.classList.toggle('active');
-            });
-        }
-
-        // Marcar la página activa en el menú
-        const currentPage = document.body.getAttribute("data-page");
-        if (currentPage && mainNav) {
+        if (mainNav && currentPage) {
             const activeLink = mainNav.querySelector(`a[data-page="${currentPage}"]`);
             if (activeLink) {
                 activeLink.classList.add("active");
             }
+        }
+
+        const menuBtn = document.getElementById("menu-toggle-btn");
+
+        if (menuBtn && mainNav) {
+            menuBtn.addEventListener("click", () => {
+                mainNav.classList.toggle("active");
+            });
         }
 
     } catch (e) {
