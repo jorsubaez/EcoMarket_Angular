@@ -30,7 +30,6 @@ body {
     height: 100%;
     margin: 0;
     padding: 0;
-    font-family: var(--font-family);
     background: var(--bg);
     color: var(--dark-grey);
 }
@@ -396,7 +395,13 @@ a {
         display: none;
     }
 
-    /* Ocultamos el texto "Iniciar sesión" en móvil para que quepa todo. Opcional. */
+    .login-link.is-logged-in {
+        display: inline-flex;
+    }
+
+    .mobile-only-menu {
+        display: list-item;
+    }
 
     /* 4. Menú Desplegable */
     .main-nav {
@@ -488,4 +493,26 @@ a {
         width: 40px;
         height: 40px;
     }
+}
+
+/* --- ESTILOS PARA EL NUEVO ICONO DE CUENTA --- */
+.account-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    border-radius: 50%;
+    background: rgba(46, 125, 50, 0.10);
+    border: 1px solid rgba(46, 125, 50, 0.18);
+    color: var(--primary-green);
+    transition: background 0.2s ease;
+}
+
+.account-icon:hover {
+    background: rgba(46, 125, 50, 0.18);
+}
+
+/* Ocultar el "Iniciar sesión" del menú en pantallas grandes */
+.mobile-only-menu {
+    display: none;
 }

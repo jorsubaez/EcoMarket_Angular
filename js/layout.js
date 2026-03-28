@@ -14,26 +14,27 @@
         await inject(footerEl, "templates/footer.html");
 
         const sessionJson = localStorage.getItem("ecomarket_session");
+        const loginLink = document.getElementById("login-link");
+        const mainNavUl = document.querySelector("#main-nav ul");
 
         if (sessionJson) {
             const session = JSON.parse(sessionJson);
-            const loginLink = document.getElementById("login-link");
-            const mainNavUl = document.querySelector("#main-nav ul");
 
-            // 1. Cambiamos el texto y la función del botón "Iniciar sesión"
+            // 1. Reemplazamos el texto "Iniciar sesión" por el icono y cambiamos el enlace a perfil
             if (loginLink) {
-                loginLink.textContent = "Cerrar sesión";
-                loginLink.href = "#";
-                loginLink.style.color = "#256628";
-
-                loginLink.addEventListener("click", (e) => {
-                    e.preventDefault();
-                    localStorage.removeItem("ecomarket_session");
-                    window.location.href = "index.html"; // Redirigir al inicio al salir
-                });
+                loginLink.innerHTML = `
+                    <span class="account-icon">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                    </span>
+                `;
+                loginLink.href = "perfil.html";
+                loginLink.classList.add("is-logged-in"); // Clase clave para mostrarlo en móviles
             }
 
-            // 2. Si el usuario es productor, añadimos el enlace al menú principal (main-nav)
+            // 2. Si el usuario es productor, añadimos su panel al menú
             if (session.rol === 'productor' && mainNavUl) {
                 const liProductor = document.createElement("li");
                 const enlaceProductor = document.createElement("a");
@@ -42,13 +43,27 @@
                 enlaceProductor.setAttribute("data-page", "panel-productor");
                 enlaceProductor.textContent = "Panel Productor";
 
-                // Le aplicamos la clase 'active' si ya estamos en esa página
                 if (document.body.getAttribute("data-page") === "panel-productor") {
                     enlaceProductor.classList.add("active");
                 }
 
                 liProductor.appendChild(enlaceProductor);
                 mainNavUl.appendChild(liProductor);
+            }
+
+        } else {
+            // USUARIO NO LOGUEADO
+            // Añadimos "Iniciar sesión" al menú desplegable para que se vea en móviles
+            if (mainNavUl) {
+                const liLoginMobile = document.createElement("li");
+                liLoginMobile.classList.add("mobile-only-menu"); // Se oculta en PC con CSS
+
+                const btnLoginMobile = document.createElement("a");
+                btnLoginMobile.href = "login.html";
+                btnLoginMobile.textContent = "Iniciar sesión";
+
+                liLoginMobile.appendChild(btnLoginMobile);
+                mainNavUl.appendChild(liLoginMobile);
             }
         }
 
