@@ -27,6 +27,13 @@ A continuación se detallan las páginas que componen la aplicación junto a los
 
 ##
 
+* **CABECERA Y PIE DE PÁGINA:** `header.html` y `footer.html` (Componentes Globales)
+   * **Aspectos Responsive:**
+      * **Reordenación de Elementos:** En dispositivos móviles, para reorganizar la estructura, las opciones de navegación que antes se encontraban a lo largo de la cabecera desaparecen y, en su lugar, aparece un botón de hamburguesa a la izquierda del que se despliegan estas acciones. Además, el logo se centra automáticamente y se oculta el eslogan.
+      * **Adaptación del Footer:** El pie de página utiliza CSS Grid para pasar de una distribución de 3 columnas a una sola columna vertical en móviles, garantizando la legibilidad de los datos de contacto.
+
+##
+
 * **INICIO:** `index.html` **(Página de inicio)**
    * **Aspectos Responsive:**
       * **Layout Híbrido:** Uso de Flexbox para la primera sección y CSS Grid para la segunda sección, permitiendo una distribución fluida de los elementos.
