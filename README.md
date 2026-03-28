@@ -12,34 +12,6 @@
 
 ---
 
-## Descripción del Proyecto
-**EcoMarket** es una plataforma web que actúa como nexo entre proveedores agrícolas y clientes. El sistema está diseñado como un producto independiente para simplificar la gestión digital de pequeños inventarios agrícolas. Permite la visualización de catálogos, la gestión de carritos y ofrece un panel de administración para que los productores gestionen sus productos de "Kilómetro 0".
-
----
-
-## Requisitos Funcionales
-El sistema se divide en dos grandes áreas para cubrir las necesidades tanto de los consumidores como de los proveedores locales.
-
-### Área Pública (Cliente)
-Enfocada en la experiencia de compra y descubrimiento de productos.
-
-* **Catálogo Interactivo:** Visualización de productos frescos con imágenes reales, precios detallados y origen del producto.
-* **Búsqueda y Filtrado:** Sistema de navegación por categorías (frutas, verduras, eco-box, etc.) para localizar productos rápidamente.
-* **Gestión de Carrito:** Añadir y gestionar productos de forma intuitiva antes de finalizar la compra.
-* **Fichas de Producto:** Consulta detallada de información técnica y descriptiva de cada artículo.
-* **Autenticación:** Registro e inicio de sesión diferenciando claramente entre perfil de consumidor y productor.
-
-### Área Privada (Productor)
-Panel de control exclusivo para la gestión del inventario y presencia en la plataforma.
-
-* **Panel de Control Personalizado:** Acceso a un dashboard privado donde el productor solo visualiza y gestiona su propio catálogo.
-* **Gestión de Productos (CRUD):** Creación mediante un formulario sencillo para dar de alta productos (nombre, precio, descripción, imagen) y gestión técnica de los productos existentes sin necesidad de conocimientos de programación.
-* **Control de Inventario:** Simulación digital de la gestión de stock para mantener la información actualizada.
-* **Seguridad y Roles:** Separación total de permisos; el productor tiene herramientas administrativas que el consumidor no puede visualizar ni acceder.
-* **Autonomía de Datos:** Control total sobre la información publicada, permitiendo actualizaciones en tiempo real.
-
----
-
 ## Diseño de la Web
 Recursos visuales y prototipado del proyecto:
 
@@ -47,6 +19,8 @@ Recursos visuales y prototipado del proyecto:
   * [Acceso directo al PDF](docs/mockups.pdf)
 * **Storyboard:** Guion gráfico de la experiencia de usuario. Ruta: `docs/storyboard.png`
   * [Acceso directo al PNG](docs/storyboard.png)
+* **Archivo JSON:** Archivo con los usuarios guardados. Ruta: `db.json`
+  * [Acceso directo al JSON](db.json)
 
 ---
 
@@ -65,29 +39,22 @@ A continuación se detallan las páginas que componen la aplicación junto al mo
 | `perfil.html` | `VER PERFIL` |
 
 > [!NOTE]
-> Para facilitar la revisión de las secciones privadas y las funcionalidades de usuario sin necesidad de completar el formulario de registro, se han habilitado las siguientes credenciales de prueba:
-> * **Email:** `usuario@ejemplo.com`
-> * **Contraseña:** `123456`
->
-> Al iniciar sesión con esta cuenta, se obtiene acceso automático tanto al perfil de usuario `perfil.html` como al panel de productor `panel-productor.html`, permitiendo testear la gestión de inventario y la visualización de datos personales.
-
----
-
-## Templates Identificados
-Listado de componentes reutilizables y el archivo encargado de su carga:
-
-* **Template:** `header.html`
-    * **Cargado en:** `index.html`, `catalogo.html`, `productores.html`, `contacto.html`, `login.html`, `registro.html`, `panel-productor.html` y `perfil.html`
-* **Template:** `footer.html`
-    * **Cargado en:** `index.html`, `catalogo.html`, `productores.html`, `contacto.html`, `login.html`, `registro.html`, `panel-productor.html` y `perfil.html`
+> 
+> En este sprint hemos migrado a un sistema de usuarios usando `json-server`. Para que el inicio de sesión y las validaciones funcionen correctamente, es necesario levantar el servidor de la base de datos simulada. Para ello, asegúrese de tener instalado [Node.js](https://nodejs.org/es/download) y ejecute el siguiente comando en la terminal del proyecto:
+> ```bash
+> npm run backend
+> ```
+> 
+> Una vez el servidor esté corriendo, puede acceder con los siguientes usuarios para probar los distintos roles y vistas. La contraseña para todos ellos es `123456`:
+> 
+> * **Administrador:** `carlos@ecomarket.com`
+> * **Productor:** `ana@ecomarket.com`
+> * **Cliente:** `julio@ecomarket.com`
 
 ---
 
 ## Observaciones
 Aspectos a tener en consideración para la evaluación del proyecto:
 
-* **Arquitectura de Layout:** Se ha implementado un layout compartido con JavaScript para centralizar el header y el footer. Además, se han añadido mejoras en la organización del código, facilitando la agregación de futuras modificaciones de manera escalable.
-
-* **Documentación de Requisitos (IEEE 830):** En la carpeta `docs/`, se incluye un documento basado en la norma `IEEE 830` que detalla la visión prevista para el producto final. 
-    * > **Nota sobre el alcance:** Este documento representa la **hoja de ruta y visión actual** del proyecto. No debe considerarse una descripción inamovible al 100% del resultado final, ya que el software está sujeto a cambios iterativos derivados de decisiones de diseño, necesidades técnicas o evolución del equipo de desarrollo durante los Sprints. 
-    * [Acceso directo al documento](docs/ecomarket-ieee830.pdf)
+* **JSON Package:** Se ha incluido un arhivo `package.json` para poder levantar la base de datos más fácilmente sin tener que ejecutar el comando completo de `json-server`. 
+    * [Acceso directo al archivo](package.json)
