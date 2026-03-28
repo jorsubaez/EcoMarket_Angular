@@ -20,7 +20,8 @@
         if (sessionJson) {
             const session = JSON.parse(sessionJson);
 
-            // 1. Reemplazamos el texto "Iniciar sesión" por el icono y cambiamos el enlace a perfil
+            // USUARIO LOGUEADO
+            // 1. Cambiamos el texto de la cabecera por el icono y le ponemos la clase 'is-logged-in'
             if (loginLink) {
                 loginLink.innerHTML = `
                     <span class="account-icon">
@@ -31,10 +32,10 @@
                     </span>
                 `;
                 loginLink.href = "perfil.html";
-                loginLink.classList.add("is-logged-in"); // Clase clave para mostrarlo en móviles
+                loginLink.classList.add("is-logged-in");
             }
 
-            // 2. Si el usuario es productor, añadimos su panel al menú
+            // 2. Si es productor, añadimos su panel al menú
             if (session.rol === 'productor' && mainNavUl) {
                 const liProductor = document.createElement("li");
                 const enlaceProductor = document.createElement("a");
@@ -53,10 +54,10 @@
 
         } else {
             // USUARIO NO LOGUEADO
-            // Añadimos "Iniciar sesión" al menú desplegable para que se vea en móviles
+            // Creamos la opción "Iniciar sesión" para inyectarla al final del menú desplegable
             if (mainNavUl) {
                 const liLoginMobile = document.createElement("li");
-                liLoginMobile.classList.add("mobile-only-menu"); // Se oculta en PC con CSS
+                liLoginMobile.className = "mobile-only-menu"; // Esta clase la oculta en PC
 
                 const btnLoginMobile = document.createElement("a");
                 btnLoginMobile.href = "login.html";

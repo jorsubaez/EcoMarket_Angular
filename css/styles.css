@@ -517,3 +517,43 @@ a {
 .mobile-only-menu {
     display: none;
 }
+
+/* --- ESTILOS DEL ICONO DE CUENTA --- */
+.account-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    border-radius: 50%;
+    background: rgba(46, 125, 50, 0.10);
+    border: 1px solid rgba(46, 125, 50, 0.18);
+    color: var(--primary-green);
+    transition: background 0.2s ease;
+}
+
+.account-icon:hover {
+    background: rgba(46, 125, 50, 0.18);
+}
+
+/* Ocultar el ítem de menú "Iniciar sesión" en PC */
+.mobile-only-menu {
+    display: none !important;
+}
+
+/* AJUSTES PARA MÓVIL */
+@media (max-width: 768px) {
+    /* 1. Mantenemos oculto el texto de "Iniciar sesión" en la cabecera */
+    .login-link {
+        display: none;
+    }
+
+    /* 2. Pero si está logueado (tiene el icono), SÍ lo mostramos en la cabecera */
+    .login-link.is-logged-in {
+        display: inline-flex;
+    }
+
+    /* 3. Mostramos la opción del menú desplegable SOLO en móvil */
+    .mobile-only-menu {
+        display: list-item !important;
+    }
+}
