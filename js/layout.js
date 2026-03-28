@@ -24,7 +24,7 @@
             if (loginLink) {
                 loginLink.textContent = "Cerrar sesión";
                 loginLink.href = "#";
-                loginLink.style.color = "#d9534f"; // Opcional: darle un toque rojo
+                loginLink.style.color = "#256628";
 
                 loginLink.addEventListener("click", (e) => {
                     e.preventDefault();
