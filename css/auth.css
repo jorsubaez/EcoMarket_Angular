@@ -1,9 +1,8 @@
 .auth-page{
     min-height: calc(100vh - 160px);
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    padding: 80px 18px 48px;
+    display: grid;
+    place-items: center;
+    padding: 48px 18px;
 }
 
 .auth-card{
@@ -17,6 +16,7 @@
     overflow: hidden;
 }
 
+/* MÁS ESPACIO AQUÍ */
 .auth-header{
     margin-bottom: 32px;
 }
@@ -236,7 +236,7 @@
 /* TABLET */
 @media (max-width: 768px){
     .auth-page{
-        padding: 64px 16px 32px;
+        padding: 32px 16px;
     }
 
     .auth-card{
@@ -257,7 +257,7 @@
 @media (max-width: 600px){
     .auth-page{
         min-height: auto;
-        padding: 48px 12px 20px;
+        padding: 20px 12px;
     }
 
     .auth-card{
@@ -296,7 +296,7 @@
 /* MÓVIL PEQUEÑO */
 @media (max-width: 420px){
     .auth-page{
-        padding: 38px 10px 14px;
+        padding: 14px 10px;
     }
 
     .auth-card{
