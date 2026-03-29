@@ -42,7 +42,7 @@ body {
 }
 
 main {
-    flex: 1;
+    flex: 1 0 auto;
 }
 
 a {
@@ -170,6 +170,12 @@ a {
 .login-link {
     font-weight: 600;
     color: var(--primary-green);
+    display: inline-flex;
+    align-items: center;
+}
+
+.login-link .mobile-login-icon {
+    display: none;
 }
 
 .cart-link {
@@ -393,7 +399,18 @@ a {
     }
 
     .login-link {
+        /* Always show the link area in header on mobile */
+        display: inline-flex;
+    }
+
+    .login-link .login-text {
         display: none;
+        /* Hide text on mobile */
+    }
+
+    .login-link .mobile-login-icon {
+        display: inline-flex;
+        /* Show icon on mobile */
     }
 
     .login-link.is-logged-in {
@@ -542,9 +559,14 @@ a {
 
 /* AJUSTES PARA MÓVIL */
 @media (max-width: 768px) {
+
     /* 1. Mantenemos oculto el texto de "Iniciar sesión" en la cabecera */
-    .login-link {
+    .login-link .login-text {
         display: none;
+    }
+
+    .login-link .mobile-login-icon {
+        display: inline-flex;
     }
 
     /* 2. Pero si está logueado (tiene el icono), SÍ lo mostramos en la cabecera */
