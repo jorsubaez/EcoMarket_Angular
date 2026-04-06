@@ -122,19 +122,15 @@
         return session;
     }
 
-    function loadProducts(ownerId) {
-        const key = `ecomarket_products_${ownerId}`;
-        try { return JSON.parse(localStorage.getItem(key)) || []; }
-        catch { return []; }
-    }
-
-    function saveProducts(ownerId, items) {
-        const key = `ecomarket_products_${ownerId}`;
-        localStorage.setItem(key, JSON.stringify(items));
-    }
-
-    function uid() {
-        return Math.random().toString(16).slice(2) + Date.now().toString(16);
+    async function fetchProducts(ownerId) {
+        try {
+            const res = await fetch(`http://localhost:3000/productos?ownerId=${ownerId}`);
+            if (!res.ok) throw new Error("Error en servidor");
+            return await res.json();
+        } catch(e) {
+            console.error(e);
+            return [];
+        }
     }
 
     function formatPrice(value) {
@@ -151,7 +147,7 @@
           <img class="thumb" src="${item.image || 'Imagenes/placeholder-producto.jpg'}" alt="">
           <div>
             <strong>${item.name}</strong>
-            <div class="muted">ID: ${item.id.slice(0, 8)}</div>
+            <div class="muted">ID: ${item.id ? item.id.toString().slice(0, 8) : ''}</div>
           </div>
         </div>
       </td>
@@ -185,19 +181,10 @@
 
         document.getElementById("producerName").textContent = session.name || "Productor";
 
-        const ownerId = session.id || "demo";
-        let products = loadProducts(ownerId);
-
-        if (products.length === 0) {
-            products = [
-                { id: uid(), name: "Zanahorias ecológicas", origin: "Gran Canaria", price: 2.50, unit: "€/kg", image: "Imagenes/zanahoria.jpg" },
-                { id: uid(), name: "Tomates de rama", origin: "Gran Canaria", price: 3.10, unit: "€/kg", image: "Imagenes/tomate.png" },
-                { id: uid(), name: "Lechuga ecológica", origin: "Gran Canaria", price: 1.70, unit: "€/unidad", image: "Imagenes/lechuga.png" },
-                { id: uid(), name: "Pepino", origin: "Gran Canaria", price: 0.75, unit: "€/kg", image: "Imagenes/pepino.jpg" },
-            ];
-            saveProducts(ownerId, products);
-        }
-
+        const ownerId = session.id;
+        
+        // Cargar desde json-server buscando solo los del owner actual
+        let products = await fetchProducts(ownerId);
         renderTable(products);
 
         document.getElementById("logoutBtn").addEventListener("click", () => {
@@ -230,16 +217,37 @@
                 });
             }
 
-            const item = { id: uid(), name, origin, price: Number(price), unit, image: imageUrl };
+            const item = { 
+                ownerId, // Sólo añade sus propios productos
+                ownerName: session.name, // Para uso opcional en catálogo
+                name, 
+                origin, 
+                price: Number(price), 
+                unit, 
+                image: imageUrl 
+            };
 
-            products.unshift(item);
-            saveProducts(ownerId, products);
-            renderTable(products);
-
-            e.target.reset();
+            try {
+                const res = await fetch("http://localhost:3000/productos", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(item)
+                });
+                
+                if (res.ok) {
+                    const newItem = await res.json();
+                    products.unshift(newItem);
+                    renderTable(products);
+                    e.target.reset();
+                } else {
+                    alert("No se pudo añadir el producto");
+                }
+            } catch(e) {
+                alert("Error de red conectando al servidor JSON.");
+            }
         });
 
-        document.getElementById("productsTbody").addEventListener("click", (e) => {
+        document.getElementById("productsTbody").addEventListener("click", async (e) => {
             const btn = e.target.closest("button");
             if (!btn) return;
 
@@ -247,14 +255,24 @@
             if (!id) return;
 
             if (btn.classList.contains("btn-danger")) {
-                products = products.filter(p => p.id !== id);
-                saveProducts(ownerId, products);
-                renderTable(products);
+                if(!confirm("¿Estás seguro de que quieres borrar este producto permanentemente?")) return;
+                
+                try {
+                    const res = await fetch(`http://localhost:3000/productos/${id}`, { method: "DELETE" });
+                    if(res.ok) {
+                        products = products.filter(p => String(p.id) !== String(id));
+                        renderTable(products);
+                    } else {
+                        alert("No pudimos borrar el producto en el servidor.");
+                    }
+                } catch(e) {
+                    alert("Error de red");
+                }
                 return;
             }
 
             if (btn.classList.contains("btn-edit")) {
-                const item = products.find(p => p.id === id);
+                const item = products.find(p => String(p.id) === String(id));
                 if (!item) return;
 
                 const newName = prompt("Editar nombre:", item.name);
@@ -263,11 +281,29 @@
                 const newPrice = prompt("Editar precio (ej. 3.10):", String(item.price));
                 if (newPrice === null) return;
 
-                item.name = newName.trim() || item.name;
-                item.price = Number(newPrice) || item.price;
+                const patchData = {
+                    name: newName.trim() || item.name,
+                    price: Number(newPrice) || item.price
+                };
 
-                saveProducts(ownerId, products);
-                renderTable(products);
+                try {
+                    const res = await fetch(`http://localhost:3000/productos/${id}`, {
+                        method: "PATCH",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(patchData)
+                    });
+                    
+                    if (res.ok) {
+                        const updatedItem = await res.json();
+                        const index = products.findIndex(p => String(p.id) === String(id));
+                        products[index] = updatedItem;
+                        renderTable(products);
+                    } else {
+                        alert("Fallo al actualizar el producto en el servidor");
+                    }
+                } catch(e) {
+                    alert("Error de red");
+                }
             }
         });
     });

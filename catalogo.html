@@ -23,85 +23,65 @@
         <p>Frutas, verduras, miel, huevos y otros productos ecológicos de productores locales.</p>
     </section>
 
-    <section class="grid-productos-mockup">
-
-        <article class="producto-card-mockup">
-            <div class="imagen-producto-dummy">
-                <img src="Imagenes/naranja.png" alt="Naranjas ecológicas">
-            </div>
-            <div class="info-producto">
-                <h4>Naranjas ecológicas</h4>
-                <p>Origen: Tenerife</p>
-                <p>Productor: AgroTierra Norte</p>
-                <p class="precio-destacado">2,50 €/kg</p>
-                <div class="controles-compra">
-                    <label>Cant.</label>
-                    <input type="number" value="1" min="1" class="input-cantidad">
-                    <span>kg</span>
-                </div>
-                <button class="btn-verde-comprar">Añadir al carrito</button>
-            </div>
-        </article>
-
-        <article class="producto-card-mockup">
-            <div class="imagen-producto-dummy">
-                <img src="Imagenes/platano.png" alt="Plátanos ecológicos">
-            </div>
-            <div class="info-producto">
-                <h4>Plátanos ecológicos</h4>
-                <p>Origen: La Palma</p>
-                <p>Productor: EcoPlatanera La Palma</p>
-                <p class="precio-destacado">2,80 €/kg</p>
-                <div class="controles-compra">
-                    <label>Cant.</label>
-                    <input type="number" value="1" min="1" class="input-cantidad">
-                    <span>kg</span>
-                </div>
-                <button class="btn-verde-comprar">Añadir al carrito</button>
-            </div>
-        </article>
-
-        <article class="producto-card-mockup">
-            <div class="imagen-producto-dummy">
-                <img src="Imagenes/tomate.png" alt="Tomates de rama">
-            </div>
-            <div class="info-producto">
-                <h4>Tomates de rama</h4>
-                <p>Origen: Gran Canaria</p>
-                <p>Productor: Finca La Vega</p>
-                <p class="precio-destacado">3,10 €/kg</p>
-                <div class="controles-compra">
-                    <label>Cant.</label>
-                    <input type="number" value="1" min="1" class="input-cantidad">
-                    <span>kg</span>
-                </div>
-                <button class="btn-verde-comprar">Añadir al carrito</button>
-            </div>
-        </article>
-
-        <article class="producto-card-mockup">
-            <div class="imagen-producto-dummy">
-                <img src="Imagenes/lechuga.png" alt="Lechuga ecológica">
-            </div>
-            <div class="info-producto">
-                <h4>Lechuga ecológica</h4>
-                <p>Origen: Fuerteventura</p>
-                <p>Productor: Finca La Vega</p>
-                <p class="precio-destacado">1,70 €/unidad</p>
-                <div class="controles-compra">
-                    <label>Cant.</label>
-                    <input type="number" value="1" min="1" class="input-cantidad">
-                    <span>unid.</span>
-                </div>
-                <button class="btn-verde-comprar">Añadir al carrito</button>
-            </div>
-        </article>
-
+    <section class="grid-productos-mockup" id="catalogo-grid">
+        <p>Cargando productos...</p>
     </section>
 </main>
 
 <div id="footer-placeholder"></div>
 
 <script src="js/layout.js"></script>
+<script>
+    function formatPrice(value) {
+        const num = Number(value);
+        if (Number.isNaN(num)) return value;
+        return num.toFixed(2).replace(".", ",");
+    }
+
+    document.addEventListener("DOMContentLoaded", async () => {
+        const grid = document.getElementById("catalogo-grid");
+        
+        try {
+            const res = await fetch("http://localhost:3000/productos");
+            if (!res.ok) throw new Error("Network response was not ok");
+            const productos = await res.json();
+            
+            grid.innerHTML = "";
+            
+            if (productos.length === 0) {
+                grid.innerHTML = "<p>No hay productos disponibles en este momento.</p>";
+                return;
+            }
+
+            productos.forEach(p => {
+                const article = document.createElement("article");
+                article.className = "producto-card-mockup";
+                
+                const imgSrc = p.image || 'Imagenes/placeholder-producto.jpg'; // imagen por defecto si no tiene
+                
+                article.innerHTML = `
+                    <div class="imagen-producto-dummy">
+                        <img src="${imgSrc}" alt="${p.name}">
+                    </div>
+                    <div class="info-producto">
+                        <h4>${p.name}</h4>
+                        <p>Origen: ${p.origin}</p>
+                        <p>Productor: ${p.ownerName || 'Productor local'}</p>
+                        <p class="precio-destacado">${formatPrice(p.price)} ${p.unit}</p>
+                        <div class="controles-compra" style="margin-top: 15px;">
+                            <a href="detalle.html?id=${p.id}" class="btn-verde-comprar" style="display: block; text-align: center; text-decoration: none; width: 100%;">Ver detalle</a>
+                        </div>
+                    </div>
+                `;
+                
+                grid.appendChild(article);
+            });
+            
+        } catch(e) {
+            grid.innerHTML = "<p>No se pudo cargar el catálogo. Comprueba si el servidor JSON está ejecutándose.</p>";
+            console.error(e);
+        }
+    });
+</script>
 </body>
 </html>
