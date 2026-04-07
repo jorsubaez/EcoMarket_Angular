@@ -12,6 +12,7 @@
 
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/perfil.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body data-page="perfil">
@@ -107,15 +108,220 @@
             return session;
         }
 
-        document.addEventListener("DOMContentLoaded", () => {
+        document.addEventListener("DOMContentLoaded", async () => {
             const session = requireSession();
             if (!session) return;
 
+            let currentUser = null;
+            try {
+                const res = await fetch(`http://localhost:3000/usuarios/${session.id}`);
+                if(res.ok) currentUser = await res.json();
+            } catch(e) {
+                console.warn("No se pudo cargar detalles del usuario desde json-server");
+            }
+
             const userNameEl = document.querySelector(".main-content h3");
             const userEmailEl = document.querySelector(".info-card:nth-child(1) .info-value");
+            const userPhoneEl = document.querySelector(".info-card:nth-child(2) .info-value");
+            const userAddressEl = document.querySelector(".info-card:nth-child(3) .info-value");
 
-            if (userNameEl) userNameEl.textContent = session.name || "Usuario EcoMarket";
-            if (userEmailEl) userEmailEl.textContent = session.email || "email@ejemplo.com";
+            if (userNameEl) userNameEl.textContent = currentUser?.nombre || session.name || "Usuario EcoMarket";
+            if (userEmailEl) userEmailEl.textContent = currentUser?.email || session.email || "email@ejemplo.com";
+            if (userPhoneEl) userPhoneEl.textContent = currentUser?.telefono || "No especificado";
+            if (userAddressEl) userAddressEl.textContent = currentUser?.direccion || "Añade una dirección";
+
+            const btnEdit = document.querySelector('.btn-primary');
+            if (btnEdit) {
+                btnEdit.addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    const { value: formValues } = await Swal.fire({
+                        title: 'Editar Perfil',
+                        width: '600px',
+                        html: `
+                            <style>
+                                .custom-swal-field {
+                                    width: 100%;
+                                    box-sizing: border-box;
+                                    padding: 12px 14px;
+                                    font-size: 0.95rem;
+                                    font-family: inherit;
+                                    border: 1px solid rgba(0,0,0,0.12);
+                                    border-radius: 12px;
+                                    outline: none;
+                                    background: #fff;
+                                    transition: border-color 0.2s, box-shadow 0.2s;
+                                    margin: 0;
+                                }
+                                .custom-swal-field:focus {
+                                    border-color: rgba(46,125,50,0.45);
+                                    box-shadow: 0 0 0 4px rgba(46,125,50,0.12);
+                                }
+                                .swal-container-grid { display: flex; gap: 10px; margin-bottom: 15px; width: 100%; box-sizing: border-box; }
+                                .swal-label { font-weight: 700; font-size: 0.95rem; margin-bottom: 6px; display: block; color: var(--dark-grey); }
+                            </style>
+                            <div style="text-align: left; margin-bottom: 10px; width: 100%; box-sizing: border-box;">
+                                <label class="swal-label">Datos personales</label>
+                                <div class="swal-container-grid">
+                                    <input id="swal-name" class="custom-swal-field" style="flex:1;" placeholder="Nombre / Apellidos" value="${currentUser?.nombre || session.name || ''}">
+                                    <input id="swal-email" type="email" class="custom-swal-field" style="flex:1;" placeholder="Email" value="${currentUser?.email || session.email || ''}">
+                                </div>
+                                
+                                <label class="swal-label">Teléfono</label>
+                                <div class="swal-container-grid">
+                                    <select id="swal-prefix" class="custom-swal-field" style="flex: 0 0 110px; cursor: pointer; padding: 12px 8px;">
+                                        <option value="+34" data-max="9">🇪🇸 +34</option>
+                                        <option value="+1" data-max="10">🇺🇸 +1</option>
+                                        <option value="+44" data-max="10">🇬🇧 +44</option>
+                                        <option value="+33" data-max="9">🇫🇷 +33</option>
+                                        <option value="+49" data-max="11">🇩🇪 +49</option>
+                                        <option value="+39" data-max="10">🇮🇹 +39</option>
+                                        <option value="+351" data-max="9">🇵🇹 +351</option>
+                                        <option value="+52" data-max="10">🇲🇽 +52</option>
+                                        <option value="+54" data-max="10">🇦🇷 +54</option>
+                                        <option value="+57" data-max="10">🇨🇴 +57</option>
+                                    </select>
+                                    <input id="swal-phone" type="number" class="custom-swal-field" style="flex: 1;" placeholder="Nº de teléfono">
+                                </div>
+
+                                <label class="swal-label">Dirección</label>
+                                <div class="swal-container-grid" style="margin-bottom: 10px;">
+                                    <select id="swal-street-type" class="custom-swal-field" style="flex: 0 0 130px; cursor: pointer;">
+                                        <option value="Calle">Calle</option>
+                                        <option value="Avenida">Avenida</option>
+                                        <option value="Paseo">Paseo</option>
+                                        <option value="Carretera">Carretera</option>
+                                        <option value="Plaza">Plaza</option>
+                                        <option value="Urbanización">Urbanización</option>
+                                        <option value="Camino">Camino</option>
+                                    </select>
+                                    <input id="swal-street-name" class="custom-swal-field" style="flex: 1;" placeholder="Nombre de la vía">
+                                </div>
+                                <div class="swal-container-grid" style="margin-bottom: 0;">
+                                    <input id="swal-street-num" class="custom-swal-field" style="flex: 1;" placeholder="Número">
+                                    <input id="swal-street-door" class="custom-swal-field" style="flex: 1;" placeholder="Bajo, 4ºA...">
+                                </div>
+                            </div>
+                        `,
+                        focusConfirm: false,
+                        showCancelButton: true,
+                        confirmButtonText: 'Guardar',
+                        cancelButtonText: 'Cancelar',
+                        confirmButtonColor: '#4CAF50',
+                        didOpen: () => {
+                            // Pre-fill phone if exists
+                            const currentPhone = currentUser?.telefono || '';
+                            if (currentPhone) {
+                                const parts = currentPhone.split(' ');
+                                if (parts.length >= 2) {
+                                    document.getElementById('swal-prefix').value = parts[0];
+                                    document.getElementById('swal-phone').value = parts.slice(1).join('');
+                                } else {
+                                    document.getElementById('swal-phone').value = currentPhone;
+                                }
+                            }
+                            
+                            // Pre-fill rough address structure if exists
+                            const currentAddress = currentUser?.direccion || '';
+                            if (currentAddress && currentAddress.includes(' ')) {
+                                // Super rough heuristic parsing for pre-existing addresses
+                                const parts = currentAddress.split(',');
+                                const firstPart = parts[0].trim().split(' ');
+                                const possibleType = firstPart[0];
+                                const typeSelect = document.getElementById('swal-street-type');
+                                
+                                let isValidType = false;
+                                for(let opt of typeSelect.options) {
+                                    if(opt.value === possibleType) isValidType = true;
+                                }
+                                
+                                if (isValidType) {
+                                    typeSelect.value = possibleType;
+                                    document.getElementById('swal-street-name').value = firstPart.slice(1).join(' ');
+                                } else {
+                                    document.getElementById('swal-street-name').value = parts[0].trim();
+                                }
+                                
+                                if (parts.length > 1) {
+                                    document.getElementById('swal-street-num').value = parts[1].trim();
+                                }
+                                if (parts.length > 2) {
+                                    document.getElementById('swal-street-door').value = parts[2].trim();
+                                }
+                            }
+                        },
+                        preConfirm: () => {
+                            const email = document.getElementById('swal-email').value.trim();
+                            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                            
+                            if (!emailRegex.test(email)) {
+                                Swal.showValidationMessage('El formato del correo no es válido.');
+                                return false;
+                            }
+
+                            const phoneSelect = document.getElementById('swal-prefix');
+                            const phonePrefix = phoneSelect.value;
+                            const maxDigits = parseInt(phoneSelect.options[phoneSelect.selectedIndex].getAttribute('data-max'));
+                            const phoneBodyRaw = document.getElementById('swal-phone').value.trim();
+                            
+                            if (phoneBodyRaw) {
+                                if (phoneBodyRaw.length > maxDigits) {
+                                    Swal.showValidationMessage(`Para el prefijo ${phonePrefix}, el número no puede tener más de ${maxDigits} dígitos.`);
+                                    return false;
+                                }
+                                if (phoneBodyRaw.length < Math.max(7, maxDigits - 2)) {
+                                    Swal.showValidationMessage(`El teléfono parece ser demasiado corto para ${phonePrefix}.`);
+                                    return false;
+                                }
+                            }
+
+                            const finalPhone = phoneBodyRaw ? `${phonePrefix} ${phoneBodyRaw}` : '';
+                            
+                            const sType = document.getElementById('swal-street-type').value;
+                            const sName = document.getElementById('swal-street-name').value.trim();
+                            const sNum = document.getElementById('swal-street-num').value.trim();
+                            const sDoor = document.getElementById('swal-street-door').value.trim();
+                            
+                            const finalAddress = sName ? `${sType} ${sName}, ${sNum}${sDoor ? ', ' + sDoor : ''}` : '';
+
+                            return {
+                                nombre: document.getElementById('swal-name').value,
+                                email: email,
+                                telefono: finalPhone,
+                                direccion: finalAddress
+                            }
+                        }
+                    });
+
+                    if (formValues) {
+                        try {
+                            const res = await fetch(`http://localhost:3000/usuarios/${session.id}`, {
+                                method: 'PATCH',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify(formValues)
+                            });
+                            
+                            if(res.ok) {
+                                const updatedUser = await res.json();
+                                if (userNameEl) userNameEl.textContent = updatedUser.nombre;
+                                if (userEmailEl) userEmailEl.textContent = updatedUser.email;
+                                if (userPhoneEl) userPhoneEl.textContent = updatedUser.telefono || "No especificado";
+                                if (userAddressEl) userAddressEl.textContent = updatedUser.direccion || "Añade una dirección";
+                                
+                                session.name = updatedUser.nombre;
+                                session.email = updatedUser.email;
+                                localStorage.setItem("ecomarket_session", JSON.stringify(session));
+                                currentUser = updatedUser;
+                                
+                                Swal.fire({ icon: 'success', title: 'Actualizado', text: 'Perfil guardado', timer: 1500, showConfirmButton: false });
+                            } else {
+                                Swal.fire({ icon: 'error', title: 'Error', text: 'No se pudo guardar el perfil', confirmButtonColor: '#4CAF50' });
+                            }
+                        } catch(e) {
+                            Swal.fire({ icon: 'error', title: 'Error', text: 'Error de red', confirmButtonColor: '#4CAF50' });
+                        }
+                    }
+                });
+            }
 
             const sidebarButtons = document.querySelectorAll(".sidebar-button");
             const logoutBtn = Array.from(sidebarButtons).find(btn => btn.textContent.includes("Cerrar sesión"));

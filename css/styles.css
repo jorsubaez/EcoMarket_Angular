@@ -310,6 +310,27 @@ a {
     border-color: rgba(46, 125, 50, 0.35);
 }
 
+/* --- SWEETALERT2 STYLES OVERRIDE --- */
+.swal2-popup {
+    font-family: var(--font-family), sans-serif !important;
+    border-radius: var(--radius-lg) !important;
+}
+.swal2-confirm, .swal2-cancel {
+    border-radius: 999px !important;
+    font-weight: 600 !important;
+    padding: 12px 24px !important;
+    font-family: var(--font-family), sans-serif !important;
+}
+.swal2-confirm {
+    background-color: var(--primary-green) !important;
+    color: #fff !important;
+    box-shadow: 0 4px 12px rgba(46, 125, 50, .20) !important;
+}
+.swal2-cancel {
+    background-color: rgba(0,0,0,0.08) !important;
+    color: #333 !important;
+}
+
 /* --- ESTILOS RESPONSIVE --- */
 
 /* Estilos base del botón menú (oculto en escritorio) */

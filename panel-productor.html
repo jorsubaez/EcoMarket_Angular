@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="css/styles.css" />
     <link rel="stylesheet" href="css/panel-productor.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body data-page="panel-productor">
 
@@ -65,9 +66,15 @@
                 </div>
 
                 <div class="field full">
-                    <label for="pImage">Imagen del producto</label>
-                    <input id="pImage" type="file" accept="image/*" />
-                    <small>Opcional. Si no subes imagen, se usará un placeholder.</small>
+                    <label>Imagen del producto</label>
+                    <div style="display: flex; align-items: center; gap: 14px; margin-top: 4px;">
+                        <label for="pImage" class="btn btn-secondary" style="cursor: pointer; width: auto; font-size: 0.95rem; padding: 10px 18px; margin: 0;">
+                            <i class="fa-solid fa-upload"></i> Seleccionar imagen
+                        </label>
+                        <span id="fileNameDisplay" style="color: var(--light-grey); font-size: 0.95rem; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Ningún archivo seleccionado</span>
+                    </div>
+                    <input id="pImage" type="file" accept="image/*" style="display: none;" onchange="document.getElementById('fileNameDisplay').textContent = this.files.length > 0 ? this.files[0].name : 'Ningún archivo seleccionado'" />
+                    <small style="margin-top: 8px; display: block;">Opcional. Si no subes imagen, se usará un placeholder.</small>
                 </div>
 
                 <div class="actions">
@@ -124,9 +131,10 @@
 
     async function fetchProducts(ownerId) {
         try {
-            const res = await fetch(`http://localhost:3000/productos?ownerId=${ownerId}`);
+            const res = await fetch(`http://localhost:3000/productos`);
             if (!res.ok) throw new Error("Error en servidor");
-            return await res.json();
+            const allProducts = await res.json();
+            return allProducts.filter(p => String(p.ownerId) === String(ownerId));
         } catch(e) {
             console.error(e);
             return [];
@@ -239,11 +247,12 @@
                     products.unshift(newItem);
                     renderTable(products);
                     e.target.reset();
+                    Swal.fire({ icon: 'success', title: 'Añadido', text: 'Producto añadido correctamente', timer: 1500, showConfirmButton: false });
                 } else {
-                    alert("No se pudo añadir el producto");
+                    Swal.fire({ icon: 'error', title: 'Error', text: 'No se pudo añadir el producto', confirmButtonColor: '#4CAF50' });
                 }
             } catch(e) {
-                alert("Error de red conectando al servidor JSON.");
+                Swal.fire({ icon: 'error', title: 'Error de red', text: 'Error conectando al servidor JSON.', confirmButtonColor: '#4CAF50' });
             }
         });
 
@@ -255,18 +264,30 @@
             if (!id) return;
 
             if (btn.classList.contains("btn-danger")) {
-                if(!confirm("¿Estás seguro de que quieres borrar este producto permanentemente?")) return;
+                const result = await Swal.fire({
+                    title: '¿Estás seguro?',
+                    text: "Borrarás este producto permanentemente",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#aaa',
+                    confirmButtonText: 'Sí, borrar',
+                    cancelButtonText: 'Cancelar'
+                });
+                
+                if(!result.isConfirmed) return;
                 
                 try {
                     const res = await fetch(`http://localhost:3000/productos/${id}`, { method: "DELETE" });
                     if(res.ok) {
                         products = products.filter(p => String(p.id) !== String(id));
                         renderTable(products);
+                        Swal.fire({ icon: 'success', title: 'Borrado', text: 'El producto ha sido eliminado', timer: 1500, showConfirmButton: false });
                     } else {
-                        alert("No pudimos borrar el producto en el servidor.");
+                        Swal.fire({ icon: 'error', title: 'Error', text: 'No pudimos borrar el producto en el servidor.', confirmButtonColor: '#4CAF50' });
                     }
                 } catch(e) {
-                    alert("Error de red");
+                    Swal.fire({ icon: 'error', title: 'Error', text: 'Error de red', confirmButtonColor: '#4CAF50' });
                 }
                 return;
             }
@@ -275,34 +296,76 @@
                 const item = products.find(p => String(p.id) === String(id));
                 if (!item) return;
 
-                const newName = prompt("Editar nombre:", item.name);
-                if (newName === null) return;
-
-                const newPrice = prompt("Editar precio (ej. 3.10):", String(item.price));
-                if (newPrice === null) return;
-
-                const patchData = {
-                    name: newName.trim() || item.name,
-                    price: Number(newPrice) || item.price
-                };
-
-                try {
-                    const res = await fetch(`http://localhost:3000/productos/${id}`, {
-                        method: "PATCH",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify(patchData)
-                    });
-                    
-                    if (res.ok) {
-                        const updatedItem = await res.json();
-                        const index = products.findIndex(p => String(p.id) === String(id));
-                        products[index] = updatedItem;
-                        renderTable(products);
-                    } else {
-                        alert("Fallo al actualizar el producto en el servidor");
+                const { value: formValues } = await Swal.fire({
+                    title: 'Editar Producto',
+                    html: `
+                        <input id="swal-input-name" class="swal2-input" placeholder="Nombre del producto" value="${item.name}">
+                        <input id="swal-input-price" type="number" step="0.01" class="swal2-input" placeholder="Precio" value="${item.price}">
+                        <div style="margin-top: 15px; text-align: left; padding: 0 10px;">
+                            <label style="font-size: 14px; font-weight: bold; display: block; margin-bottom: 8px;">Foto (opcional):</label>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <label for="swal-input-image" class="btn btn-secondary" style="cursor: pointer; padding: 8px 14px; font-size: 0.9rem; margin: 0;">
+                                    <i class="fa-solid fa-upload"></i> Subir imagen
+                                </label>
+                                <span id="swalFileName" style="color: #666; font-size: 0.85rem; max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Ningún archivo</span>
+                            </div>
+                            <input id="swal-input-image" type="file" accept="image/*" style="display: none;" onchange="document.getElementById('swalFileName').textContent = this.files.length > 0 ? this.files[0].name : 'Ningún archivo'">
+                        </div>
+                    `,
+                    focusConfirm: false,
+                    showCancelButton: true,
+                    confirmButtonText: 'Guardar',
+                    cancelButtonText: 'Cancelar',
+                    confirmButtonColor: '#4CAF50',
+                    preConfirm: () => {
+                        const newName = document.getElementById('swal-input-name').value;
+                        const newPrice = document.getElementById('swal-input-price').value;
+                        const fileInput = document.getElementById('swal-input-image');
+                        return { newName, newPrice, file: fileInput.files[0] };
                     }
-                } catch(e) {
-                    alert("Error de red");
+                });
+
+                if (formValues) {
+                    const { newName, newPrice, file } = formValues;
+
+                    if (!newName || !newPrice) {
+                        Swal.fire({ icon: 'warning', title: 'Atención', text: 'Nombre y precio son obligatorios', confirmButtonColor: '#4CAF50' });
+                        return;
+                    }
+
+                    let patchData = {
+                        name: newName.trim(),
+                        price: Number(newPrice)
+                    };
+
+                    if (file) {
+                        const imageUrl = await new Promise((resolve) => {
+                            const reader = new FileReader();
+                            reader.onload = () => resolve(reader.result);
+                            reader.readAsDataURL(file);
+                        });
+                        patchData.image = imageUrl;
+                    }
+
+                    try {
+                        const res = await fetch(`http://localhost:3000/productos/${id}`, {
+                            method: "PATCH",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify(patchData)
+                        });
+                        
+                        if (res.ok) {
+                            const updatedItem = await res.json();
+                            const index = products.findIndex(p => String(p.id) === String(id));
+                            products[index] = updatedItem;
+                            renderTable(products);
+                            Swal.fire({ icon: 'success', title: 'Actualizado', text: 'Producto actualizado con éxito', timer: 1500, showConfirmButton: false });
+                        } else {
+                            Swal.fire({ icon: 'error', title: 'Error', text: 'Fallo al actualizar el producto en el servidor', confirmButtonColor: '#4CAF50' });
+                        }
+                    } catch(e) {
+                        Swal.fire({ icon: 'error', title: 'Error', text: 'Error de red', confirmButtonColor: '#4CAF50' });
+                    }
                 }
             }
         });

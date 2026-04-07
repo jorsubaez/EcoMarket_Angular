@@ -68,8 +68,9 @@
                         <p>Origen: ${p.origin}</p>
                         <p>Productor: ${p.ownerName || 'Productor local'}</p>
                         <p class="precio-destacado">${formatPrice(p.price)} ${p.unit}</p>
-                        <div class="controles-compra" style="margin-top: 15px;">
-                            <a href="detalle.html?id=${p.id}" class="btn-verde-comprar" style="display: block; text-align: center; text-decoration: none; width: 100%;">Ver detalle</a>
+                        <div class="controles-compra" style="margin-top: 15px; display: flex; align-items: center; gap: 10px;">
+                            <input type="number" value="1" min="1" style="width: 65px; padding: 10px 4px; border: 1px solid #ccc; border-radius: 8px; font-family: inherit; font-size: 1rem; text-align: center; box-sizing: border-box;">
+                            <a href="#" class="btn-verde-comprar" style="flex: 1; text-align: center; text-decoration: none; padding: 10px 0; box-sizing: border-box;" onclick="event.preventDefault();">Añadir carrito</a>
                         </div>
                     </div>
                 `;

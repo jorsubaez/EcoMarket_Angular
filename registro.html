@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="css/styles.css" />
     <link rel="stylesheet" href="css/auth.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body>
@@ -55,7 +56,7 @@
                 </div>
             </div>
 
-            <div class="field">
+            <div class="field" style="margin-bottom: 15px;">
                 <label for="email">Email</label>
                 <div class="input-wrap">
                     <i class="fa-regular fa-envelope"></i>
@@ -70,16 +71,72 @@
                 </div>
             </div>
 
-            <div class="field">
-                <label for="rol">Tipo de cuenta</label>
-                <select id="rol" name="rol" required style="width: 100%; padding: 10px 10px 10px 40px; border: 1px solid #ddd; border-radius: 8px; font-size: 0.95rem; font-family: inherit; margin-top: 5px;">
-                    <option value="" disabled selected>Selecciona una opción</option>
-                    <option value="cliente">Cliente (Comprador)</option>
-                    <option value="productor">Productor (Vendedor)</option>
-                </select>
-                <!-- Hack rápido para posicionar un icono dentro del diseño de EcoMarket sin tener que tocar sus estilos base -->
-                <i class="fa-solid fa-users" style="position: absolute; margin-top: -30px; margin-left: 15px; color: #888;"></i>
+            <!-- TELÉFONO -->
+            <label style="font-weight: 700; font-size: 0.95rem; margin-bottom: 6px; display: block; color: var(--dark-grey);">Teléfono</label>
+            <div class="grid-2" style="grid-template-columns: 100px 1fr; margin-bottom: 15px; align-items: start;">
+                <div class="field" style="margin: 0;">
+                    <div class="input-wrap" style="padding: 0;">
+                        <select id="countryPrefix" style="width: 100%; border: none; background: transparent; outline: none; padding: 12px 10px; font-family: inherit; font-size: 0.95rem; cursor: pointer;">
+                            <option value="+34" data-max="9">🇪🇸 +34</option>
+                            <option value="+1" data-max="10">🇺🇸 +1</option>
+                            <option value="+44" data-max="10">🇬🇧 +44</option>
+                            <option value="+33" data-max="9">🇫🇷 +33</option>
+                            <option value="+49" data-max="11">🇩🇪 +49</option>
+                            <option value="+39" data-max="10">🇮🇹 +39</option>
+                            <option value="+351" data-max="9">🇵🇹 +351</option>
+                            <option value="+52" data-max="10">🇲🇽 +52</option>
+                            <option value="+54" data-max="10">🇦🇷 +54</option>
+                            <option value="+57" data-max="10">🇨🇴 +57</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="field" style="margin: 0;">
+                    <div class="input-wrap">
+                        <i class="fa-solid fa-phone"></i>
+                        <input id="phoneBody" type="number" placeholder="Nº de teléfono" inputmode="numeric" required />
+                    </div>
+                </div>
             </div>
+
+            <!-- DIRECCIÓN -->
+            <label style="font-weight: 700; font-size: 0.95rem; margin-bottom: 6px; display: block; color: var(--dark-grey);">Dirección</label>
+            <div class="grid-2" style="grid-template-columns: 140px 1fr; margin-bottom: 10px; align-items: start;">
+                <div class="field" style="margin: 0;">
+                    <div class="input-wrap" style="padding: 0;">
+                        <select id="streetType" style="width: 100%; border: none; background: transparent; outline: none; padding: 12px 14px; font-family: inherit; font-size: 0.95rem; cursor: pointer;">
+                            <option value="Calle">Calle</option>
+                            <option value="Avenida">Avenida</option>
+                            <option value="Paseo">Paseo</option>
+                            <option value="Carretera">Carretera</option>
+                            <option value="Plaza">Plaza</option>
+                            <option value="Urbanización">Urbanización</option>
+                            <option value="Camino">Camino</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="field" style="margin: 0;">
+                    <div class="input-wrap">
+                        <i class="fa-solid fa-road"></i>
+                        <input id="streetName" type="text" placeholder="Nombre de la vía" required />
+                    </div>
+                </div>
+            </div>
+            <div class="grid-2" style="margin-bottom: 20px;">
+                <div class="field" style="margin: 0;">
+                    <div class="input-wrap">
+                        <i class="fa-solid fa-hashtag"></i>
+                        <input id="streetNumber" type="text" placeholder="Número" required />
+                    </div>
+                </div>
+                <div class="field" style="margin: 0;">
+                    <div class="input-wrap">
+                        <i class="fa-solid fa-door-open"></i>
+                        <input id="streetDoor" type="text" placeholder="Bajo, 4ºA..." />
+                    </div>
+                </div>
+            </div>
+
+
 
             <div class="grid-2">
                 <div class="field">
@@ -167,15 +224,51 @@
                 const passwordRe = document.getElementById('password2').value;
 
                 if (password !== passwordRe) {
-                    alert('Las contraseñas no coinciden.');
+                    Swal.fire({ icon: 'error', title: 'Oops...', text: 'Las contraseñas no coinciden.', confirmButtonColor: '#4CAF50' });
                     return;
                 }
 
+                const email = document.getElementById('email').value.trim();
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                
+                if (!emailRegex.test(email)) {
+                    Swal.fire({ icon: 'warning', title: 'Atención', text: 'El formato del correo electrónico no es válido.', confirmButtonColor: '#4CAF50' });
+                    return;
+                }
+
+                // Phone logic
+                const phoneSelect = document.getElementById('countryPrefix');
+                const selectedOption = phoneSelect.options[phoneSelect.selectedIndex];
+                const maxDigits = parseInt(selectedOption.getAttribute('data-max'));
+                const phoneBodyRaw = document.getElementById('phoneBody').value.trim();
+                
+                if (phoneBodyRaw.length > maxDigits) {
+                    Swal.fire({ icon: 'warning', title: 'Atención', text: `Para el prefijo ${selectedOption.value}, el número no puede tener más de ${maxDigits} dígitos.`, confirmButtonColor: '#4CAF50' });
+                    return;
+                }
+                
+                if (phoneBodyRaw.length < Math.max(7, maxDigits - 2)) {
+                    Swal.fire({ icon: 'warning', title: 'Atención', text: `El teléfono introducido parece demasiado corto para ${selectedOption.value}.`, confirmButtonColor: '#4CAF50' });
+                    return;
+                }
+
+                const finalPhone = `${selectedOption.value} ${phoneBodyRaw}`;
+
+                // Address logic
+                const sType = document.getElementById('streetType').value;
+                const sName = document.getElementById('streetName').value.trim();
+                const sNum = document.getElementById('streetNumber').value.trim();
+                const sDoor = document.getElementById('streetDoor').value.trim();
+                
+                const finalAddress = `${sType} ${sName}, ${sNum}${sDoor ? ', ' + sDoor : ''}`;
+
                 const nuevoUsuario = {
                     nombre: document.getElementById('name').value.trim() + " " + document.getElementById('surname').value.trim(),
-                    email: document.getElementById('email').value.trim(),
+                    email: email,
                     password: password,
-                    rol: document.getElementById('rol').value
+                    rol: 'cliente',
+                    telefono: finalPhone,
+                    direccion: finalAddress
                 };
 
                 try {
@@ -184,7 +277,7 @@
                     const checkData = await checkRes.json();
                     
                     if (checkData.length > 0) {
-                        alert('Ese email ya está registrado.');
+                        Swal.fire({ icon: 'warning', title: 'Atención', text: 'Ese email ya está registrado.', confirmButtonColor: '#4CAF50' });
                         return;
                     }
 
@@ -198,14 +291,14 @@
                     });
 
                     if (response.ok) {
-                        alert('✨ Cuenta creada correctamente. Serás redirigido para iniciar sesión.');
+                        await Swal.fire({ icon: 'success', title: '¡Éxito!', text: 'Cuenta creada correctamente.', confirmButtonColor: '#4CAF50' });
                         window.location.replace('login.html');
                     } else {
-                        alert('Problema al crear la cuenta. Revisa la consola o intenta nuevamente.');
+                        Swal.fire({ icon: 'error', title: 'Error', text: 'Problema al crear la cuenta. Revisa la consola o intenta nuevamente.', confirmButtonColor: '#4CAF50' });
                     }
                 } catch(error) {
                     console.error("Error contactando al servidor JSON:", error);
-                    alert('No se pudo conectar al servidor json-server (¿está encendido?).');
+                    Swal.fire({ icon: 'error', title: 'Error de red', text: 'No se pudo conectar al servidor json-server (¿está encendido?).', confirmButtonColor: '#4CAF50' });
                 }
             });
         }
