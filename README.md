@@ -4,17 +4,17 @@
    <img src="Imagenes/logo.JPG" alt="Logo EcoMarket" width="500">
 </p>
 
-## 👥 Integrantes del Grupo
+## Integrantes del Grupo
 * Alejandro David Fariña Afonso
 * Daniel Peña Méndez
 * Jorge Suárez Báez
 * Nauzet Martel Rodríguez
 * Paola Viera Suárez
 
-## 📖 Descripción del Proyecto
+## Descripción del Proyecto
 EcoMarket surge como una respuesta tecnológica a la creciente demanda de un consumo responsable y la dificultad de los pequeños productores ecológicos para acceder a mercados digitales competitivos. Consiste en el desarrollo de un marketplace especializado que actúa como puente directo entre productores individuales (o pequeñas empresas) y clientes finales, eliminando intermediarios innecesarios.
 
-## 🛠️ Tecnologías Utilizadas
+## Tecnologías Utilizadas
 El ecosistema técnico de EcoMarket se compone de:
 * **Frontend:** HTML, CSS y JavaScript nativo para la estructuración de las vistas, los estilos y la lógica del lado del cliente.
 * **Backend y Base de Datos (Simulado):** Un archivo JSON gestionado a través de `json-server` para simular la persistencia de datos.
@@ -22,10 +22,10 @@ El ecosistema técnico de EcoMarket se compone de:
 ## Sprint 0
 Hemos dado por finalizado el Sprint 0, un ciclo inicial enfocado en asentar las bases técnicas del proyecto y entregar un primer núcleo funcional.
 
-### 🎯 Objetivo del Sprint
+### Objetivo del Sprint
 "Tener un entorno de desarrollo funcional y una interfaz gráfica operativa con el CRUD completo del catálogo de productos ecológicos y el sistema de autenticación de usuarios."
 
-### ✅ Historias Completadas
+### Historias Completadas
 Durante este primer sprint se han completado con éxito las siguientes historias:
 * **HT1:** Configuración del entorno.
 * **HU1:** Registro de usuario.
@@ -37,7 +37,7 @@ Durante este primer sprint se han completado con éxito las siguientes historias
 * **HU9:** Eliminar el producto.
 * **HU12:** Perfil de usuario.
 
-### 📋 Definition of Done (DoD) Validado
+### Definition of Done (DoD) Validado
 Para garantizar una base sólida, hemos asegurado el cumplimiento de los siguientes requisitos de calidad:
 * El entorno de desarrollo está completamente configurado y operativo.
 * El repositorio está estructurado en GitHub con control de versiones activo y el código actualizado.
