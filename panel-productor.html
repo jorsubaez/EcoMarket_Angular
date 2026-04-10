@@ -66,6 +66,16 @@
                 </div>
 
                 <div class="field full">
+                    <label for="pDescription">Descripción</label>
+                    <textarea id="pDescription" placeholder="Añade una descripción para este producto..." rows="3" style="width: 100%; border: 1px solid #ddd; border-radius: 8px; padding: 12px; font-family: inherit; font-size: 0.95rem; box-sizing: border-box; resize: vertical;" required></textarea>
+                </div>
+
+                <div class="field">
+                    <label for="pQuantity">Cantidad en Stock</label>
+                    <input id="pQuantity" type="number" min="0" placeholder="Ej. 100" required />
+                </div>
+
+                <div class="field full">
                     <label>Imagen del producto</label>
                     <div style="display: flex; align-items: center; gap: 14px; margin-top: 4px;">
                         <label for="pImage" class="btn btn-secondary" style="cursor: pointer; width: auto; font-size: 0.95rem; padding: 10px 18px; margin: 0;">
@@ -101,6 +111,7 @@
                         <th>Nombre</th>
                         <th>Origen</th>
                         <th>Precio</th>
+                        <th>Disponibilidad</th>
                         <th class="th-actions">Acciones</th>
                     </tr>
                     </thead>
@@ -161,6 +172,7 @@
       </td>
       <td>${item.origin}</td>
       <td><strong>${formatPrice(item.price)}</strong> <span class="muted">${item.unit}</span></td>
+      <td>${item.quantity !== undefined ? item.quantity : 0}</td>
       <td class="td-actions">
         <button class="btn-mini btn-edit" data-id="${item.id}">Editar</button>
         <button class="btn-mini btn-danger" data-id="${item.id}">Eliminar</button>
@@ -213,6 +225,8 @@
             const origin = document.getElementById("pOrigin").value.trim();
             const price = document.getElementById("pPrice").value;
             const unit = document.getElementById("pUnit").value;
+            const description = document.getElementById("pDescription").value.trim();
+            const quantity = document.getElementById("pQuantity").value;
             const file = document.getElementById("pImage").files[0];
 
             let imageUrl = "";
@@ -232,6 +246,8 @@
                 origin, 
                 price: Number(price), 
                 unit, 
+                description,
+                quantity: Number(quantity),
                 image: imageUrl 
             };
 
@@ -299,8 +315,18 @@
                 const { value: formValues } = await Swal.fire({
                     title: 'Editar Producto',
                     html: `
-                        <input id="swal-input-name" class="swal2-input" placeholder="Nombre del producto" value="${item.name}">
-                        <input id="swal-input-price" type="number" step="0.01" class="swal2-input" placeholder="Precio" value="${item.price}">
+                        <div style="text-align: left; margin-bottom: 15px; padding: 0 10px;">
+                            <label for="swal-input-name" style="font-size: 14px; font-weight: bold; display: block; margin-bottom: 5px;">Nombre del producto</label>
+                            <input id="swal-input-name" class="swal2-input" style="margin: 0; width: 100%; box-sizing: border-box;" placeholder="Nombre" value="${item.name}">
+                        </div>
+                        <div style="text-align: left; margin-bottom: 15px; padding: 0 10px;">
+                            <label for="swal-input-price" style="font-size: 14px; font-weight: bold; display: block; margin-bottom: 5px;">Precio</label>
+                            <input id="swal-input-price" type="number" step="0.01" class="swal2-input" style="margin: 0; width: 100%; box-sizing: border-box;" placeholder="Precio" value="${item.price}">
+                        </div>
+                        <div style="text-align: left; margin-bottom: 15px; padding: 0 10px;">
+                            <label for="swal-input-qty" style="font-size: 14px; font-weight: bold; display: block; margin-bottom: 5px;">Disponibilidad (Stock)</label>
+                            <input id="swal-input-qty" type="number" class="swal2-input" style="margin: 0; width: 100%; box-sizing: border-box;" placeholder="Disponibilidad" value="${item.quantity || 0}">
+                        </div>
                         <div style="margin-top: 15px; text-align: left; padding: 0 10px;">
                             <label style="font-size: 14px; font-weight: bold; display: block; margin-bottom: 8px;">Foto (opcional):</label>
                             <div style="display: flex; align-items: center; gap: 10px;">
@@ -320,13 +346,14 @@
                     preConfirm: () => {
                         const newName = document.getElementById('swal-input-name').value;
                         const newPrice = document.getElementById('swal-input-price').value;
+                        const newQty = document.getElementById('swal-input-qty').value;
                         const fileInput = document.getElementById('swal-input-image');
-                        return { newName, newPrice, file: fileInput.files[0] };
+                        return { newName, newPrice, newQty, file: fileInput.files[0] };
                     }
                 });
 
                 if (formValues) {
-                    const { newName, newPrice, file } = formValues;
+                    const { newName, newPrice, newQty, file } = formValues;
 
                     if (!newName || !newPrice) {
                         Swal.fire({ icon: 'warning', title: 'Atención', text: 'Nombre y precio son obligatorios', confirmButtonColor: '#4CAF50' });
@@ -335,7 +362,8 @@
 
                     let patchData = {
                         name: newName.trim(),
-                        price: Number(newPrice)
+                        price: Number(newPrice),
+                        quantity: Number(newQty)
                     };
 
                     if (file) {
