@@ -1,59 +1,47 @@
-# EcoMarketSprint1
+# Eco Market
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.6.
+<p align="center">
+   <img src="images/logo.JPG" alt="Logo EcoMarket" width="500">
+</p>
 
-## Development server
+## Integrantes del Grupo
+* Alejandro David Fariña Afonso
+* Daniel Peña Méndez
+* Jorge Suárez Báez
+* Nauzet Martel Rodríguez
+* Paola Viera Suárez
 
-To start a local development server, run:
+## Descripción del Proyecto
+EcoMarket surge como una respuesta tecnológica a la creciente demanda de un consumo responsable y la dificultad de los pequeños productores ecológicos para acceder a mercados digitales competitivos. Consiste en el desarrollo de un marketplace especializado que actúa como puente directo entre productores individuales (o pequeñas empresas) y clientes finales, eliminando intermediarios innecesarios.
 
-```bash
-ng serve
-```
+## Tecnologías Utilizadas
+El ecosistema técnico de EcoMarket se compone de:
+* **Frontend:** HTML, CSS y JavaScript nativo para la estructuración de las vistas, los estilos y la lógica del lado del cliente.
+* **Backend y Base de Datos (Simulado):** Un archivo JSON gestionado a través de `json-server` para simular la persistencia de datos.
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## Sprint 0
+Hemos dado por finalizado el Sprint 0, un ciclo inicial enfocado en asentar las bases técnicas del proyecto y entregar un primer núcleo funcional.
 
-## Code scaffolding
+### Objetivo del Sprint
+"Tener un entorno de desarrollo funcional y una interfaz gráfica operativa con el CRUD completo del catálogo de productos ecológicos y el sistema de autenticación de usuarios."
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+### Historias Completadas
+Durante este primer sprint se han completado con éxito las siguientes historias:
+* **HT1:** Configuración del entorno.
+* **HU1:** Registro de usuario.
+* **HU2:** Inicio de sesión.
+* **HU3:** Ver catálogo de productos.
+* **HU4:** Ver detalle de producto.
+* **HU7a:** Dar de alta un producto.
+* **HU8:** Modificar producto.
+* **HU9:** Eliminar el producto.
+* **HU12:** Perfil de usuario.
 
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+### Definition of Done (DoD) Validado
+Para garantizar una base sólida, hemos asegurado el cumplimiento de los siguientes requisitos de calidad:
+* El entorno de desarrollo está completamente configurado y operativo.
+* El repositorio está estructurado en GitHub con control de versiones activo y el código actualizado.
+* La base de datos está diseñada y conectada al sistema.
+* El sistema de autenticación (registro e login) funciona de forma correcta.
+* El catálogo de productos es visible, permite acceder a los detalles y cuenta con un CRUD funcional (crear, editar, eliminar).
+* Todas las funciones han sido probadas sin presentar errores críticos.
