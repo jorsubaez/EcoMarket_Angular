@@ -1,1 +1,202 @@
-<p>panel-productor works!</p>
+<main class="producer-page">
+  <section class="producer-shell">
+    <header class="producer-head">
+      <div>
+        <p class="eyebrow">EcoMarket</p>
+        <h1>Area de productor</h1>
+        <p class="lead">
+          Gestiona tus productos, actualiza stock y manten tu catalogo listo para la venta.
+        </p>
+      </div>
+
+      <div class="producer-user">
+        <span class="pill">Sesion: {{ sessionName }}</span>
+        <button class="btn btn-secondary" type="button" (click)="logout()">
+          Cerrar sesion
+        </button>
+      </div>
+    </header>
+
+    <section class="producer-card producer-card-form">
+      <div class="card-head">
+        <div>
+          <h2>{{ isEditing ? 'Editar producto' : 'Anadir producto' }}</h2>
+          <p>
+            {{ isEditing
+            ? 'Actualiza los datos del producto seleccionado.'
+            : 'Completa el formulario para publicar un nuevo producto.' }}
+          </p>
+        </div>
+
+        @if (isEditing) {
+          <button class="btn btn-ghost" type="button" (click)="cancelEdit()">
+            Cancelar edicion
+          </button>
+        }
+      </div>
+
+      @if (successMessage) {
+        <p class="feedback success">{{ successMessage }}</p>
+      }
+
+      @if (errorMessage) {
+        <p class="feedback error">{{ errorMessage }}</p>
+      }
+
+      <form class="producer-form" [formGroup]="productForm" (ngSubmit)="submitProduct()">
+        <label class="field">
+          <span>Nombre</span>
+          <input type="text" formControlName="name" placeholder="Ej. Tomates de rama" />
+          @if (productForm.controls.name.invalid && productForm.controls.name.touched) {
+            <small>Introduce un nombre valido.</small>
+          }
+        </label>
+
+        <label class="field">
+          <span>Origen</span>
+          <input type="text" formControlName="origin" placeholder="Ej. Gran Canaria" />
+          @if (productForm.controls.origin.invalid && productForm.controls.origin.touched) {
+            <small>El origen es obligatorio.</small>
+          }
+        </label>
+
+        <label class="field">
+          <span>Precio (EUR)</span>
+          <input type="number" min="0" step="0.01" formControlName="price" />
+          @if (productForm.controls.price.invalid && productForm.controls.price.touched) {
+            <small>Escribe un precio igual o superior a 0.</small>
+          }
+        </label>
+
+        <label class="field">
+          <span>Unidad</span>
+          <select formControlName="unit">
+            <option value="EUR/kg">EUR/kg</option>
+            <option value="EUR/unidad">EUR/unidad</option>
+            <option value="EUR/l">EUR/l</option>
+            <option value="EUR/pack">EUR/pack</option>
+          </select>
+        </label>
+
+        <label class="field full">
+          <span>Descripcion</span>
+          <textarea
+            rows="4"
+            formControlName="description"
+            placeholder="Cuenta que hace especial a este producto"
+          ></textarea>
+          @if (
+            productForm.controls.description.invalid &&
+            productForm.controls.description.touched
+            ) {
+            <small>La descripcion es obligatoria.</small>
+          }
+        </label>
+
+        <label class="field">
+          <span>Cantidad en stock</span>
+          <input type="number" min="0" formControlName="quantity" />
+          @if (productForm.controls.quantity.invalid && productForm.controls.quantity.touched) {
+            <small>Indica una cantidad valida.</small>
+          }
+        </label>
+
+        <div class="field">
+          <span>Imagen del producto</span>
+          <label class="file-picker" for="product-image">
+            <input
+              #imageInput
+              id="product-image"
+              type="file"
+              accept="image/*"
+              (change)="onImageSelected($event)"
+            />
+            <span class="btn btn-secondary">Seleccionar imagen</span>
+            <strong>{{ selectedFileName }}</strong>
+          </label>
+          <small>Opcional. Si no subes una imagen, se mostrara un placeholder.</small>
+        </div>
+
+        <div class="actions">
+          <button class="btn btn-primary" type="submit" [disabled]="submitting">
+            {{ submitting ? 'Guardando...' : (isEditing ? 'Guardar cambios' : 'Anadir producto') }}
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <section class="producer-card">
+      <div class="table-head">
+        <div>
+          <h2>Mis productos en venta</h2>
+          <p>Consulta tu catalogo actual y gestiona cada publicacion.</p>
+        </div>
+
+        <label class="search-box">
+          <span>Buscar</span>
+          <input
+            #searchBox
+            type="search"
+            placeholder="Buscar por nombre"
+            (input)="updateSearch(searchBox.value)"
+          />
+        </label>
+      </div>
+
+      @if (loading) {
+        <p class="state-message">Cargando productos...</p>
+      } @else if (accessDenied) {
+        <p class="state-message">Necesitas iniciar sesion como productor para ver este panel.</p>
+      } @else if (!filteredProducts.length) {
+        <p class="state-message">Aun no tienes productos que coincidan con la busqueda.</p>
+      } @else {
+        <div class="table-wrap">
+          <table class="producer-table">
+            <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Origen</th>
+              <th>Precio</th>
+              <th>Disponibilidad</th>
+              <th>Acciones</th>
+            </tr>
+            </thead>
+            <tbody>
+              @for (product of filteredProducts; track product.id ?? product.name) {
+                <tr>
+                  <td class="td-name">
+                    <div class="row-main">
+                      <img
+                        class="thumb"
+                        [src]="productImage(product)"
+                        [alt]="'Imagen de ' + product.name"
+                      />
+                      <div>
+                        <strong>{{ product.name }}</strong>
+                        <p class="muted">{{ product.description }}</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td>{{ product.origin }}</td>
+                  <td>
+                    <strong>{{ formatPrice(product.price) }}</strong>
+                    <span class="muted">{{ product.unit }}</span>
+                  </td>
+                  <td>{{ product.quantity }}</td>
+                  <td class="td-actions">
+                    <button class="btn-mini btn-edit" type="button" (click)="editProduct(product)">
+                      Editar
+                    </button>
+                    <button class="btn-mini btn-danger" type="button" (click)="deleteProduct(product)">
+                      Eliminar
+                    </button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </section>
+  </section>
+</main>
