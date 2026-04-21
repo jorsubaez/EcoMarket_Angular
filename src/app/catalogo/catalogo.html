@@ -1,1 +1,50 @@
-<p>catalogo works!</p>
+<div class="catalogo-container">
+  <div class="catalogo-header">
+    <h1 class="page-title">Catálogo de productos</h1>
+    <p class="subtitle">Frutas, verduras, miel, huevos y otros productos ecológicos de productores locales.</p>
+  </div>
+
+  <hr class="divider">
+
+  <div class="productos-grid">
+    @for (producto of productos; track producto.id) {
+      <div class="producto-card">
+
+        <div class="img-container">
+          <img [src]="producto.imagenUrl" [alt]="producto.nombre" class="producto-img">
+
+          @if (producto.tieneEcoSello) {
+            <img src="assets/ecosello.png" alt="EcoSello" class="ecosello-badge">
+          }
+        </div>
+
+        <div class="producto-info">
+          <h3 class="producto-nombre">{{ producto.nombre }}</h3>
+          <p class="producto-detalle">Origen: {{ producto.origen }}</p>
+          <p class="producto-detalle">Productor: {{ producto.productor }}</p>
+
+          <div class="precio-stock-container">
+            <span class="precio">{{ producto.precio | number:'1.2-2' }} €/{{ producto.unidad }}</span>
+            <span class="stock">Disp: {{ producto.disponibilidad }}</span>
+          </div>
+
+          <div class="acciones-container">
+            <input
+              type="number"
+              class="input-cantidad"
+              value="1"
+              min="1"
+              [max]="producto.disponibilidad"
+              #cantidadRef>
+            <button class="btn-anadir" (click)="agregarAlCarrito(producto, cantidadRef.value)">
+              Añadir carrito
+            </button>
+          </div>
+        </div>
+
+      </div>
+    } @empty {
+      <p class="no-productos">No hay productos disponibles en este momento.</p>
+    }
+  </div>
+</div>

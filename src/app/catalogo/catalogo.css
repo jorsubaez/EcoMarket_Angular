@@ -1,0 +1,166 @@
+.catalogo-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: inherit;
+  color: #333;
+}
+
+.catalogo-header {
+  margin-bottom: 1.5rem;
+}
+
+.page-title {
+  color: #2a7a38;
+  font-size: 2.2rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  margin-top: 0;
+}
+
+.subtitle {
+  color: #555;
+  font-size: 1rem;
+  margin-top: 0;
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid #e0e0e0;
+  margin-bottom: 2rem;
+}
+
+/* Grid adaptable */
+.productos-grid {
+  display: grid;
+  /* Crea columnas de mínimo 250px que se expanden para llenar el espacio */
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Tarjeta de Producto */
+.producto-card {
+  background-color: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+  border: 1px solid #f0f0f0;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.producto-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+}
+
+/* Contenedor de Imagen */
+.img-container {
+  background-color: #f7f9f7; /* Color de fondo suave simulando el mockup */
+  height: 200px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.producto-img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.ecosello-badge {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  width: 60px; /* Ajusta según el tamaño de tu logo EcoSello */
+  height: auto;
+}
+
+/* Información del Producto */
+.producto-info {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.producto-nombre {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #222;
+  margin: 0 0 0.5rem 0;
+}
+
+.producto-detalle {
+  font-size: 0.85rem;
+  color: #666;
+  margin: 0 0 0.3rem 0;
+}
+
+/* Precio y Stock */
+.precio-stock-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.precio {
+  font-weight: 800;
+  font-size: 1rem;
+  color: #444;
+}
+
+.stock {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+/* Acciones (Input y Botón) */
+.acciones-container {
+  display: flex;
+  gap: 0.8rem;
+  margin-top: auto; /* Empuja los controles hacia abajo si la tarjeta crece */
+}
+
+.input-cantidad {
+  width: 60px;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  text-align: center;
+  font-size: 1rem;
+  font-family: inherit;
+}
+
+.input-cantidad:focus {
+  outline: none;
+  border-color: #2a7a38;
+}
+
+.btn-anadir {
+  flex-grow: 1;
+  background-color: #2a7a38;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.btn-anadir:hover {
+  background-color: #1e5a28;
+}
+
+.no-productos {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 3rem;
+  color: #666;
+}
