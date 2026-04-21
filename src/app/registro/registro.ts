@@ -1,9 +1,18 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-registro',
-  imports: [],
+  standalone: true,
+  imports: [CommonModule, RouterLink],
   templateUrl: './registro.html',
-  styleUrl: './registro.css',
+  styleUrl: './registro.css'
 })
-export class Registro {}
+export class RegistroComponent {
+  passwordVisible = false;
+
+  togglePassword() {
+    this.passwordVisible = !this.passwordVisible;
+  }
+}
