@@ -12,6 +12,7 @@ export interface Producto {
   disponibilidad: number;
   imagenUrl: string;
   tieneEcoSello: boolean;
+  descripcion?: string;
 }
 
 @Component({
@@ -34,6 +35,7 @@ export class Catalogo {
       disponibilidad: 100,
       imagenUrl: 'assets/images/tomate.png', // Ajusta esta ruta a tus imágenes reales
       tieneEcoSello: true,
+      descripcion: 'Deliciosos tomates cultivados de forma 100% ecológica, sin pesticidas ni químicos artificiales. Madurados al sol, son ideales para ensaladas, gazpachos y salsas caseras.',
     },
     {
       id: 2,
@@ -45,6 +47,7 @@ export class Catalogo {
       disponibilidad: 150,
       imagenUrl: 'assets/images/naranja.png',
       tieneEcoSello: true,
+      descripcion: 'Naranjas dulces y jugosas, ricas en vitamina C. Cultivadas localmente y recolectadas en su punto óptimo de maduración para garantizar el mejor sabor.',
     },
     {
       id: 3,
@@ -56,6 +59,7 @@ export class Catalogo {
       disponibilidad: 200,
       imagenUrl: 'assets/images/platano.png',
       tieneEcoSello: true,
+      descripcion: 'Plátanos de Canarias con denominación de origen. Sabor intenso y textura perfecta. Ideal como snack saludable lleno de energía.',
     },
     {
       id: 4,
@@ -67,12 +71,26 @@ export class Catalogo {
       disponibilidad: 120,
       imagenUrl: 'assets/images/lechuga.png',
       tieneEcoSello: true,
+      descripcion: 'Lechugas orgánicas frescas y crujientes, cultivadas sin químicos. La base perfecta para cualquier ensalada saludable.',
     },
   ];
+
+  selectedProducto: Producto | null = null;
+
+  abrirModal(producto: Producto) {
+    this.selectedProducto = producto;
+    document.body.style.overflow = 'hidden'; // Evita el scroll del fondo
+  }
+
+  cerrarModal() {
+    this.selectedProducto = null;
+    document.body.style.overflow = 'auto';
+  }
 
   agregarAlCarrito(producto: Producto, cantidadInput: string) {
     const cantidad = parseInt(cantidadInput, 10) || 1;
     console.log(`Se enviará a Django: Añadir ${cantidad} de ${producto.nombre} al carrito`);
-    // Aquí irá la lógica para el servicio del carrito
+    alert(`Se han añadido ${cantidad} de ${producto.nombre} al carrito.`);
+    this.cerrarModal();
   }
 }

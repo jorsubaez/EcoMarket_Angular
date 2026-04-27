@@ -16,12 +16,22 @@ export class Contacto {
     mensaje: new FormControl('', Validators.required),
   });
 
+  successMessage = '';
+
   onSubmit() {
     if (this.contactoForm.valid) {
       console.log('Formulario listo para enviar a Django:', this.contactoForm.value);
       // Cuando tengas el servicio del backend, lo llamarás aquí.
-      // Por ahora, reseteamos el formulario al enviarlo:
+      
+      this.successMessage = '¡Formulario enviado correctamente! Nos pondremos en contacto contigo pronto.';
+      
+      // Reseteamos el formulario al enviarlo:
       this.contactoForm.reset({ motivo: 'Información general' });
+      
+      // Ocultar el mensaje después de 4 segundos
+      setTimeout(() => {
+        this.successMessage = '';
+      }, 4000);
     }
   }
 }

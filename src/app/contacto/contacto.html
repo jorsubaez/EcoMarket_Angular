@@ -9,6 +9,12 @@
         en colaborar como productor, rellena el formulario y nos pondremos en contacto contigo.
       </p>
 
+      @if (successMessage) {
+        <div class="feedback-animated success">
+          {{ successMessage }}
+        </div>
+      }
+
       <form [formGroup]="contactoForm" (ngSubmit)="onSubmit()">
         <div class="form-row">
           <div class="form-group">

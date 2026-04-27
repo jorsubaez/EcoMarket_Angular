@@ -44,6 +44,7 @@
   bottom: 1.5rem;
   right: 1.5rem;
   width: 70px;
+  mix-blend-mode: multiply;
 }
 
 /* Sección de Información */

@@ -8,13 +8,13 @@
 
   <div class="productos-grid">
     @for (producto of productos; track producto.id) {
-      <div class="producto-card">
+      <div class="producto-card" (click)="abrirModal(producto)" tabindex="0" role="button">
 
         <div class="img-container">
           <img [src]="producto.imagenUrl" [alt]="producto.nombre" class="producto-img">
 
           @if (producto.tieneEcoSello) {
-            <img src="assets/ecosello.png" alt="EcoSello" class="ecosello-badge">
+            <img src="assets/images/sello-eco.png" alt="EcoSello" class="ecosello-badge">
           }
         </div>
 
@@ -27,16 +27,15 @@
             <span class="precio">{{ producto.precio | number:'1.2-2' }} €/{{ producto.unidad }}</span>
             <span class="stock">Disp: {{ producto.disponibilidad }}</span>
           </div>
-
-          <div class="acciones-container">
+          <div class="acciones-container" (click)="$event.stopPropagation()">
             <input
               type="number"
               class="input-cantidad"
               value="1"
               min="1"
               [max]="producto.disponibilidad"
-              #cantidadRef>
-            <button class="btn-anadir" (click)="agregarAlCarrito(producto, cantidadRef.value)">
+              #cantidadRefCard>
+            <button class="btn-anadir" (click)="agregarAlCarrito(producto, cantidadRefCard.value)">
               Añadir carrito
             </button>
           </div>
@@ -47,4 +46,47 @@
       <p class="no-productos">No hay productos disponibles en este momento.</p>
     }
   </div>
+
+  @if (selectedProducto) {
+    <div class="modal-overlay" (click)="cerrarModal()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <button class="close-btn" (click)="cerrarModal()">&times;</button>
+        
+        <div class="modal-body">
+          <div class="modal-img-container">
+            <img [src]="selectedProducto.imagenUrl" [alt]="selectedProducto.nombre" class="modal-img">
+            @if (selectedProducto.tieneEcoSello) {
+              <img src="assets/images/sello-eco.png" alt="EcoSello" class="modal-ecosello">
+            }
+          </div>
+          
+          <div class="modal-info">
+            <h2 class="modal-title">{{ selectedProducto.nombre }}</h2>
+            <p class="modal-origen"><strong>Origen:</strong> {{ selectedProducto.origen }}</p>
+            <p class="modal-productor"><strong>Productor:</strong> {{ selectedProducto.productor }}</p>
+            
+            <p class="modal-desc">{{ selectedProducto.descripcion }}</p>
+            
+            <div class="modal-price-stock">
+              <span class="modal-precio">{{ selectedProducto.precio | number:'1.2-2' }} €/{{ selectedProducto.unidad }}</span>
+              <span class="modal-stock">Disponibilidad: {{ selectedProducto.disponibilidad }}</span>
+            </div>
+            
+            <div class="acciones-container modal-acciones">
+              <input
+                type="number"
+                class="input-cantidad"
+                value="1"
+                min="1"
+                [max]="selectedProducto.disponibilidad"
+                #cantidadRef>
+              <button class="btn-anadir" (click)="agregarAlCarrito(selectedProducto, cantidadRef.value)">
+                Añadir al carrito
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
 </div>

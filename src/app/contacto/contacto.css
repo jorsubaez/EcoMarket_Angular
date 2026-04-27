@@ -150,3 +150,31 @@ input:focus, select:focus, textarea:focus {
     gap: 1.5rem;
   }
 }
+
+/* Animación del mensaje de éxito */
+.feedback-animated {
+  border-radius: 12px;
+  padding: 1rem 1.5rem;
+  margin-bottom: 2rem;
+  font-weight: 600;
+  font-size: 1rem;
+  text-align: center;
+  animation: slideDownFadeIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.feedback-animated.success {
+  background-color: rgba(47, 125, 50, 0.12);
+  color: #245d29;
+  border: 1px solid rgba(47, 125, 50, 0.2);
+}
+
+@keyframes slideDownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
