@@ -32,7 +32,7 @@ export class Catalogo {
       precio: 4.0,
       unidad: 'kg',
       disponibilidad: 100,
-      imagenUrl: 'assets/tomates.png', // Ajusta esta ruta a tus imágenes reales
+      imagenUrl: 'assets/images/tomate.png', // Ajusta esta ruta a tus imágenes reales
       tieneEcoSello: true,
     },
     {
@@ -43,7 +43,7 @@ export class Catalogo {
       precio: 2.5,
       unidad: 'kg',
       disponibilidad: 150,
-      imagenUrl: 'assets/naranjas.png',
+      imagenUrl: 'assets/images/naranja.png',
       tieneEcoSello: true,
     },
     {
@@ -54,18 +54,18 @@ export class Catalogo {
       precio: 1.8,
       unidad: 'kg',
       disponibilidad: 200,
-      imagenUrl: 'assets/platanos.png',
+      imagenUrl: 'assets/images/platano.png',
       tieneEcoSello: true,
     },
     {
       id: 4,
-      nombre: 'Zanahorias orgánicas',
+      nombre: 'Lechugas orgánicas',
       origen: 'Galicia',
       productor: 'Carlos Agricultor',
       precio: 1.5,
       unidad: 'pack',
       disponibilidad: 120,
-      imagenUrl: 'assets/zanahorias.png',
+      imagenUrl: 'assets/images/lechuga.png',
       tieneEcoSello: true,
     },
   ];

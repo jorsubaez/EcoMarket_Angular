@@ -47,7 +47,7 @@ export class Detalle implements OnInit {
         precio: 4.0,
         unidad: 'kg',
         disponibilidad: 100,
-        imagenUrl: 'assets/tomates.png',
+        imagenUrl: 'assets/images/tomate.png',
         tieneEcoSello: true,
         descripcion:
           'Deliciosos tomates cultivados de forma 100% ecológica, sin pesticidas ni químicos artificiales. Madurados al sol, son ideales para ensaladas, gazpachos y salsas caseras. Al comprar este producto apoyas directamente a la agricultura local.',
