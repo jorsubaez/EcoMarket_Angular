@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Crear cuenta - EcoMarket</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+          rel="stylesheet">
+
+    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="stylesheet" href="css/auth.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+
+<body>
+<div id="header-placeholder"></div>
+
+<main class="auth-page">
+    <section class="auth-card">
+        <header class="auth-header">
+            <h1>Crear cuenta</h1>
+            <p>Regístrate en EcoMarket y empieza a comprar productos ecológicos.</p>
+        </header>
+
+        <form class="auth-form" action="#" method="post" autocomplete="on">
+            <div class="grid-2">
+                <div class="field">
+                    <label for="name">Nombre</label>
+                    <div class="input-wrap">
+                        <i class="fa-regular fa-user"></i>
+                        <input
+                                id="name"
+                                name="name"
+                                type="text"
+                                required
+                        />
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label for="surname">Apellidos</label>
+                    <div class="input-wrap">
+                        <i class="fa-regular fa-id-card"></i>
+                        <input
+                                id="surname"
+                                name="surname"
+                                type="text"
+                                required
+                        />
+                    </div>
+                </div>
+            </div>
+
+            <div class="field" style="margin-bottom: 15px;">
+                <label for="email">Email</label>
+                <div class="input-wrap">
+                    <i class="fa-regular fa-envelope"></i>
+                    <input
+                            id="email"
+                            name="email"
+                            type="email"
+                            inputmode="email"
+                            placeholder="tuemail@ejemplo.com"
+                            required
+                    />
+                </div>
+            </div>
+
+            <!-- TELÉFONO -->
+            <label style="font-weight: 700; font-size: 0.95rem; margin-bottom: 6px; display: block; color: var(--dark-grey);">Teléfono</label>
+            <div class="grid-2" style="grid-template-columns: 100px 1fr; margin-bottom: 15px; align-items: start;">
+                <div class="field" style="margin: 0;">
+                    <div class="input-wrap" style="padding: 0;">
+                        <select id="countryPrefix" style="width: 100%; border: none; background: transparent; outline: none; padding: 12px 10px; font-family: inherit; font-size: 0.95rem; cursor: pointer;">
+                            <option value="+34" data-max="9">🇪🇸 +34</option>
+                            <option value="+1" data-max="10">🇺🇸 +1</option>
+                            <option value="+44" data-max="10">🇬🇧 +44</option>
+                            <option value="+33" data-max="9">🇫🇷 +33</option>
+                            <option value="+49" data-max="11">🇩🇪 +49</option>
+                            <option value="+39" data-max="10">🇮🇹 +39</option>
+                            <option value="+351" data-max="9">🇵🇹 +351</option>
+                            <option value="+52" data-max="10">🇲🇽 +52</option>
+                            <option value="+54" data-max="10">🇦🇷 +54</option>
+                            <option value="+57" data-max="10">🇨🇴 +57</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="field" style="margin: 0;">
+                    <div class="input-wrap">
+                        <i class="fa-solid fa-phone"></i>
+                        <input id="phoneBody" type="number" placeholder="Nº de teléfono" inputmode="numeric" required />
+                    </div>
+                </div>
+            </div>
+
+            <!-- DIRECCIÓN -->
+            <label style="font-weight: 700; font-size: 0.95rem; margin-bottom: 6px; display: block; color: var(--dark-grey);">Dirección</label>
+            <div class="grid-2" style="grid-template-columns: 140px 1fr; margin-bottom: 10px; align-items: start;">
+                <div class="field" style="margin: 0;">
+                    <div class="input-wrap" style="padding: 0;">
+                        <select id="streetType" style="width: 100%; border: none; background: transparent; outline: none; padding: 12px 14px; font-family: inherit; font-size: 0.95rem; cursor: pointer;">
+                            <option value="Calle">Calle</option>
+                            <option value="Avenida">Avenida</option>
+                            <option value="Paseo">Paseo</option>
+                            <option value="Carretera">Carretera</option>
+                            <option value="Plaza">Plaza</option>
+                            <option value="Urbanización">Urbanización</option>
+                            <option value="Camino">Camino</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="field" style="margin: 0;">
+                    <div class="input-wrap">
+                        <i class="fa-solid fa-road"></i>
+                        <input id="streetName" type="text" placeholder="Nombre de la vía" required />
+                    </div>
+                </div>
+            </div>
+            <div class="grid-2" style="margin-bottom: 20px;">
+                <div class="field" style="margin: 0;">
+                    <div class="input-wrap">
+                        <i class="fa-solid fa-hashtag"></i>
+                        <input id="streetNumber" type="text" placeholder="Número" required />
+                    </div>
+                </div>
+                <div class="field" style="margin: 0;">
+                    <div class="input-wrap">
+                        <i class="fa-solid fa-door-open"></i>
+                        <input id="streetDoor" type="text" placeholder="Bajo, 4ºA..." />
+                    </div>
+                </div>
+            </div>
+
+
+
+            <div class="grid-2">
+                <div class="field">
+                    <label for="password">Contraseña</label>
+                    <div class="input-wrap">
+                        <i class="fa-solid fa-lock"></i>
+                        <input
+                                id="password"
+                                name="password"
+                                type="password"
+                                placeholder="Mínimo 6 caracteres"
+                                required
+                                minlength="6"
+                        />
+                        <button
+                                class="icon-btn"
+                                type="button"
+                                aria-label="Mostrar u ocultar contraseña"
+                                id="togglePassword"
+                        >
+                            <i class="fa-regular fa-eye"></i>
+                        </button>
+                    </div>
+                    <small class="hint">Usa al menos 6 caracteres (mejor si combinas letras y números).</small>
+                </div>
+
+                <div class="field">
+                    <label for="password2">Repite la contraseña</label>
+                    <div class="input-wrap">
+                        <i class="fa-solid fa-lock"></i>
+                        <input
+                                id="password2"
+                                name="password2"
+                                type="password"
+                                placeholder="Repite tu contraseña"
+                                required
+                                minlength="6"
+                        />
+                    </div>
+                </div>
+            </div>
+
+            <label class="checkbox checkbox-terms">
+                <input type="checkbox" required />
+                <span>Acepto los <a class="auth-link" href="#">Términos</a> y la <a class="auth-link"
+                                                                                    href="#">Política de privacidad</a>.</span>
+            </label>
+
+            <button class="btn btn-primary btn-block" type="submit">
+                Crear cuenta
+            </button>
+
+            <p class="auth-footer-text">
+                ¿Ya tienes cuenta?
+                <a class="auth-link" href="login.html">Inicia sesión</a>
+            </p>
+        </form>
+    </section>
+</main>
+
+<div id="footer-placeholder"></div>
+
+<script src="js/layout.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const btn = document.getElementById('togglePassword');
+        const input = document.getElementById('password');
+
+        if (btn && input) {
+            btn.addEventListener('click', () => {
+                const isPassword = input.type === 'password';
+                input.type = isPassword ? 'text' : 'password';
+                btn.innerHTML = isPassword
+                    ? '<i class="fa-regular fa-eye-slash"></i>'
+                    : '<i class="fa-regular fa-eye"></i>';
+            });
+        }
+
+        const registroForm = document.querySelector('.auth-form');
+        if (registroForm) {
+            registroForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const password = document.getElementById('password').value;
+                const passwordRe = document.getElementById('password2').value;
+
+                if (password !== passwordRe) {
+                    Swal.fire({ icon: 'error', title: 'Oops...', text: 'Las contraseñas no coinciden.', confirmButtonColor: '#4CAF50' });
+                    return;
+                }
+
+                const email = document.getElementById('email').value.trim();
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                
+                if (!emailRegex.test(email)) {
+                    Swal.fire({ icon: 'warning', title: 'Atención', text: 'El formato del correo electrónico no es válido.', confirmButtonColor: '#4CAF50' });
+                    return;
+                }
+
+                // Phone logic
+                const phoneSelect = document.getElementById('countryPrefix');
+                const selectedOption = phoneSelect.options[phoneSelect.selectedIndex];
+                const maxDigits = parseInt(selectedOption.getAttribute('data-max'));
+                const phoneBodyRaw = document.getElementById('phoneBody').value.trim();
+                
+                if (phoneBodyRaw.length > maxDigits) {
+                    Swal.fire({ icon: 'warning', title: 'Atención', text: `Para el prefijo ${selectedOption.value}, el número no puede tener más de ${maxDigits} dígitos.`, confirmButtonColor: '#4CAF50' });
+                    return;
+                }
+                
+                if (phoneBodyRaw.length < Math.max(7, maxDigits - 2)) {
+                    Swal.fire({ icon: 'warning', title: 'Atención', text: `El teléfono introducido parece demasiado corto para ${selectedOption.value}.`, confirmButtonColor: '#4CAF50' });
+                    return;
+                }
+
+                const finalPhone = `${selectedOption.value} ${phoneBodyRaw}`;
+
+                // Address logic
+                const sType = document.getElementById('streetType').value;
+                const sName = document.getElementById('streetName').value.trim();
+                const sNum = document.getElementById('streetNumber').value.trim();
+                const sDoor = document.getElementById('streetDoor').value.trim();
+                
+                const finalAddress = `${sType} ${sName}, ${sNum}${sDoor ? ', ' + sDoor : ''}`;
+
+                const nuevoUsuario = {
+                    nombre: document.getElementById('name').value.trim() + " " + document.getElementById('surname').value.trim(),
+                    email: email,
+                    password: password,
+                    rol: 'cliente',
+                    telefono: finalPhone,
+                    direccion: finalAddress
+                };
+
+                try {
+                    // Validar si el email existe
+                    const checkRes = await fetch(`http://localhost:3000/usuarios?email=${nuevoUsuario.email}`);
+                    const checkData = await checkRes.json();
+                    
+                    if (checkData.length > 0) {
+                        Swal.fire({ icon: 'warning', title: 'Atención', text: 'Ese email ya está registrado.', confirmButtonColor: '#4CAF50' });
+                        return;
+                    }
+
+                    // Enviar al servidor local usando POST
+                    const response = await fetch('http://localhost:3000/usuarios', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(nuevoUsuario)
+                    });
+
+                    if (response.ok) {
+                        await Swal.fire({ icon: 'success', title: '¡Éxito!', text: 'Cuenta creada correctamente.', confirmButtonColor: '#4CAF50' });
+                        window.location.replace('login.html');
+                    } else {
+                        Swal.fire({ icon: 'error', title: 'Error', text: 'Problema al crear la cuenta. Revisa la consola o intenta nuevamente.', confirmButtonColor: '#4CAF50' });
+                    }
+                } catch(error) {
+                    console.error("Error contactando al servidor JSON:", error);
+                    Swal.fire({ icon: 'error', title: 'Error de red', text: 'No se pudo conectar al servidor json-server (¿está encendido?).', confirmButtonColor: '#4CAF50' });
+                }
+            });
+        }
+    });
+</script>
+
+</body>
+
+</html>
