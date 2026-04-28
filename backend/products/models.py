@@ -16,3 +16,14 @@ class Producto(models.Model):
 
     def __str__(self):
         return f"{self.name} - {self.origin}"
+
+class CartItem(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='cart_items')
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    cantidad = models.PositiveIntegerField(default=1)
+
+    class Meta:
+        unique_together = ('user', 'producto')
+
+    def __str__(self):
+        return f"{self.cantidad} x {self.producto.name} ({self.user.username})"

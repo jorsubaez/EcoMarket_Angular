@@ -5,13 +5,13 @@
             <p>Regístrate en EcoMarket y empieza a comprar productos ecológicos.</p>
         </header>
 
-        <form class="auth-form" action="#" method="post" autocomplete="on">
+        <form class="auth-form" [formGroup]="registerForm" (ngSubmit)="onSubmit()" autocomplete="on">
             <div class="grid-2">
                 <div class="field">
                     <label for="name">Nombre</label>
                     <div class="input-wrap">
                         <i class="fa-regular fa-user"></i>
-                        <input id="name" name="name" type="text" required />
+                        <input id="name" formControlName="first_name" type="text" required />
                     </div>
                 </div>
 
@@ -19,7 +19,7 @@
                     <label for="surname">Apellidos</label>
                     <div class="input-wrap">
                         <i class="fa-regular fa-id-card"></i>
-                        <input id="surname" name="surname" type="text" required />
+                        <input id="surname" formControlName="last_name" type="text" required />
                     </div>
                 </div>
             </div>
@@ -28,7 +28,7 @@
                 <label for="email">Email</label>
                 <div class="input-wrap">
                     <i class="fa-regular fa-envelope"></i>
-                    <input id="email" name="email" type="email" inputmode="email" placeholder="tuemail@ejemplo.com" required />
+                    <input id="email" formControlName="email" type="email" inputmode="email" placeholder="tuemail@ejemplo.com" required />
                 </div>
             </div>
 
@@ -37,7 +37,7 @@
                     <label for="password">Contraseña</label>
                     <div class="input-wrap">
                         <i class="fa-solid fa-lock"></i>
-                        <input id="password" name="password" [type]="passwordVisible ? 'text' : 'password'" placeholder="Mínimo 6 caracteres" required minlength="6" />
+                        <input id="password" formControlName="password" [type]="passwordVisible ? 'text' : 'password'" placeholder="Mínimo 6 caracteres" required minlength="6" />
                         <button class="icon-btn" type="button" aria-label="Mostrar u ocultar contraseña" (click)="togglePassword()">
                             <i class="fa-regular" [ngClass]="passwordVisible ? 'fa-eye-slash' : 'fa-eye'"></i>
                         </button>
@@ -49,17 +49,23 @@
                     <label for="password2">Repite la contraseña</label>
                     <div class="input-wrap">
                         <i class="fa-solid fa-lock"></i>
-                        <input id="password2" name="password2" type="password" placeholder="Repite tu contraseña" required minlength="6" />
+                        <input id="password2" formControlName="passwordConfirm" type="password" placeholder="Repite tu contraseña" required minlength="6" />
                     </div>
                 </div>
             </div>
 
             <label class="checkbox checkbox-terms">
-                <input type="checkbox" required />
+                <input type="checkbox" formControlName="terms" required />
                 <span>Acepto los <a class="auth-link" href="#">Términos</a> y la <a class="auth-link" href="#">Política de privacidad</a>.</span>
             </label>
 
-            <button class="btn btn-primary btn-block" type="submit">Crear cuenta</button>
+            <div *ngIf="errorMessage" class="error-message" style="color: red; margin-bottom: 1rem;">
+                {{ errorMessage }}
+            </div>
+
+            <button class="btn btn-primary btn-block" type="submit" [disabled]="registerForm.invalid || submitting">
+                {{ submitting ? 'Creando cuenta...' : 'Crear cuenta' }}
+            </button>
 
             <p class="auth-footer-text">
                 ¿Ya tienes cuenta? <a class="auth-link" routerLink="/login">Inicia sesión</a>

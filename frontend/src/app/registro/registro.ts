@@ -1,18 +1,74 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { RouterLink, Router } from '@angular/router';
+import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-registro',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, ReactiveFormsModule],
   templateUrl: './registro.html',
   styleUrl: './registro.css'
 })
 export class RegistroComponent {
   passwordVisible = false;
+  submitting = false;
+  errorMessage = '';
+
+  private fb = inject(FormBuilder);
+
+  registerForm = this.fb.group({
+    first_name: ['', Validators.required],
+    last_name: ['', Validators.required],
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', [Validators.required, Validators.minLength(6)]],
+    passwordConfirm: ['', Validators.required],
+    terms: [false, Validators.requiredTrue]
+  });
+
+  constructor(private authService: AuthService, private router: Router) {}
 
   togglePassword() {
     this.passwordVisible = !this.passwordVisible;
+  }
+
+  onSubmit() {
+    if (this.registerForm.invalid) {
+      return;
+    }
+
+    const { password, passwordConfirm } = this.registerForm.value;
+    if (password !== passwordConfirm) {
+      this.errorMessage = 'Las contraseñas no coinciden.';
+      return;
+    }
+
+    this.submitting = true;
+    this.errorMessage = '';
+
+    const userData = {
+      ...this.registerForm.value,
+      rol: 'CLIENTE' // Roles as requested
+    };
+
+    this.authService.register(userData).subscribe({
+      next: () => {
+        // Automatically login after register
+        this.authService.login({ email: userData.email, password: userData.password }).subscribe({
+          next: () => {
+            this.router.navigate(['/catalogo']);
+          },
+          error: () => {
+            this.router.navigate(['/login']);
+          }
+        });
+      },
+      error: (err) => {
+        this.submitting = false;
+        this.errorMessage = 'Hubo un error al registrar tu cuenta. Puede que el email ya esté en uso.';
+        console.error(err);
+      }
+    });
   }
 }

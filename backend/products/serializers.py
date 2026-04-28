@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Producto
+from .models import Producto, CartItem
 
 class ProductoSerializer(serializers.ModelSerializer):
     ownerId = serializers.ReadOnlyField(source='owner.id')
@@ -28,3 +28,11 @@ class ProductoSerializer(serializers.ModelSerializer):
         if value < 0:
             raise serializers.ValidationError("La cantidad no puede ser negativa.")
         return value
+
+class CartItemSerializer(serializers.ModelSerializer):
+    producto_detalles = ProductoSerializer(source='producto', read_only=True)
+
+    class Meta:
+        model = CartItem
+        fields = ['id', 'user', 'producto', 'cantidad', 'producto_detalles']
+        read_only_fields = ['user']

@@ -3,6 +3,7 @@ import { Component, ElementRef, OnInit, ViewChild, inject } from '@angular/core'
 import { HttpClient } from '@angular/common/http';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-panel-productor',
@@ -15,7 +16,8 @@ export class PanelProductor implements OnInit {
 
   private readonly fb = inject(FormBuilder);
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = 'http://localhost:3000/productos';
+  private readonly authService = inject(AuthService);
+  private readonly apiUrl = 'http://localhost:8000/api/productos/';
   private readonly placeholderImage =
     'data:image/svg+xml;utf8,' +
     encodeURIComponent(`
@@ -51,9 +53,9 @@ export class PanelProductor implements OnInit {
   private ownerId: number | string | null = null;
 
   async ngOnInit(): Promise<void> {
-    const session = this.getSession();
+    const session = this.authService.currentUser;
 
-    if (!session || session.rol !== 'productor') {
+    if (!session || session.rol !== 'PRODUCTOR') {
       this.accessDenied = true;
       this.loading = false;
       return;
@@ -111,7 +113,7 @@ export class PanelProductor implements OnInit {
     try {
       if (this.editingProductId !== null) {
         const updated = await firstValueFrom(
-          this.http.patch<Product>(`${this.apiUrl}/${this.editingProductId}`, payload),
+          this.http.patch<Product>(`${this.apiUrl}${this.editingProductId}/`, payload),
         );
 
         this.products = this.products.map((product) =>
@@ -127,7 +129,7 @@ export class PanelProductor implements OnInit {
       this.resetForm();
     } catch {
       this.errorMessage =
-        'No se pudo guardar el producto. Comprueba que json-server este funcionando en http://localhost:3000.';
+        'No se pudo guardar el producto. Comprueba que el backend de Django este funcionando.';
     } finally {
       this.submitting = false;
     }
@@ -165,7 +167,7 @@ export class PanelProductor implements OnInit {
     this.clearMessages();
 
     try {
-      await firstValueFrom(this.http.delete<void>(`${this.apiUrl}/${product.id}`));
+      await firstValueFrom(this.http.delete<void>(`${this.apiUrl}${product.id}/`));
       this.products = this.products.filter((item) => String(item.id) !== String(product.id));
 
       if (String(this.editingProductId) === String(product.id)) {
@@ -198,11 +200,10 @@ export class PanelProductor implements OnInit {
   }
 
   protected logout(): void {
-    localStorage.removeItem('ecomarket_session');
+    this.authService.logout();
     this.accessDenied = true;
     this.products = [];
     this.clearMessages();
-    this.successMessage = 'Sesion cerrada. El guard y la redireccion los conectara Persona 3.';
   }
 
   protected formatPrice(value: number | string): string {
@@ -230,14 +231,7 @@ export class PanelProductor implements OnInit {
     return currentProduct?.image || '';
   }
 
-  private getSession(): Session | null {
-    try {
-      const raw = localStorage.getItem('ecomarket_session');
-      return raw ? (JSON.parse(raw) as Session) : null;
-    } catch {
-      return null;
-    }
-  }
+
 
   private async loadProducts(): Promise<void> {
     this.loading = true;

@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -14,48 +15,38 @@ export class LoginComponent {
   email = '';
   password = '';
   passwordVisible = false;
+  errorMessage = '';
+  submitting = false;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private authService: AuthService) {}
 
   togglePassword() {
     this.passwordVisible = !this.passwordVisible;
   }
 
-  async onSubmit() {
-    try {
-      const response = await fetch('http://localhost:3000/usuarios');
+  onSubmit() {
+    if (!this.email || !this.password) {
+      this.errorMessage = 'Por favor, rellena todos los campos.';
+      return;
+    }
 
-      if (!response.ok) {
-        throw new Error('No se pudo conectar con json-server');
-      }
+    this.submitting = true;
+    this.errorMessage = '';
 
-      const usuarios = await response.json();
-
-      const usuarioEncontrado = usuarios.find((usuario: any) =>
-        usuario.email === this.email && usuario.password === this.password
-      );
-
-      if (usuarioEncontrado) {
-        const sessionData = {
-          id: usuarioEncontrado.id,
-          name: usuarioEncontrado.nombre,
-          email: usuarioEncontrado.email,
-          rol: usuarioEncontrado.rol
-        };
-
-        localStorage.setItem("ecomarket_session", JSON.stringify(sessionData));
-
-        if (usuarioEncontrado.rol === "productor") {
+    this.authService.login({ email: this.email, password: this.password }).subscribe({
+      next: (response) => {
+        this.submitting = false;
+        if (response.user && response.user.rol === 'PRODUCTOR') {
           this.router.navigate(['/panel-productor']);
         } else {
           this.router.navigate(['/perfil']);
         }
-      } else {
-        alert("Email o contraseña incorrectos");
+      },
+      error: (err) => {
+        this.submitting = false;
+        this.errorMessage = 'Email o contraseña incorrectos.';
+        console.error("Error al iniciar sesión:", err);
       }
-    } catch (error) {
-      console.error("Error al conectar con json-server:", error);
-      alert("No se pudo iniciar sesión.");
-    }
+    });
   }
 }

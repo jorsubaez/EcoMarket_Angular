@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-contacto',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './contacto.html',
   styleUrl: './contacto.css',
 })
@@ -17,21 +19,32 @@ export class Contacto {
   });
 
   successMessage = '';
+  errorMessage = '';
+  submitting = false;
+
+  constructor(private http: HttpClient) {}
 
   onSubmit() {
     if (this.contactoForm.valid) {
-      console.log('Formulario listo para enviar a Django:', this.contactoForm.value);
-      // Cuando tengas el servicio del backend, lo llamarás aquí.
-      
-      this.successMessage = '¡Formulario enviado correctamente! Nos pondremos en contacto contigo pronto.';
-      
-      // Reseteamos el formulario al enviarlo:
-      this.contactoForm.reset({ motivo: 'Información general' });
-      
-      // Ocultar el mensaje después de 4 segundos
-      setTimeout(() => {
-        this.successMessage = '';
-      }, 4000);
+      this.submitting = true;
+      this.errorMessage = '';
+      this.successMessage = '';
+
+      this.http.post('http://localhost:8000/api/users/contact/', this.contactoForm.value).subscribe({
+        next: () => {
+          this.submitting = false;
+          this.successMessage = '¡Formulario enviado correctamente! Nos pondremos en contacto contigo pronto.';
+          this.contactoForm.reset({ motivo: 'Información general' });
+          setTimeout(() => {
+            this.successMessage = '';
+          }, 4000);
+        },
+        error: (err) => {
+          this.submitting = false;
+          this.errorMessage = 'Hubo un error al enviar el mensaje. Por favor, inténtalo más tarde.';
+          console.error(err);
+        }
+      });
     }
   }
 }

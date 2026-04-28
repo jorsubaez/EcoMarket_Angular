@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { HttpClient} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-perfil',
@@ -13,7 +14,8 @@ import { firstValueFrom } from 'rxjs';
 export class Perfil implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = 'http://localhost:3000/usuarios';
+  private readonly authService = inject(AuthService);
+  private readonly apiUrl = 'http://localhost:8000/api/users/me/';
 
   protected loading = true;
   protected accessDenied = false;
@@ -47,7 +49,7 @@ export class Perfil implements OnInit {
   });
 
   async ngOnInit(): Promise<void> {
-    const session = this.getSession();
+    const session = this.authService.currentUser;
 
     if (!session) {
       this.accessDenied = true;
@@ -128,20 +130,19 @@ export class Perfil implements OnInit {
 
     try {
       const updatedUser = await firstValueFrom(
-        this.http.patch<UserProfile>(`${this.apiUrl}/${this.user.id}`, payload),
+        this.http.patch<any>(this.apiUrl, {
+          first_name: payload.nombre.split(' ')[0] || '',
+          last_name: payload.nombre.split(' ').slice(1).join(' ') || '',
+          email: payload.email
+          // Other fields are not in User model yet, but keeping payload structure
+        }),
       );
 
       this.user = {
         ...this.user,
-        ...updatedUser,
+        nombre: updatedUser.first_name + ' ' + updatedUser.last_name,
+        email: updatedUser.email
       };
-
-      this.writeSession({
-        id: this.user.id,
-        name: this.user.nombre,
-        email: this.user.email,
-        rol: this.user.rol,
-      });
 
       this.syncFormWithUser();
       this.editing = false;
@@ -158,10 +159,9 @@ export class Perfil implements OnInit {
     this.clearMessages();
 
     if (item === 'Cerrar sesion') {
-      localStorage.removeItem('ecomarket_session');
+      this.authService.logout();
       this.accessDenied = true;
       this.editing = false;
-      this.successMessage = 'Sesion cerrada. La redireccion real la conectara Persona 3.';
       return;
     }
 
@@ -174,12 +174,14 @@ export class Perfil implements OnInit {
 
     try {
       const remoteUser = await firstValueFrom(
-        this.http.get<UserProfile>(`${this.apiUrl}/${this.user.id}`),
+        this.http.get<any>(this.apiUrl),
       );
 
       this.user = {
         ...this.user,
-        ...remoteUser,
+        nombre: remoteUser.first_name ? remoteUser.first_name + ' ' + remoteUser.last_name : remoteUser.username,
+        email: remoteUser.email,
+        rol: remoteUser.rol
       };
       this.syncFormWithUser();
     } catch {
@@ -202,19 +204,6 @@ export class Perfil implements OnInit {
   private clearMessages(): void {
     this.successMessage = '';
     this.errorMessage = '';
-  }
-
-  private getSession(): Session | null {
-    try {
-      const raw = localStorage.getItem('ecomarket_session');
-      return raw ? (JSON.parse(raw) as Session) : null;
-    } catch {
-      return null;
-    }
-  }
-
-  private writeSession(session: Session): void {
-    localStorage.setItem('ecomarket_session', JSON.stringify(session));
   }
 }
 

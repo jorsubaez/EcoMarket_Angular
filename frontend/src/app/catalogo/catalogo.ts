@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 import { CartService } from '../services/cart.service';
 
 // Definimos la estructura de datos que esperamos de Django
@@ -23,62 +24,36 @@ export interface Producto {
   templateUrl: './catalogo.html',
   styleUrl: './catalogo.css',
 })
-export class Catalogo {
-  // Datos simulados basados en tu mockup para ir trabajando la vista
-  productos: Producto[] = [
-    {
-      id: 1,
-      nombre: 'Tomates',
-      origen: 'Gran Canaria',
-      productor: 'Ana Productora',
-      precio: 4.0,
-      unidad: 'kg',
-      disponibilidad: 100,
-      imagenUrl: 'assets/images/tomate.png', // Ajusta esta ruta a tus imágenes reales
-      tieneEcoSello: true,
-      descripcion: 'Deliciosos tomates cultivados de forma 100% ecológica, sin pesticidas ni químicos artificiales. Madurados al sol, son ideales para ensaladas, gazpachos y salsas caseras.',
-    },
-    {
-      id: 2,
-      nombre: 'Naranjas ecológicas',
-      origen: 'Gran Canaria',
-      productor: 'Ana Productora',
-      precio: 2.5,
-      unidad: 'kg',
-      disponibilidad: 150,
-      imagenUrl: 'assets/images/naranja.png',
-      tieneEcoSello: true,
-      descripcion: 'Naranjas dulces y jugosas, ricas en vitamina C. Cultivadas localmente y recolectadas en su punto óptimo de maduración para garantizar el mejor sabor.',
-    },
-    {
-      id: 3,
-      nombre: 'Plátanos ecológicos',
-      origen: 'Gran Canaria',
-      productor: 'Ana Productora',
-      precio: 1.8,
-      unidad: 'kg',
-      disponibilidad: 200,
-      imagenUrl: 'assets/images/platano.png',
-      tieneEcoSello: true,
-      descripcion: 'Plátanos de Canarias con denominación de origen. Sabor intenso y textura perfecta. Ideal como snack saludable lleno de energía.',
-    },
-    {
-      id: 4,
-      nombre: 'Lechugas orgánicas',
-      origen: 'Galicia',
-      productor: 'Carlos Agricultor',
-      precio: 1.5,
-      unidad: 'pack',
-      disponibilidad: 120,
-      imagenUrl: 'assets/images/lechuga.png',
-      tieneEcoSello: true,
-      descripcion: 'Lechugas orgánicas frescas y crujientes, cultivadas sin químicos. La base perfecta para cualquier ensalada saludable.',
-    },
-  ];
-
+export class Catalogo implements OnInit {
+  productos: Producto[] = [];
   selectedProducto: Producto | null = null;
+  loading = true;
 
-  constructor(private cartService: CartService) {}
+  constructor(private cartService: CartService, private http: HttpClient) {}
+
+  ngOnInit() {
+    this.http.get<any[]>('http://localhost:8000/api/productos/').subscribe({
+      next: (data) => {
+        this.productos = data.map(item => ({
+          id: item.id,
+          nombre: item.name,
+          origen: item.origin,
+          productor: item.ownerName || 'Productor Anónimo',
+          precio: parseFloat(item.price),
+          unidad: item.unit,
+          disponibilidad: item.quantity,
+          imagenUrl: item.image_url || item.image_url_legacy || 'assets/images/placeholder.png',
+          tieneEcoSello: true,
+          descripcion: item.description || ''
+        }));
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Error fetching products', err);
+        this.loading = false;
+      }
+    });
+  }
 
   abrirModal(producto: Producto) {
     this.selectedProducto = producto;

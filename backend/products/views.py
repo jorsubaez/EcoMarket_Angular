@@ -1,6 +1,6 @@
 from rest_framework import viewsets, permissions, filters
-from .models import Producto
-from .serializers import ProductoSerializer
+from .models import Producto, CartItem
+from .serializers import ProductoSerializer, CartItemSerializer
 from .permissions import IsOwnerOrReadOnly, IsProductor
 
 class ProductoViewSet(viewsets.ModelViewSet):
@@ -27,3 +27,13 @@ class ProductoViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         # Automatically assign the producer that makes the request as owner
         serializer.save(owner=self.request.user)
+
+class CartItemViewSet(viewsets.ModelViewSet):
+    serializer_class = CartItemSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return CartItem.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
