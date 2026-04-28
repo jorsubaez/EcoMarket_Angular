@@ -39,8 +39,8 @@
                 </span>
                 <span class="login-text">Iniciar sesión</span>
             </a>
-            <a class="cart-link cart-icon-only" href="carrito.html" aria-label="Ir al carrito">
-                <span class="cart-icon">
+            <a class="cart-link cart-icon-only" href="#" aria-label="Ir al carrito" (click)="toggleCartDrawer($event)">
+                <span class="cart-icon" [class.cart-bump]="bumpCart">
                     <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
                         stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="9" cy="21" r="1"></circle>
@@ -48,9 +48,56 @@
                         <path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"></path>
                     </svg>
                 </span>
-                <span class="cart-count">0</span>
+                <span class="cart-count">{{ cartCount }}</span>
             </a>
         </div>
 
     </div>
 </header>
+
+<!-- Overlay y Panel Lateral del Carrito -->
+<div class="cart-overlay" [class.active]="isCartDrawerOpen" (click)="toggleCartDrawer()"></div>
+
+<div class="cart-drawer" [class.active]="isCartDrawerOpen">
+    <div class="cart-header">
+        <h2>Tu Carrito</h2>
+        <button class="close-cart-btn" (click)="toggleCartDrawer()">&times;</button>
+    </div>
+
+    <div class="cart-items">
+        @if (cartItems.length === 0) {
+            <div class="empty-cart">
+                <p>Tu carrito está vacío.</p>
+                <p>¡Descubre productos locales y ecológicos!</p>
+            </div>
+        } @else {
+            @for (item of cartItems; track item.producto.id) {
+                <div class="cart-item">
+                    <img [src]="item.producto.imagenUrl" [alt]="item.producto.nombre" class="cart-item-img">
+                    <div class="cart-item-details">
+                        <h4 class="cart-item-title">{{ item.producto.nombre }}</h4>
+                        <div class="cart-item-price">{{ item.producto.precio | number:'1.2-2' }} €/{{ item.producto.unidad }}</div>
+                        <div class="cart-item-actions">
+                            <div class="quantity-controls">
+                                <button class="qty-btn" (click)="updateQuantity(item.producto.id, item.cantidad - 1)">-</button>
+                                <span class="qty-value">{{ item.cantidad }}</span>
+                                <button class="qty-btn" (click)="updateQuantity(item.producto.id, item.cantidad + 1)">+</button>
+                            </div>
+                            <button class="remove-btn" (click)="removeItem(item.producto.id)">Eliminar</button>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+
+    @if (cartItems.length > 0) {
+        <div class="cart-footer">
+            <div class="cart-total">
+                <span>Total:</span>
+                <span>{{ cartTotal | number:'1.2-2' }} €</span>
+            </div>
+            <button class="btn-checkout">Finalizar Compra</button>
+        </div>
+    }
+</div>

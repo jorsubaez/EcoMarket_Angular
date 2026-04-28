@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { CartService } from '../services/cart.service';
 
 // Definimos la estructura de datos que esperamos de Django
 export interface Producto {
@@ -77,6 +78,8 @@ export class Catalogo {
 
   selectedProducto: Producto | null = null;
 
+  constructor(private cartService: CartService) {}
+
   abrirModal(producto: Producto) {
     this.selectedProducto = producto;
     document.body.style.overflow = 'hidden'; // Evita el scroll del fondo
@@ -89,8 +92,8 @@ export class Catalogo {
 
   agregarAlCarrito(producto: Producto, cantidadInput: string) {
     const cantidad = parseInt(cantidadInput, 10) || 1;
-    console.log(`Se enviará a Django: Añadir ${cantidad} de ${producto.nombre} al carrito`);
-    alert(`Se han añadido ${cantidad} de ${producto.nombre} al carrito.`);
+    this.cartService.addToCart(producto, cantidad);
+    console.log(`Añadidos ${cantidad} de ${producto.nombre} al carrito mediante CartService`);
     this.cerrarModal();
   }
 }

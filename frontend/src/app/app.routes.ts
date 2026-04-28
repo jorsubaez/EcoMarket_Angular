@@ -11,11 +11,11 @@ import { Perfil } from './perfil/perfil';
 import { PanelProductor } from './panel-productor/panel-productor';
 
 export const routes: Routes = [
-  { path: '', component: Inicio }, // Página principal (vacía)
-  { path: 'catalogo', component: Catalogo }, // ecomarket.com/catalogo
-  { path: 'contacto', component: Contacto }, // ecomarket.com/contacto
-  { path: 'detalle', component: Detalle }, // ecomarket.com/detalle
-  { path: 'login', component: LoginComponent }, // Si escriben cualquier otra cosa, vuelve al inicio
+  { path: '', component: Inicio },
+  { path: 'catalogo', component: Catalogo },
+  { path: 'contacto', component: Contacto },
+  { path: 'detalle', component: Detalle },
+  { path: 'login', component: LoginComponent },
   { path: 'productores', component: Productores },
   { path: 'registro', component: RegistroComponent },
   { path: 'perfil', component: Perfil },
