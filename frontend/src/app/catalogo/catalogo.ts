@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
+import { ChangeDetectorRef } from '@angular/core';
 import { CartService } from '../services/cart.service';
+import { ProductService, ApiProduct } from '../services/product.service';
 
 // Definimos la estructura de datos que esperamos de Django
 export interface Producto {
@@ -29,30 +30,33 @@ export class Catalogo implements OnInit {
   selectedProducto: Producto | null = null;
   loading = true;
 
-  constructor(private cartService: CartService, private http: HttpClient) {}
+  constructor(
+    private cartService: CartService,
+    private productService: ProductService,
+    private cdr: ChangeDetectorRef
+  ) { }
 
   ngOnInit() {
-    this.http.get<any[]>('http://localhost:8000/api/productos/').subscribe({
-      next: (data) => {
-        this.productos = data.map(item => ({
-          id: item.id,
-          nombre: item.name,
-          origen: item.origin,
-          productor: item.ownerName || 'Productor Anónimo',
-          precio: parseFloat(item.price),
-          unidad: item.unit,
-          disponibilidad: item.quantity,
-          imagenUrl: item.image_url || item.image_url_legacy || 'assets/images/placeholder.png',
-          tieneEcoSello: true,
-          descripcion: item.description || ''
-        }));
-        this.loading = false;
-      },
-      error: (err) => {
-        console.error('Error fetching products', err);
-        this.loading = false;
-      }
+    // 1. Suscribirse a la caché instantánea
+    this.productService.products$.subscribe((data: ApiProduct[]) => {
+      this.productos = data.map(item => ({
+        id: item.id,
+        nombre: item.name,
+        origen: item.origin,
+        productor: item.ownerName || 'Productor Anónimo',
+        precio: typeof item.price === 'string' ? parseFloat(item.price) : item.price,
+        unidad: item.unit,
+        disponibilidad: item.quantity,
+        imagenUrl: item.image_url || item.image_url_legacy || 'assets/images/placeholder.png',
+        tieneEcoSello: true,
+        descripcion: item.description || ''
+      }));
+      this.loading = false;
+      this.cdr.detectChanges();
     });
+
+    // 2. Disparar recarga de fondo
+    this.productService.refreshProducts();
   }
 
   abrirModal(producto: Producto) {

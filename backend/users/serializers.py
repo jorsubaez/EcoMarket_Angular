@@ -6,10 +6,11 @@ User = get_user_model()
 
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
+    username = serializers.CharField(required=False)
 
     class Meta:
         model = User
-        fields = ('id', 'username', 'email', 'first_name', 'last_name', 'password', 'rol')
+        fields = ('id', 'username', 'email', 'first_name', 'last_name', 'password', 'rol', 'telefono', 'direccion')
         read_only_fields = ('id',)
 
     def create(self, validated_data):
@@ -32,7 +33,14 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['email'] = serializers.EmailField()
+        if 'username' in self.fields:
+            del self.fields['username']
+
     def validate(self, attrs):
+        attrs['username'] = attrs.get('email')
         data = super().validate(attrs)
         
         # Add custom claims

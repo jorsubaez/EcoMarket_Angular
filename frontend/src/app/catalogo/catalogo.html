@@ -8,85 +8,79 @@
 
   <div class="productos-grid">
     @for (producto of productos; track producto.id) {
-      <div class="producto-card" (click)="abrirModal(producto)" tabindex="0" role="button">
+    <div class="producto-card" (click)="abrirModal(producto)" tabindex="0" role="button">
 
-        <div class="img-container">
-          <img [src]="producto.imagenUrl" [alt]="producto.nombre" class="producto-img">
+      <div class="img-container">
+        <img [src]="producto.imagenUrl" [alt]="producto.nombre" class="producto-img">
 
-          @if (producto.tieneEcoSello) {
-            <img src="assets/images/sello-eco.png" alt="EcoSello" class="ecosello-badge">
-          }
-        </div>
-
-        <div class="producto-info">
-          <h3 class="producto-nombre">{{ producto.nombre }}</h3>
-          <p class="producto-detalle">Origen: {{ producto.origen }}</p>
-          <p class="producto-detalle">Productor: {{ producto.productor }}</p>
-
-          <div class="precio-stock-container">
-            <span class="precio">{{ producto.precio | number:'1.2-2' }} €/{{ producto.unidad }}</span>
-            <span class="stock">Disp: {{ producto.disponibilidad }}</span>
-          </div>
-          <div class="acciones-container" (click)="$event.stopPropagation()">
-            <input
-              type="number"
-              class="input-cantidad"
-              value="1"
-              min="1"
-              [max]="producto.disponibilidad"
-              #cantidadRefCard>
-            <button class="btn-anadir" (click)="agregarAlCarrito(producto, cantidadRefCard.value)">
-              Añadir carrito
-            </button>
-          </div>
-        </div>
-
+        @if (producto.tieneEcoSello) {
+        <img src="assets/images/sello-eco.png" alt="EcoSello" class="ecosello-badge">
+        }
       </div>
+
+      <div class="producto-info">
+        <h3 class="producto-nombre">{{ producto.nombre }}</h3>
+        <p class="producto-detalle">Origen: {{ producto.origen }}</p>
+        <p class="producto-detalle">Productor: {{ producto.productor }}</p>
+
+        <div class="precio-stock-container">
+          <span class="precio">{{ producto.precio | number:'1.2-2' }} {{ producto.unidad }}</span>
+          <span class="stock">Disp: {{ producto.disponibilidad }}</span>
+        </div>
+        <div class="acciones-container" (click)="$event.stopPropagation()">
+          <input type="number" class="input-cantidad" value="1" min="1" [max]="producto.disponibilidad"
+            #cantidadRefCard>
+          <button class="btn-anadir" (click)="agregarAlCarrito(producto, cantidadRefCard.value)">
+            Añadir carrito
+          </button>
+        </div>
+      </div>
+
+    </div>
     } @empty {
-      <p class="no-productos">No hay productos disponibles en este momento.</p>
+    @if (!loading) {
+    <p class="no-productos">No hay productos disponibles en este momento.</p>
+    }
     }
   </div>
 
   @if (selectedProducto) {
-    <div class="modal-overlay" (click)="cerrarModal()">
-      <div class="modal-content" (click)="$event.stopPropagation()">
-        <button class="close-btn" (click)="cerrarModal()">&times;</button>
-        
-        <div class="modal-body">
-          <div class="modal-img-container">
-            <img [src]="selectedProducto.imagenUrl" [alt]="selectedProducto.nombre" class="modal-img">
-            @if (selectedProducto.tieneEcoSello) {
-              <img src="assets/images/sello-eco.png" alt="EcoSello" class="modal-ecosello">
-            }
+  <div class="modal-overlay" (click)="cerrarModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <button class="close-btn" (click)="cerrarModal()">&times;</button>
+
+      <div class="modal-body">
+        <div class="modal-img-container">
+          <img [src]="selectedProducto.imagenUrl" [alt]="selectedProducto.nombre" class="modal-img">
+          @if (selectedProducto.tieneEcoSello) {
+          <img src="assets/images/sello-eco.png" alt="EcoSello" class="modal-ecosello">
+          }
+        </div>
+
+        <div class="modal-info">
+          <h2 class="modal-title">{{ selectedProducto.nombre }}</h2>
+          <p class="modal-origen"><strong>Origen:</strong> {{ selectedProducto.origen }}</p>
+          <p class="modal-productor"><strong>Productor:</strong> {{ selectedProducto.productor }}</p>
+
+          <p class="modal-desc">{{ selectedProducto.descripcion }}</p>
+
+          <div class="modal-price-stock">
+            <span class="modal-precio">{{ selectedProducto.precio | number:'1.2-2' }} {{ selectedProducto.unidad }}</span>
+            <span class="modal-stock">Disponibilidad: {{ selectedProducto.disponibilidad }}</span>
           </div>
-          
-          <div class="modal-info">
-            <h2 class="modal-title">{{ selectedProducto.nombre }}</h2>
-            <p class="modal-origen"><strong>Origen:</strong> {{ selectedProducto.origen }}</p>
-            <p class="modal-productor"><strong>Productor:</strong> {{ selectedProducto.productor }}</p>
-            
-            <p class="modal-desc">{{ selectedProducto.descripcion }}</p>
-            
-            <div class="modal-price-stock">
-              <span class="modal-precio">{{ selectedProducto.precio | number:'1.2-2' }} €/{{ selectedProducto.unidad }}</span>
-              <span class="modal-stock">Disponibilidad: {{ selectedProducto.disponibilidad }}</span>
-            </div>
-            
-            <div class="acciones-container modal-acciones">
-              <input
-                type="number"
-                class="input-cantidad"
-                value="1"
-                min="1"
-                [max]="selectedProducto.disponibilidad"
-                #cantidadRef>
-              <button class="btn-anadir" (click)="agregarAlCarrito(selectedProducto, cantidadRef.value)">
-                Añadir al carrito
-              </button>
-            </div>
+
+          <div class="acciones-container modal-acciones">
+            <input type="number" class="input-cantidad" value="1" min="1" [max]="selectedProducto.disponibilidad"
+              #cantidadRef>
+            <button class="btn-anadir" (click)="agregarAlCarrito(selectedProducto, cantidadRef.value)">
+              Añadir al carrito
+            </button>
           </div>
         </div>
       </div>
     </div>
+  </div>
   }
 </div>
+
+

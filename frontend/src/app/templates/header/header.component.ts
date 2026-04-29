@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { CartService, CartItem } from '../../services/cart.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-header',
@@ -19,7 +20,7 @@ export class HeaderComponent implements OnInit {
   isCartDrawerOpen = false;
   bumpCart = false;
 
-  constructor(private cartService: CartService) {}
+  constructor(private cartService: CartService, public authService: AuthService) {}
 
   ngOnInit() {
     this.cartService.cart$.subscribe(items => {

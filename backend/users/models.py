@@ -8,6 +8,8 @@ class CustomUser(AbstractUser):
     )
     rol = models.CharField(max_length=20, choices=ROLE_CHOICES, default='CLIENTE')
     email = models.EmailField(unique=True)
+    telefono = models.CharField(max_length=20, blank=True, null=True)
+    direccion = models.CharField(max_length=160, blank=True, null=True)
 
     def __str__(self):
         return f"{self.username} ({self.rol})"

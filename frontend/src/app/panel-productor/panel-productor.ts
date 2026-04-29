@@ -2,8 +2,10 @@ import { CommonModule } from '@angular/common';
 import { Component, ElementRef, OnInit, ViewChild, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, Subscription } from 'rxjs';
+import { ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { AuthService } from '../services/auth.service';
+import { ProductService, ApiProduct } from '../services/product.service';
 
 @Component({
   selector: 'app-panel-productor',
@@ -11,13 +13,14 @@ import { AuthService } from '../services/auth.service';
   templateUrl: './panel-productor.html',
   styleUrl: './panel-productor.css',
 })
-export class PanelProductor implements OnInit {
+export class PanelProductor implements OnInit, OnDestroy {
   @ViewChild('imageInput') imageInput?: ElementRef<HTMLInputElement>;
 
   private readonly fb = inject(FormBuilder);
-  private readonly http = inject(HttpClient);
   private readonly authService = inject(AuthService);
-  private readonly apiUrl = 'http://localhost:8000/api/productos/';
+  private readonly productService = inject(ProductService);
+  private readonly cdr = inject(ChangeDetectorRef);
+  private productsSub?: Subscription;
   private readonly placeholderImage =
     'data:image/svg+xml;utf8,' +
     encodeURIComponent(`
@@ -64,7 +67,34 @@ export class PanelProductor implements OnInit {
     this.sessionName = session.name || 'Productor';
     this.ownerId = session.id;
 
-    await this.loadProducts();
+    // 1. Subscribe to cache
+    this.productsSub = this.productService.products$.subscribe((allProducts) => {
+      this.products = allProducts
+        .filter(p => String(p.ownerId) === String(this.ownerId))
+        .map(p => ({
+          id: p.id,
+          ownerId: p.ownerId,
+          ownerName: p.ownerName,
+          name: p.name,
+          origin: p.origin,
+          price: typeof p.price === 'string' ? parseFloat(p.price) : p.price,
+          unit: p.unit,
+          description: p.description,
+          quantity: p.quantity,
+          image: p.image_url || p.image_url_legacy || ''
+        }));
+      this.loading = false;
+      this.cdr.detectChanges();
+    });
+
+    // 2. Trigger background load
+    this.productService.refreshProducts();
+  }
+
+  ngOnDestroy(): void {
+    if (this.productsSub) {
+      this.productsSub.unsubscribe();
+    }
   }
 
   protected get filteredProducts(): Product[] {
@@ -95,7 +125,7 @@ export class PanelProductor implements OnInit {
     this.submitting = true;
 
     const formValue = this.productForm.getRawValue();
-    const payload: Partial<Product> = {
+    const payload: Partial<ApiProduct> = {
       ownerId: this.ownerId,
       ownerName: this.sessionName,
       name: formValue.name.trim(),
@@ -112,17 +142,10 @@ export class PanelProductor implements OnInit {
 
     try {
       if (this.editingProductId !== null) {
-        const updated = await firstValueFrom(
-          this.http.patch<Product>(`${this.apiUrl}${this.editingProductId}/`, payload),
-        );
-
-        this.products = this.products.map((product) =>
-          String(product.id) === String(this.editingProductId) ? updated : product,
-        );
+        await this.productService.updateProduct(this.editingProductId, payload);
         this.successMessage = 'Producto actualizado correctamente.';
       } else {
-        const created = await firstValueFrom(this.http.post<Product>(this.apiUrl, payload));
-        this.products = [created, ...this.products];
+        await this.productService.createProduct(payload);
         this.successMessage = 'Producto anadido correctamente.';
       }
 
@@ -132,6 +155,7 @@ export class PanelProductor implements OnInit {
         'No se pudo guardar el producto. Comprueba que el backend de Django este funcionando.';
     } finally {
       this.submitting = false;
+      this.cdr.detectChanges();
     }
   }
 
@@ -167,16 +191,17 @@ export class PanelProductor implements OnInit {
     this.clearMessages();
 
     try {
-      await firstValueFrom(this.http.delete<void>(`${this.apiUrl}${product.id}/`));
-      this.products = this.products.filter((item) => String(item.id) !== String(product.id));
+      await this.productService.deleteProduct(product.id);
 
       if (String(this.editingProductId) === String(product.id)) {
         this.resetForm();
       }
 
       this.successMessage = 'Producto eliminado correctamente.';
+      this.cdr.detectChanges();
     } catch {
       this.errorMessage = 'No se pudo eliminar el producto.';
+      this.cdr.detectChanges();
     }
   }
 
@@ -215,6 +240,10 @@ export class PanelProductor implements OnInit {
     return numericValue.toFixed(2).replace('.', ',');
   }
 
+  protected formatUnit(unit: string): string {
+    return unit ? unit.replace('EUR/', '€/') : '';
+  }
+
   protected productImage(product: Product): string {
     return product.image || this.placeholderImage;
   }
@@ -232,24 +261,6 @@ export class PanelProductor implements OnInit {
   }
 
 
-
-  private async loadProducts(): Promise<void> {
-    this.loading = true;
-    this.clearMessages();
-
-    try {
-      const allProducts = await firstValueFrom(this.http.get<Product[]>(this.apiUrl));
-
-      this.products = allProducts.filter(
-        (product) => String(product.ownerId) === String(this.ownerId),
-      );
-    } catch {
-      this.errorMessage = 'No se pudieron cargar tus productos. Verifica la API local.';
-      this.products = [];
-    } finally {
-      this.loading = false;
-    }
-  }
 
   private resetForm(): void {
     this.productForm.reset({

@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
+import { ChangeDetectorRef } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 
 @Component({
@@ -15,9 +16,10 @@ export class Perfil implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly http = inject(HttpClient);
   private readonly authService = inject(AuthService);
+  private readonly cdr = inject(ChangeDetectorRef);
   private readonly apiUrl = 'http://localhost:8000/api/users/me/';
 
-  protected loading = true;
+  protected loading = false;
   protected accessDenied = false;
   protected editing = false;
   protected saving = false;
@@ -67,7 +69,7 @@ export class Perfil implements OnInit {
     };
 
     this.syncFormWithUser();
-    await this.loadUserDetails();
+    this.loadUserDetails();
   }
 
   protected get avatarInitials(): string {
@@ -133,23 +135,31 @@ export class Perfil implements OnInit {
         this.http.patch<any>(this.apiUrl, {
           first_name: payload.nombre.split(' ')[0] || '',
           last_name: payload.nombre.split(' ').slice(1).join(' ') || '',
-          email: payload.email
-          // Other fields are not in User model yet, but keeping payload structure
+          email: payload.email,
+          telefono: payload.telefono,
+          direccion: payload.direccion
         }),
       );
 
       this.user = {
         ...this.user,
         nombre: updatedUser.first_name + ' ' + updatedUser.last_name,
-        email: updatedUser.email
+        email: updatedUser.email,
+        telefono: updatedUser.telefono,
+        direccion: updatedUser.direccion
       };
+
+      this.authService.updateSession({
+        name: this.user.nombre,
+        email: this.user.email
+      });
 
       this.syncFormWithUser();
       this.editing = false;
       this.successMessage = 'Perfil actualizado correctamente.';
     } catch {
       this.errorMessage =
-        'No se pudo guardar el perfil. Comprueba que json-server este funcionando en http://localhost:3000.';
+        'No se pudo guardar el perfil. Comprueba que el backend de Django esté funcionando.';
     } finally {
       this.saving = false;
     }
@@ -165,31 +175,38 @@ export class Perfil implements OnInit {
       return;
     }
 
-    this.successMessage = `"${item}" queda como acceso visual por ahora para no pisar rutas de otros companeros.`;
+    if (item === 'Mi perfil') {
+      this.editing = false;
+      return;
+    }
+
+    this.successMessage = `La sección "${item}" estará disponible en futuras versiones.`;
   }
 
-  private async loadUserDetails(): Promise<void> {
-    this.loading = true;
+  private loadUserDetails(): void {
     this.clearMessages();
 
-    try {
-      const remoteUser = await firstValueFrom(
-        this.http.get<any>(this.apiUrl),
-      );
-
-      this.user = {
-        ...this.user,
-        nombre: remoteUser.first_name ? remoteUser.first_name + ' ' + remoteUser.last_name : remoteUser.username,
-        email: remoteUser.email,
-        rol: remoteUser.rol
-      };
-      this.syncFormWithUser();
-    } catch {
-      this.errorMessage =
-        'No se pudieron cargar los detalles completos del perfil. Se muestran los datos de la sesion local.';
-    } finally {
-      this.loading = false;
-    }
+    this.http.get<any>(this.apiUrl).subscribe({
+      next: (remoteUser) => {
+        this.user = {
+          ...this.user,
+          nombre: remoteUser.first_name ? remoteUser.first_name + ' ' + remoteUser.last_name : remoteUser.username,
+          email: remoteUser.email,
+          rol: remoteUser.rol,
+          telefono: remoteUser.telefono || '',
+          direccion: remoteUser.direccion || ''
+        };
+        this.syncFormWithUser();
+        this.loading = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.errorMessage =
+          'No se pudieron cargar los detalles completos del perfil. Se muestran los datos de la sesion local.';
+        this.loading = false;
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   private syncFormWithUser(): void {

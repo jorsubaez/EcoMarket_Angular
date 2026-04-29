@@ -2,6 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { ChangeDetectorRef } from '@angular/core';
 import { CartService } from '../services/cart.service';
 
 // Usamos la misma estructura del catálogo, pero le añadimos una descripción
@@ -31,7 +32,7 @@ export class Detalle implements OnInit {
 
   loading = true;
 
-  constructor(private http: HttpClient, private cartService: CartService) {}
+  constructor(private http: HttpClient, private cartService: CartService, private cdr: ChangeDetectorRef) { }
 
   ngOnInit() {
     const idParam = this.route.snapshot.queryParamMap.get('id');
@@ -56,10 +57,12 @@ export class Detalle implements OnInit {
           descripcion: item.description || ''
         };
         this.loading = false;
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Error fetching product', err);
         this.loading = false;
+        this.cdr.detectChanges();
       }
     });
   }

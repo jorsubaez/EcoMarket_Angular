@@ -24,21 +24,37 @@
                 <li><a routerLink="/catalogo" routerLinkActive="active">Catálogo</a></li>
                 <li><a routerLink="/productores" routerLinkActive="active">Productores</a></li>
                 <li><a routerLink="/contacto" routerLinkActive="active">Contacto</a></li>
+                @if (authService.session$ | async; as session) {
+                    @if (session.rol === 'PRODUCTOR') {
+                        <li><a routerLink="/panel-productor" routerLinkActive="active">Panel Productor</a></li>
+                    }
+                }
                 <li class="mobile-only-menu"><a routerLink="/login">Iniciar sesión</a></li>
             </ul>
         </nav>
 
         <div class="user-actions">
-            <a class="login-link" routerLink="/login" id="login-link">
-                <span class="account-icon mobile-login-icon">
-                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
-                        stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="12" cy="7" r="4"></circle>
-                    </svg>
-                </span>
-                <span class="login-text">Iniciar sesión</span>
-            </a>
+            @if (authService.session$ | async; as session) {
+                <a class="login-link" routerLink="/perfil" id="login-link">
+                    <span class="account-icon mobile-login-icon">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                    </span>
+                    <span class="login-text">Mi Perfil</span>
+                </a>
+            } @else {
+                <a class="login-link" routerLink="/login" id="login-link">
+                    <span class="account-icon mobile-login-icon">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                    </span>
+                    <span class="login-text">Iniciar sesión</span>
+                </a>
+            }
             <a class="cart-link cart-icon-only" href="#" aria-label="Ir al carrito" (click)="toggleCartDrawer($event)">
                 <span class="cart-icon" [class.cart-bump]="bumpCart">
                     <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
@@ -76,7 +92,7 @@
                     <img [src]="item.producto.imagenUrl" [alt]="item.producto.nombre" class="cart-item-img">
                     <div class="cart-item-details">
                         <h4 class="cart-item-title">{{ item.producto.nombre }}</h4>
-                        <div class="cart-item-price">{{ item.producto.precio | number:'1.2-2' }} €/{{ item.producto.unidad }}</div>
+                        <div class="cart-item-price">{{ item.producto.precio | number:'1.2-2' }} {{ item.producto.unidad }}</div>
                         <div class="cart-item-actions">
                             <div class="quantity-controls">
                                 <button class="qty-btn" (click)="updateQuantity(item.producto.id, item.cantidad - 1)">-</button>

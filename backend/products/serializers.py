@@ -1,10 +1,12 @@
 from rest_framework import serializers
 from .models import Producto, CartItem
+from drf_extra_fields.fields import Base64ImageField
 
 class ProductoSerializer(serializers.ModelSerializer):
     ownerId = serializers.ReadOnlyField(source='owner.id')
     ownerName = serializers.ReadOnlyField(source='owner.first_name')
     image_url = serializers.SerializerMethodField()
+    image = Base64ImageField(required=False, allow_null=True)
 
     class Meta:
         model = Producto

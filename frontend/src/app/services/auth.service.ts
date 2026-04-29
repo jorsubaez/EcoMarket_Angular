@@ -59,4 +59,13 @@ export class AuthService {
     this.sessionSubject.next(null);
     this.router.navigate(['/login']);
   }
+
+  updateSession(newData: Partial<SessionData>): void {
+    const currentSession = this.currentUser;
+    if (currentSession) {
+      const updatedSession = { ...currentSession, ...newData };
+      localStorage.setItem('ecomarket_session', JSON.stringify(updatedSession));
+      this.sessionSubject.next(updatedSession);
+    }
+  }
 }
