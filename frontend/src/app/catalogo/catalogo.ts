@@ -69,6 +69,14 @@ export class Catalogo implements OnInit {
     document.body.style.overflow = 'auto';
   }
 
+  formatUnidadPrecio(unidad: string): string {
+    if (!unidad) {
+      return '';
+    }
+
+    return unidad.startsWith('EUR/') ? unidad.replace('EUR/', '€/') : `€/${unidad}`;
+  }
+
   agregarAlCarrito(producto: Producto, cantidadInput: string) {
     const cantidad = parseInt(cantidadInput, 10) || 1;
     this.cartService.addToCart(producto, cantidad);

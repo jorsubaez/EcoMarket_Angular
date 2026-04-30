@@ -71,10 +71,10 @@
         <label class="field">
           <span>Unidad</span>
           <select formControlName="unit">
-            <option value="EUR/kg">EUR/kg</option>
-            <option value="EUR/unidad">EUR/unidad</option>
-            <option value="EUR/l">EUR/l</option>
-            <option value="EUR/pack">EUR/pack</option>
+            <option value="EUR/kg">Por kg</option>
+            <option value="EUR/unidad">Por unidad</option>
+            <option value="EUR/l">Por litro</option>
+            <option value="EUR/pack">Por pack</option>
           </select>
         </label>
 
@@ -160,7 +160,7 @@
               <td>{{ product.origin }}</td>
               <td>
                 <strong>{{ formatPrice(product.price) }}</strong>
-                <span class="muted">{{ product.unit }}</span>
+                <span class="muted">{{ formatUnit(product.unit) }}</span>
               </td>
               <td>{{ product.quantity }}</td>
               <td class="td-actions">

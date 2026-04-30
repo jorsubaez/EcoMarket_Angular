@@ -24,7 +24,7 @@
         <p class="producto-detalle">Productor: {{ producto.productor }}</p>
 
         <div class="precio-stock-container">
-          <span class="precio">{{ producto.precio | number:'1.2-2' }} &euro;/{{ producto.unidad }}</span>
+          <span class="precio">{{ producto.precio | number:'1.2-2' }} {{ formatUnidadPrecio(producto.unidad) }}</span>
           <span class="stock">Disp: {{ producto.disponibilidad }}</span>
         </div>
         <div class="acciones-container" (click)="$event.stopPropagation()">
@@ -65,7 +65,7 @@
           <p class="modal-desc">{{ selectedProducto.descripcion }}</p>
 
           <div class="modal-price-stock">
-            <span class="modal-precio">{{ selectedProducto.precio | number:'1.2-2' }} &euro;/{{ selectedProducto.unidad }}</span>
+            <span class="modal-precio">{{ selectedProducto.precio | number:'1.2-2' }} {{ formatUnidadPrecio(selectedProducto.unidad) }}</span>
             <span class="modal-stock">Disponibilidad: {{ selectedProducto.disponibilidad }}</span>
           </div>
 
