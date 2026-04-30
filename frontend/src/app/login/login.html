@@ -18,8 +18,14 @@
             placeholder="tuemail&#64;ejemplo.com"
             required
             [(ngModel)]="email"
+            #emailModel="ngModel"
+            [class.input-invalid]="emailModel.invalid && (emailModel.touched || submitted)"
+            [attr.aria-invalid]="emailModel.invalid && (emailModel.touched || submitted)"
           />
         </div>
+        @if (emailModel.invalid && (emailModel.touched || submitted)) {
+          <p class="field-error">Introduce un email valido.</p>
+        }
       </div>
 
       <div class="field">
@@ -34,6 +40,9 @@
             required
             minlength="6"
             [(ngModel)]="password"
+            #passwordModel="ngModel"
+            [class.input-invalid]="passwordModel.invalid && (passwordModel.touched || submitted)"
+            [attr.aria-invalid]="passwordModel.invalid && (passwordModel.touched || submitted)"
           />
           <button
             class="icon-btn"
@@ -44,7 +53,17 @@
             <i class="fa-regular" [ngClass]="passwordVisible ? 'fa-eye-slash' : 'fa-eye'"></i>
           </button>
         </div>
+        @if (passwordModel.invalid && (passwordModel.touched || submitted)) {
+          <p class="field-error">La contrasena debe tener al menos 6 caracteres.</p>
+        }
       </div>
+
+      @if (errorMessage) {
+        <div class="form-alert" role="alert">
+          <i class="fa-solid fa-circle-exclamation"></i>
+          <span>{{ errorMessage }}</span>
+        </div>
+      }
 
       <div class="auth-row">
         <label class="checkbox">
@@ -55,8 +74,8 @@
         <a class="auth-link" href="#">¿Has olvidado tu contraseña?</a>
       </div>
 
-      <button class="btn btn-primary btn-block" type="submit">
-        Entrar
+      <button class="btn btn-primary btn-block" type="submit" [disabled]="submitting">
+        {{ submitting ? 'Entrando...' : 'Entrar' }}
       </button>
 
       <div class="divider">

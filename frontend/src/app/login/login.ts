@@ -17,6 +17,7 @@ export class LoginComponent {
   passwordVisible = false;
   errorMessage = '';
   submitting = false;
+  submitted = false;
 
   constructor(private router: Router, private authService: AuthService) {}
 
@@ -25,8 +26,15 @@ export class LoginComponent {
   }
 
   onSubmit() {
+    this.submitted = true;
+
     if (!this.email || !this.password) {
       this.errorMessage = 'Por favor, rellena todos los campos.';
+      return;
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.email)) {
+      this.errorMessage = 'Introduce un email valido.';
       return;
     }
 

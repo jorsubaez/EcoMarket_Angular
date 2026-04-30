@@ -33,14 +33,23 @@ export class RegistroComponent {
     this.passwordVisible = !this.passwordVisible;
   }
 
+  isInvalid(controlName: string): boolean {
+    const control = this.registerForm.get(controlName);
+    return !!control && control.invalid && control.touched;
+  }
+
   onSubmit() {
     if (this.registerForm.invalid) {
+      this.registerForm.markAllAsTouched();
+      this.errorMessage = 'Revisa los campos marcados antes de continuar.';
       return;
     }
 
     const { password, passwordConfirm } = this.registerForm.value;
     if (password !== passwordConfirm) {
       this.errorMessage = 'Las contraseñas no coinciden.';
+      this.registerForm.get('passwordConfirm')?.setErrors({ mismatch: true });
+      this.registerForm.get('passwordConfirm')?.markAsTouched();
       return;
     }
 
