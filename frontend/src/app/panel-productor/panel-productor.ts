@@ -1,11 +1,18 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, OnInit, ViewChild, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import {
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+  inject,
+} from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { firstValueFrom, Subscription } from 'rxjs';
-import { ChangeDetectorRef, OnDestroy } from '@angular/core';
+import { Subscription } from 'rxjs';
+
 import { AuthService } from '../services/auth.service';
-import { ProductService, ApiProduct } from '../services/product.service';
+import { ApiProduct, ProductService } from '../services/product.service';
 
 @Component({
   selector: 'app-panel-productor',
@@ -21,7 +28,9 @@ export class PanelProductor implements OnInit, OnDestroy {
   private readonly authService = inject(AuthService);
   private readonly productService = inject(ProductService);
   private readonly cdr = inject(ChangeDetectorRef);
+
   private productsSub?: Subscription;
+
   private readonly placeholderImage =
     'data:image/svg+xml;utf8,' +
     encodeURIComponent(`
@@ -38,10 +47,13 @@ export class PanelProductor implements OnInit, OnDestroy {
   protected loading = true;
   protected submitting = false;
   protected searchTerm = '';
+
   protected successMessage = '';
   protected errorMessage = '';
-  protected selectedFileName = 'Ningun archivo seleccionado';
-  protected selectedCertName = 'Ningun archivo seleccionado';
+
+  protected selectedFileName = 'Ningún archivo seleccionado';
+  protected selectedCertName = 'Ningún archivo seleccionado';
+
   protected editingProductId: number | string | null = null;
   protected products: Product[] = [];
 
@@ -70,11 +82,10 @@ export class PanelProductor implements OnInit, OnDestroy {
     this.sessionName = session.name || 'Productor';
     this.ownerId = session.id;
 
-    // 1. Subscribe to cache
     this.productsSub = this.productService.products$.subscribe((allProducts) => {
       this.products = allProducts
-        .filter(p => String(p.ownerId) === String(this.ownerId))
-        .map(p => ({
+        .filter((p) => String(p.ownerId) === String(this.ownerId))
+        .map((p) => ({
           id: p.id,
           ownerId: p.ownerId,
           ownerName: p.ownerName,
@@ -85,13 +96,13 @@ export class PanelProductor implements OnInit, OnDestroy {
           description: p.description,
           quantity: p.quantity,
           image: p.image_url || p.image_url_legacy || '',
-          certificate_url: p.certificate_url
+          certificate_url: p.certificate_url,
         }));
+
       this.loading = false;
       this.cdr.detectChanges();
     });
 
-    // 2. Trigger background load
     this.productService.refreshProducts();
   }
 
@@ -103,6 +114,7 @@ export class PanelProductor implements OnInit, OnDestroy {
 
   protected get filteredProducts(): Product[] {
     const query = this.searchTerm.trim().toLowerCase();
+
     if (!query) {
       return this.products;
     }
@@ -129,6 +141,7 @@ export class PanelProductor implements OnInit, OnDestroy {
     this.submitting = true;
 
     const formValue = this.productForm.getRawValue();
+
     const payload: Partial<ApiProduct> = {
       ownerId: this.ownerId,
       ownerName: this.sessionName,
@@ -154,14 +167,14 @@ export class PanelProductor implements OnInit, OnDestroy {
         this.successMessage = 'Producto actualizado correctamente.';
       } else {
         await this.productService.createProduct(payload);
-        this.successMessage = 'Producto anadido correctamente.';
+        this.successMessage = 'Producto añadido correctamente.';
       }
 
       this.resetForm();
     } catch (error: any) {
       console.error('Submit Error:', error);
       this.errorMessage =
-        'No se pudo guardar el producto. Detalle: ' + 
+        'No se pudo guardar el producto. Detalle: ' +
         (error.error?.detail || JSON.stringify(error.error) || error.message);
     } finally {
       this.submitting = false;
@@ -171,11 +184,15 @@ export class PanelProductor implements OnInit, OnDestroy {
 
   protected editProduct(product: Product): void {
     this.clearMessages();
+
     this.editingProductId = product.id ?? null;
     this.selectedImageDataUrl = product.image || '';
-    this.selectedFileName = product.image ? 'Imagen actual' : 'Ningun archivo seleccionado';
+    this.selectedFileName = product.image ? 'Imagen actual' : 'Ningún archivo seleccionado';
     this.selectedCertDataUrl = '';
-    this.selectedCertName = product.certificate_url ? 'Certificado actual' : 'Ningun archivo seleccionado';
+    this.selectedCertName = product.certificate_url
+      ? 'Certificado actual'
+      : 'Ningún archivo seleccionado';
+
     this.productForm.setValue({
       name: product.name ?? '',
       origin: product.origin ?? '',
@@ -184,16 +201,15 @@ export class PanelProductor implements OnInit, OnDestroy {
       description: product.description ?? '',
       quantity: Number(product.quantity ?? 0),
     });
+
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   protected async deleteProduct(product: Product): Promise<void> {
-    if (!product.id) {
-      return;
-    }
+    console.log('Pulsado eliminar producto:', product);
 
     const confirmed = window.confirm(
-      `Vas a eliminar "${product.name}". Esta accion no se puede deshacer.`,
+      `Vas a eliminar "${product.name}" de tu lista de productos.\n\n¿Seguro que deseas continuar?`,
     );
 
     if (!confirmed) {
@@ -203,6 +219,11 @@ export class PanelProductor implements OnInit, OnDestroy {
     this.clearMessages();
 
     try {
+      if (product.id === undefined || product.id === null) {
+        this.errorMessage = 'No se pudo eliminar el producto porque no tiene identificador.';
+        return;
+      }
+
       await this.productService.deleteProduct(product.id);
 
       if (String(this.editingProductId) === String(product.id)) {
@@ -211,7 +232,8 @@ export class PanelProductor implements OnInit, OnDestroy {
 
       this.successMessage = 'Producto eliminado correctamente.';
       this.cdr.detectChanges();
-    } catch {
+    } catch (error) {
+      console.error('Error eliminando producto:', error);
       this.errorMessage = 'No se pudo eliminar el producto.';
       this.cdr.detectChanges();
     }
@@ -227,16 +249,21 @@ export class PanelProductor implements OnInit, OnDestroy {
     const file = input?.files?.[0];
 
     if (!file) {
-      this.selectedFileName = this.isEditing ? 'Imagen actual' : 'Ningun archivo seleccionado';
+      this.selectedFileName = this.isEditing ? 'Imagen actual' : 'Ningún archivo seleccionado';
       this.selectedImageDataUrl = this.editingProductPreview;
       return;
     }
 
     if (!file.type.match(/image\/(jpeg|jpg|png)/)) {
-      this.errorMessage = 'Formato de imagen invalido. Por favor sube una foto en formato JPG o PNG.';
-      this.selectedFileName = 'Ningun archivo seleccionado';
+      this.errorMessage =
+        'Formato de imagen inválido. Por favor sube una foto en formato JPG o PNG.';
+      this.selectedFileName = 'Ningún archivo seleccionado';
       this.selectedImageDataUrl = '';
-      if (this.imageInput) this.imageInput.nativeElement.value = '';
+
+      if (this.imageInput) {
+        this.imageInput.nativeElement.value = '';
+      }
+
       return;
     }
 
@@ -250,17 +277,26 @@ export class PanelProductor implements OnInit, OnDestroy {
     const file = input?.files?.[0];
 
     if (!file) {
-      this.selectedCertName = this.isEditing && this.products.find(p => String(p.id) === String(this.editingProductId))?.certificate_url 
-                              ? 'Certificado actual' : 'Ningun archivo seleccionado';
+      this.selectedCertName =
+        this.isEditing &&
+        this.products.find((p) => String(p.id) === String(this.editingProductId))?.certificate_url
+          ? 'Certificado actual'
+          : 'Ningún archivo seleccionado';
+
       this.selectedCertDataUrl = '';
       return;
     }
 
     if (file.type !== 'application/pdf') {
-      this.errorMessage = 'Formato de certificado invalido. Por favor sube un documento en formato PDF.';
-      this.selectedCertName = 'Ningun archivo seleccionado';
+      this.errorMessage =
+        'Formato de certificado inválido. Por favor sube un documento en formato PDF.';
+      this.selectedCertName = 'Ningún archivo seleccionado';
       this.selectedCertDataUrl = '';
-      if (this.certInput) this.certInput.nativeElement.value = '';
+
+      if (this.certInput) {
+        this.certInput.nativeElement.value = '';
+      }
+
       return;
     }
 
@@ -278,6 +314,7 @@ export class PanelProductor implements OnInit, OnDestroy {
 
   protected formatPrice(value: number | string): string {
     const numericValue = Number(value);
+
     if (Number.isNaN(numericValue)) {
       return `${value}`;
     }
@@ -305,8 +342,6 @@ export class PanelProductor implements OnInit, OnDestroy {
     return currentProduct?.image || '';
   }
 
-
-
   private resetForm(): void {
     this.productForm.reset({
       name: '',
@@ -316,15 +351,17 @@ export class PanelProductor implements OnInit, OnDestroy {
       description: '',
       quantity: 0,
     });
+
     this.editingProductId = null;
     this.selectedImageDataUrl = '';
-    this.selectedFileName = 'Ningun archivo seleccionado';
+    this.selectedFileName = 'Ningún archivo seleccionado';
     this.selectedCertDataUrl = '';
-    this.selectedCertName = 'Ningun archivo seleccionado';
+    this.selectedCertName = 'Ningún archivo seleccionado';
 
     if (this.imageInput) {
       this.imageInput.nativeElement.value = '';
     }
+
     if (this.certInput) {
       this.certInput.nativeElement.value = '';
     }
@@ -338,17 +375,13 @@ export class PanelProductor implements OnInit, OnDestroy {
   private readFileAsDataUrl(file: File): Promise<string> {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
+
       reader.onload = () => resolve(String(reader.result ?? ''));
       reader.onerror = () => reject(new Error('No se pudo leer la imagen.'));
+
       reader.readAsDataURL(file);
     });
   }
-}
-
-interface Session {
-  id: number | string;
-  name: string;
-  rol: string;
 }
 
 interface Product {

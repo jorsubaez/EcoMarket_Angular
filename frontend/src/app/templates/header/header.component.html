@@ -99,7 +99,7 @@
                                 <span class="qty-value">{{ item.cantidad }}</span>
                                 <button class="qty-btn" (click)="updateQuantity(item.producto.id, item.cantidad + 1)">+</button>
                             </div>
-                            <button class="remove-btn" (click)="removeItem(item.producto.id)">Eliminar</button>
+                          <button class="remove-btn" type="button" (click)="removeItem(item)">Eliminar</button>
                         </div>
                     </div>
                 </div>
@@ -113,7 +113,9 @@
                 <span>Total:</span>
                 <span>{{ cartTotal | number:'1.2-2' }} €</span>
             </div>
-            <button class="btn-checkout">Finalizar Compra</button>
+          <button class="btn-checkout" routerLink="/confirmar-pedido">
+            Finalizar Compra
+          </button>
         </div>
     }
 </div>

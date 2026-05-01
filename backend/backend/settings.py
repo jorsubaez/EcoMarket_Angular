@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     # Local apps
     'users',
     'products',
+    'orders',
 ]
 
 MIDDLEWARE = [
@@ -167,3 +168,6 @@ SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
+# Email simulado para desarrollo
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+DEFAULT_FROM_EMAIL = 'noreply@ecomarket.com'

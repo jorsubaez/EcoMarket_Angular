@@ -9,6 +9,8 @@ import { Productores } from './productores/productores';
 import { RegistroComponent } from './registro/registro';
 import { Perfil } from './perfil/perfil';
 import { PanelProductor } from './panel-productor/panel-productor';
+import { ConfirmarPedidoComponent } from './confirmar-pedido/confirmar-pedido';
+import { PagoPedidoComponent } from './pago-pedido/pago-pedido';
 
 export const routes: Routes = [
   { path: '', component: Inicio },
@@ -20,4 +22,6 @@ export const routes: Routes = [
   { path: 'registro', component: RegistroComponent },
   { path: 'perfil', component: Perfil },
   { path: 'panel-productor', component: PanelProductor },
+  { path: 'confirmar-pedido', component: ConfirmarPedidoComponent },
+  { path: 'pago-pedido/:id', component: PagoPedidoComponent },
 ];

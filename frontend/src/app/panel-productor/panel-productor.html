@@ -3,16 +3,16 @@
     <header class="producer-head">
       <div>
         <p class="eyebrow">EcoMarket</p>
-        <h1>Area de productor</h1>
+        <h1>Área de productor</h1>
         <p class="lead">
-          Gestiona tus productos, actualiza stock y manten tu catalogo listo para la venta.
+          Gestiona tus productos, actualiza stock y mantén tu catálogo listo para la venta.
         </p>
       </div>
 
       <div class="producer-user">
-        <span class="pill">Sesion: {{ sessionName }}</span>
+        <span class="pill">Sesión: {{ sessionName }}</span>
         <button class="btn btn-secondary" type="button" (click)="logout()">
-          Cerrar sesion
+          Cerrar sesión
         </button>
       </div>
     </header>
@@ -20,27 +20,29 @@
     <section class="producer-card producer-card-form">
       <div class="card-head">
         <div>
-          <h2>{{ isEditing ? 'Editar producto' : 'Anadir producto' }}</h2>
+          <h2>{{ isEditing ? 'Editar producto' : 'Añadir producto' }}</h2>
           <p>
-            {{ isEditing
-            ? 'Actualiza los datos del producto seleccionado.'
-            : 'Completa el formulario para publicar un nuevo producto.' }}
+            {{
+              isEditing
+                ? 'Actualiza los datos del producto seleccionado.'
+                : 'Completa el formulario para publicar un nuevo producto.'
+            }}
           </p>
         </div>
 
         @if (isEditing) {
-        <button class="btn btn-ghost" type="button" (click)="cancelEdit()">
-          Cancelar edicion
-        </button>
+          <button class="btn btn-ghost" type="button" (click)="cancelEdit()">
+            Cancelar edición
+          </button>
         }
       </div>
 
       @if (successMessage) {
-      <p class="feedback success">{{ successMessage }}</p>
+        <p class="feedback success">{{ successMessage }}</p>
       }
 
       @if (errorMessage) {
-      <p class="feedback error">{{ errorMessage }}</p>
+        <p class="feedback error">{{ errorMessage }}</p>
       }
 
       <form class="producer-form" [formGroup]="productForm" (ngSubmit)="submitProduct()">
@@ -48,7 +50,7 @@
           <span>Nombre</span>
           <input type="text" formControlName="name" placeholder="Ej. Tomates de rama" />
           @if (productForm.controls.name.invalid && productForm.controls.name.touched) {
-          <small>Introduce un nombre valido.</small>
+            <small>Introduce un nombre válido.</small>
           }
         </label>
 
@@ -56,7 +58,7 @@
           <span>Origen</span>
           <input type="text" formControlName="origin" placeholder="Ej. Gran Canaria" />
           @if (productForm.controls.origin.invalid && productForm.controls.origin.touched) {
-          <small>El origen es obligatorio.</small>
+            <small>El origen es obligatorio.</small>
           }
         </label>
 
@@ -64,7 +66,7 @@
           <span>Precio (EUR)</span>
           <input type="number" min="0" step="0.01" formControlName="price" />
           @if (productForm.controls.price.invalid && productForm.controls.price.touched) {
-          <small>Escribe un precio igual o superior a 0.</small>
+            <small>Escribe un precio igual o superior a 0.</small>
           }
         </label>
 
@@ -79,14 +81,15 @@
         </label>
 
         <label class="field full">
-          <span>Descripcion</span>
-          <textarea rows="4" formControlName="description"
-            placeholder="Cuenta que hace especial a este producto"></textarea>
-          @if (
-          productForm.controls.description.invalid &&
-          productForm.controls.description.touched
-          ) {
-          <small>La descripcion es obligatoria.</small>
+          <span>Descripción</span>
+          <textarea
+            rows="4"
+            formControlName="description"
+            placeholder="Cuenta qué hace especial a este producto"
+          ></textarea>
+
+          @if (productForm.controls.description.invalid && productForm.controls.description.touched) {
+            <small>La descripción es obligatoria.</small>
           }
         </label>
 
@@ -94,33 +97,49 @@
           <span>Cantidad en stock</span>
           <input type="number" min="0" formControlName="quantity" />
           @if (productForm.controls.quantity.invalid && productForm.controls.quantity.touched) {
-          <small>Indica una cantidad valida.</small>
+            <small>Indica una cantidad válida.</small>
           }
         </label>
 
         <div class="field">
           <span>Imagen del producto</span>
           <label class="file-picker" for="product-image">
-            <input #imageInput id="product-image" type="file" accept="image/jpeg, image/png, image/jpg" (change)="onImageSelected($event)" />
+            <input
+              #imageInput
+              id="product-image"
+              type="file"
+              accept="image/jpeg, image/png, image/jpg"
+              (change)="onImageSelected($event)"
+            />
             <span class="btn btn-secondary">Seleccionar imagen</span>
             <strong>{{ selectedFileName }}</strong>
           </label>
-          <small>Opcional. Si no subes una imagen, se mostrara un placeholder. Solo se admiten formatos JPG o PNG.</small>
+          <small>
+            Opcional. Si no subes una imagen, se mostrará un placeholder. Solo se admiten formatos JPG o PNG.
+          </small>
         </div>
 
         <div class="field">
-          <span>Certificado Ecológico</span>
+          <span>Certificado ecológico</span>
           <label class="file-picker" for="product-cert">
-            <input #certInput id="product-cert" type="file" accept=".pdf, application/pdf" (change)="onCertSelected($event)" />
+            <input
+              #certInput
+              id="product-cert"
+              type="file"
+              accept=".pdf, application/pdf"
+              (change)="onCertSelected($event)"
+            />
             <span class="btn btn-secondary">Seleccionar certificado</span>
             <strong>{{ selectedCertName }}</strong>
           </label>
-          <small>Sube el documento del certificado (Obligatorio en formato PDF) para que el producto muestre el sello 'Ecológico verificado'.</small>
+          <small>
+            Sube el documento del certificado en formato PDF para que el producto muestre el sello ecológico verificado.
+          </small>
         </div>
 
         <div class="actions">
           <button class="btn btn-primary" type="submit" [disabled]="submitting">
-            {{ submitting ? 'Guardando...' : (isEditing ? 'Guardar cambios' : 'Anadir producto') }}
+            {{ submitting ? 'Guardando...' : (isEditing ? 'Guardar cambios' : 'Añadir producto') }}
           </button>
         </div>
       </form>
@@ -130,23 +149,28 @@
       <div class="table-head">
         <div>
           <h2>Mis productos en venta</h2>
-          <p>Consulta tu catalogo actual y gestiona cada publicacion.</p>
+          <p>Consulta tu catálogo actual y gestiona cada publicación.</p>
         </div>
 
         <label class="search-box">
           <span>Buscar</span>
-          <input #searchBox type="search" placeholder="Buscar por nombre" (input)="updateSearch(searchBox.value)" />
+          <input
+            #searchBox
+            type="search"
+            placeholder="Buscar por nombre"
+            (input)="updateSearch(searchBox.value)"
+          />
         </label>
       </div>
 
       @if (!loading && accessDenied) {
-      <p class="state-message">Necesitas iniciar sesion como productor para ver este panel.</p>
+        <p class="state-message">Necesitas iniciar sesión como productor para ver este panel.</p>
       } @else if (!loading && !filteredProducts.length) {
-      <p class="state-message">Aun no tienes productos que coincidan con la busqueda.</p>
+        <p class="state-message">Aún no tienes productos que coincidan con la búsqueda.</p>
       } @else {
-      <div class="table-wrap">
-        <table class="producer-table">
-          <thead>
+        <div class="table-wrap">
+          <table class="producer-table">
+            <thead>
             <tr>
               <th>Nombre</th>
               <th>Origen</th>
@@ -154,38 +178,48 @@
               <th>Disponibilidad</th>
               <th>Acciones</th>
             </tr>
-          </thead>
-          <tbody>
-            @for (product of filteredProducts; track product.id ?? product.name) {
-            <tr>
-              <td class="td-name">
-                <div class="row-main">
-                  <img class="thumb" [src]="productImage(product)" [alt]="'Imagen de ' + product.name" />
-                  <div>
-                    <strong>{{ product.name }}</strong>
-                    <p class="muted">{{ product.description }}</p>
-                  </div>
-                </div>
-              </td>
-              <td>{{ product.origin }}</td>
-              <td>
-                <strong>{{ formatPrice(product.price) }}</strong>
-                <span class="muted">{{ formatUnit(product.unit) }}</span>
-              </td>
-              <td>{{ product.quantity }}</td>
-              <td class="td-actions">
-                <button class="btn-mini btn-edit" type="button" (click)="editProduct(product)">
-                  Editar
-                </button>
-                <button class="btn-mini btn-danger" type="button" (click)="deleteProduct(product)">
-                  Eliminar
-                </button>
-              </td>
-            </tr>
-            }
-          </tbody>
-        </table>
-      </div>
+            </thead>
+
+            <tbody>
+              @for (product of filteredProducts; track product.id ?? product.name) {
+                <tr>
+                  <td class="td-name">
+                    <div class="row-main">
+                      <img
+                        class="thumb"
+                        [src]="productImage(product)"
+                        [alt]="'Imagen de ' + product.name"
+                      />
+                      <div>
+                        <strong>{{ product.name }}</strong>
+                        <p class="muted">{{ product.description }}</p>
+                      </div>
+                    </div>
+                  </td>
+
+                  <td>{{ product.origin }}</td>
+
+                  <td>
+                    <strong>{{ formatPrice(product.price) }}</strong>
+                    <span class="muted">{{ formatUnit(product.unit) }}</span>
+                  </td>
+
+                  <td>{{ product.quantity }}</td>
+
+                  <td class="td-actions">
+                    <button class="btn-mini btn-edit" type="button" (click)="editProduct(product)">
+                      Editar
+                    </button>
+
+                    <button class="btn-mini btn-danger" type="button" (click)="deleteProduct(product)">
+                      Eliminar
+                    </button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
       }
     </section>
   </section>

@@ -9,25 +9,28 @@ import { AuthService } from '../../services/auth.service';
   standalone: true,
   imports: [RouterLink, RouterLinkActive, CommonModule],
   templateUrl: './header.component.html',
-  styleUrl: './header.component.css'
+  styleUrl: './header.component.css',
 })
 export class HeaderComponent implements OnInit {
   isMenuOpen = false;
-  
+
   cartItems: CartItem[] = [];
   cartCount = 0;
   cartTotal = 0;
   isCartDrawerOpen = false;
   bumpCart = false;
 
-  constructor(private cartService: CartService, public authService: AuthService) {}
+  constructor(
+    private cartService: CartService,
+    public authService: AuthService,
+  ) {}
 
   ngOnInit() {
-    this.cartService.cart$.subscribe(items => {
+    this.cartService.cart$.subscribe((items) => {
       this.cartItems = items;
       this.cartCount = this.cartService.getCartCount();
       this.cartTotal = this.cartService.getCartTotal();
-      
+
       if (this.cartCount > 0) {
         this.triggerCartBump();
       }
@@ -50,8 +53,22 @@ export class HeaderComponent implements OnInit {
     this.cartService.updateQuantity(productoId, cantidad);
   }
 
-  removeItem(productoId: number) {
-    this.cartService.removeFromCart(productoId);
+  async removeItem(item: CartItem): Promise<void> {
+    const productName = item.producto?.nombre || 'este producto';
+
+    const confirmed = window.confirm(
+      `Vas a eliminar "${productName}" del carrito.\n\n¿Seguro que deseas continuar?`,
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    if (!item.producto?.id) {
+      return;
+    }
+
+    await this.cartService.removeFromCart(item.producto.id);
   }
 
   triggerCartBump() {
