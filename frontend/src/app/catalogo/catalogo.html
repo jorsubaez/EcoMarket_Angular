@@ -69,6 +69,14 @@
             <span class="modal-stock">Disponibilidad: {{ selectedProducto.disponibilidad }}</span>
           </div>
 
+          @if (selectedProducto.certificadoUrl) {
+          <div class="modal-cert">
+            <a [href]="selectedProducto.certificadoUrl" target="_blank" rel="noopener noreferrer" class="btn-cert">
+              Ver Certificado Oficial (PDF/Imagen)
+            </a>
+          </div>
+          }
+
           <div class="acciones-container modal-acciones">
             <input type="number" class="input-cantidad" value="1" min="1" [max]="selectedProducto.disponibilidad"
               #cantidadRef>

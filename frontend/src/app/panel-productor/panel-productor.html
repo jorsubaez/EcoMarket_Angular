@@ -101,11 +101,21 @@
         <div class="field">
           <span>Imagen del producto</span>
           <label class="file-picker" for="product-image">
-            <input #imageInput id="product-image" type="file" accept="image/*" (change)="onImageSelected($event)" />
+            <input #imageInput id="product-image" type="file" accept="image/jpeg, image/png, image/jpg" (change)="onImageSelected($event)" />
             <span class="btn btn-secondary">Seleccionar imagen</span>
             <strong>{{ selectedFileName }}</strong>
           </label>
-          <small>Opcional. Si no subes una imagen, se mostrara un placeholder.</small>
+          <small>Opcional. Si no subes una imagen, se mostrara un placeholder. Solo se admiten formatos JPG o PNG.</small>
+        </div>
+
+        <div class="field">
+          <span>Certificado Ecológico</span>
+          <label class="file-picker" for="product-cert">
+            <input #certInput id="product-cert" type="file" accept=".pdf, application/pdf" (change)="onCertSelected($event)" />
+            <span class="btn btn-secondary">Seleccionar certificado</span>
+            <strong>{{ selectedCertName }}</strong>
+          </label>
+          <small>Sube el documento del certificado (Obligatorio en formato PDF) para que el producto muestre el sello 'Ecológico verificado'.</small>
         </div>
 
         <div class="actions">

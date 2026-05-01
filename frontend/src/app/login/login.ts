@@ -28,6 +28,8 @@ export class LoginComponent {
   onSubmit() {
     this.submitted = true;
 
+    this.email = this.email.trim();
+
     if (!this.email || !this.password) {
       this.errorMessage = 'Por favor, rellena todos los campos.';
       return;

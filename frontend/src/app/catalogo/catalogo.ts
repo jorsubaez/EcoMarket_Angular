@@ -16,6 +16,7 @@ export interface Producto {
   imagenUrl: string;
   tieneEcoSello: boolean;
   descripcion?: string;
+  certificadoUrl?: string;
 }
 
 @Component({
@@ -48,8 +49,9 @@ export class Catalogo implements OnInit {
         unidad: item.unit,
         disponibilidad: item.quantity,
         imagenUrl: item.image_url || item.image_url_legacy || 'assets/images/placeholder.png',
-        tieneEcoSello: true,
-        descripcion: item.description || ''
+        tieneEcoSello: !!item.certificate_url,
+        descripcion: item.description || '',
+        certificadoUrl: item.certificate_url
       }));
       this.loading = false;
       this.cdr.detectChanges();

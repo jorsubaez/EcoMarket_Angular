@@ -10,6 +10,7 @@ class Producto(models.Model):
     description = models.TextField(blank=True, null=True)
     quantity = models.IntegerField(default=0)
     image = models.ImageField(upload_to='productos/', blank=True, null=True)
+    certificate = models.FileField(upload_to='certificates/', blank=True, null=True)
     
     # Store old image string or base64 temporarily if needed by migration script
     image_url_legacy = models.TextField(blank=True, null=True)

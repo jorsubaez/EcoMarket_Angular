@@ -15,6 +15,7 @@ import { ProductService, ApiProduct } from '../services/product.service';
 })
 export class PanelProductor implements OnInit, OnDestroy {
   @ViewChild('imageInput') imageInput?: ElementRef<HTMLInputElement>;
+  @ViewChild('certInput') certInput?: ElementRef<HTMLInputElement>;
 
   private readonly fb = inject(FormBuilder);
   private readonly authService = inject(AuthService);
@@ -40,6 +41,7 @@ export class PanelProductor implements OnInit, OnDestroy {
   protected successMessage = '';
   protected errorMessage = '';
   protected selectedFileName = 'Ningun archivo seleccionado';
+  protected selectedCertName = 'Ningun archivo seleccionado';
   protected editingProductId: number | string | null = null;
   protected products: Product[] = [];
 
@@ -53,6 +55,7 @@ export class PanelProductor implements OnInit, OnDestroy {
   });
 
   private selectedImageDataUrl = '';
+  private selectedCertDataUrl = '';
   private ownerId: number | string | null = null;
 
   async ngOnInit(): Promise<void> {
@@ -81,7 +84,8 @@ export class PanelProductor implements OnInit, OnDestroy {
           unit: p.unit,
           description: p.description,
           quantity: p.quantity,
-          image: p.image_url || p.image_url_legacy || ''
+          image: p.image_url || p.image_url_legacy || '',
+          certificate_url: p.certificate_url
         }));
       this.loading = false;
       this.cdr.detectChanges();
@@ -136,8 +140,12 @@ export class PanelProductor implements OnInit, OnDestroy {
       quantity: Number(formValue.quantity),
     };
 
-    if (this.selectedImageDataUrl) {
+    if (this.selectedImageDataUrl && this.selectedImageDataUrl.startsWith('data:')) {
       payload.image = this.selectedImageDataUrl;
+    }
+
+    if (this.selectedCertDataUrl && this.selectedCertDataUrl.startsWith('data:')) {
+      payload.certificate = this.selectedCertDataUrl;
     }
 
     try {
@@ -150,9 +158,11 @@ export class PanelProductor implements OnInit, OnDestroy {
       }
 
       this.resetForm();
-    } catch {
+    } catch (error: any) {
+      console.error('Submit Error:', error);
       this.errorMessage =
-        'No se pudo guardar el producto. Comprueba que el backend de Django este funcionando.';
+        'No se pudo guardar el producto. Detalle: ' + 
+        (error.error?.detail || JSON.stringify(error.error) || error.message);
     } finally {
       this.submitting = false;
       this.cdr.detectChanges();
@@ -164,6 +174,8 @@ export class PanelProductor implements OnInit, OnDestroy {
     this.editingProductId = product.id ?? null;
     this.selectedImageDataUrl = product.image || '';
     this.selectedFileName = product.image ? 'Imagen actual' : 'Ningun archivo seleccionado';
+    this.selectedCertDataUrl = '';
+    this.selectedCertName = product.certificate_url ? 'Certificado actual' : 'Ningun archivo seleccionado';
     this.productForm.setValue({
       name: product.name ?? '',
       origin: product.origin ?? '',
@@ -220,8 +232,41 @@ export class PanelProductor implements OnInit, OnDestroy {
       return;
     }
 
+    if (!file.type.match(/image\/(jpeg|jpg|png)/)) {
+      this.errorMessage = 'Formato de imagen invalido. Por favor sube una foto en formato JPG o PNG.';
+      this.selectedFileName = 'Ningun archivo seleccionado';
+      this.selectedImageDataUrl = '';
+      if (this.imageInput) this.imageInput.nativeElement.value = '';
+      return;
+    }
+
+    this.errorMessage = '';
     this.selectedFileName = file.name;
     this.selectedImageDataUrl = await this.readFileAsDataUrl(file);
+  }
+
+  protected async onCertSelected(event: Event): Promise<void> {
+    const input = event.target as HTMLInputElement | null;
+    const file = input?.files?.[0];
+
+    if (!file) {
+      this.selectedCertName = this.isEditing && this.products.find(p => String(p.id) === String(this.editingProductId))?.certificate_url 
+                              ? 'Certificado actual' : 'Ningun archivo seleccionado';
+      this.selectedCertDataUrl = '';
+      return;
+    }
+
+    if (file.type !== 'application/pdf') {
+      this.errorMessage = 'Formato de certificado invalido. Por favor sube un documento en formato PDF.';
+      this.selectedCertName = 'Ningun archivo seleccionado';
+      this.selectedCertDataUrl = '';
+      if (this.certInput) this.certInput.nativeElement.value = '';
+      return;
+    }
+
+    this.errorMessage = '';
+    this.selectedCertName = file.name;
+    this.selectedCertDataUrl = await this.readFileAsDataUrl(file);
   }
 
   protected logout(): void {
@@ -274,9 +319,14 @@ export class PanelProductor implements OnInit, OnDestroy {
     this.editingProductId = null;
     this.selectedImageDataUrl = '';
     this.selectedFileName = 'Ningun archivo seleccionado';
+    this.selectedCertDataUrl = '';
+    this.selectedCertName = 'Ningun archivo seleccionado';
 
     if (this.imageInput) {
       this.imageInput.nativeElement.value = '';
+    }
+    if (this.certInput) {
+      this.certInput.nativeElement.value = '';
     }
   }
 
@@ -312,4 +362,6 @@ interface Product {
   description: string;
   quantity: number;
   image?: string;
+  certificate?: string;
+  certificate_url?: string;
 }

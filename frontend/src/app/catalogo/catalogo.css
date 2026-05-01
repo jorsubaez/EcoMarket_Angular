@@ -329,3 +329,24 @@
     min-height: 200px;
   }
 }
+
+.modal-cert {
+  margin-top: 15px;
+  margin-bottom: 20px;
+}
+
+.btn-cert {
+  display: inline-block;
+  background-color: var(--color-primary-variant, #1e5a28);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+  font-size: 0.9rem;
+}
+
+.btn-cert:hover {
+  background-color: var(--color-primary, #2a7a38);
+}
