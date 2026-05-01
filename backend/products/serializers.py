@@ -3,6 +3,7 @@ from .models import Producto, CartItem
 from drf_extra_fields.fields import Base64ImageField, Base64FileField
 import filetype
 
+
 class PDFBase64FileField(Base64FileField):
     ALLOWED_TYPES = ['pdf', 'png', 'jpg', 'jpeg']
 
@@ -12,6 +13,7 @@ class PDFBase64FileField(Base64FileField):
             return kind.extension
         return None
 
+
 class ProductoSerializer(serializers.ModelSerializer):
     ownerId = serializers.ReadOnlyField(source='owner.id')
     ownerName = serializers.ReadOnlyField(source='owner.first_name')
@@ -19,12 +21,29 @@ class ProductoSerializer(serializers.ModelSerializer):
     certificate_url = serializers.SerializerMethodField()
     image = Base64ImageField(required=False, allow_null=True)
     certificate = PDFBase64FileField(required=False, allow_null=True)
+    verification_status = serializers.ReadOnlyField()
 
     class Meta:
         model = Producto
-        fields = ['id', 'name', 'origin', 'price', 'unit', 'description', 'quantity', 'image', 'certificate', 'image_url_legacy', 'ownerId', 'ownerName', 'image_url', 'certificate_url']
-        read_only_fields = ['owner']
-        
+        fields = [
+            'id',
+            'name',
+            'origin',
+            'price',
+            'unit',
+            'description',
+            'quantity',
+            'image',
+            'certificate',
+            'image_url_legacy',
+            'ownerId',
+            'ownerName',
+            'image_url',
+            'certificate_url',
+            'verification_status',
+        ]
+        read_only_fields = ['owner', 'verification_status']
+
     def get_image_url(self, obj):
         request = self.context.get('request')
         if obj.image and hasattr(obj.image, 'url'):
@@ -40,7 +59,7 @@ class ProductoSerializer(serializers.ModelSerializer):
                 return request.build_absolute_uri(obj.certificate.url)
             return obj.certificate.url
         return ""
-    
+
     def validate_price(self, value):
         if value < 0:
             raise serializers.ValidationError("El precio no puede ser negativo.")
@@ -50,6 +69,7 @@ class ProductoSerializer(serializers.ModelSerializer):
         if value < 0:
             raise serializers.ValidationError("La cantidad no puede ser negativa.")
         return value
+
 
 class CartItemSerializer(serializers.ModelSerializer):
     producto_detalles = ProductoSerializer(source='producto', read_only=True)

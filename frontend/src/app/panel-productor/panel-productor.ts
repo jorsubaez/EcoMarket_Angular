@@ -97,6 +97,7 @@ export class PanelProductor implements OnInit, OnDestroy {
           quantity: p.quantity,
           image: p.image_url || p.image_url_legacy || '',
           certificate_url: p.certificate_url,
+          verification_status: p.verification_status || 'PENDIENTE',
         }));
 
       this.loading = false;
@@ -138,6 +139,11 @@ export class PanelProductor implements OnInit, OnDestroy {
       return;
     }
 
+    if (!this.isEditing && !this.selectedCertDataUrl) {
+      this.errorMessage = 'Debes subir un certificado ecológico en PDF para publicar el producto.';
+      return;
+    }
+
     this.submitting = true;
 
     const formValue = this.productForm.getRawValue();
@@ -164,10 +170,12 @@ export class PanelProductor implements OnInit, OnDestroy {
     try {
       if (this.editingProductId !== null) {
         await this.productService.updateProduct(this.editingProductId, payload);
-        this.successMessage = 'Producto actualizado correctamente.';
+        this.successMessage =
+          'Producto actualizado correctamente. Queda pendiente de nueva verificación.';
       } else {
         await this.productService.createProduct(payload);
-        this.successMessage = 'Producto añadido correctamente.';
+        this.successMessage =
+          'Producto añadido correctamente. Queda pendiente de verificación por el administrador.';
       }
 
       this.resetForm();
@@ -330,6 +338,28 @@ export class PanelProductor implements OnInit, OnDestroy {
     return product.image || this.placeholderImage;
   }
 
+  protected getStatusLabel(status?: string): string {
+    switch (status) {
+      case 'VERIFICADO':
+        return 'Verificado';
+      case 'RECHAZADO':
+        return 'Rechazado';
+      default:
+        return 'Pendiente';
+    }
+  }
+
+  protected getStatusClass(status?: string): string {
+    switch (status) {
+      case 'VERIFICADO':
+        return 'status-badge verified';
+      case 'RECHAZADO':
+        return 'status-badge rejected';
+      default:
+        return 'status-badge pending';
+    }
+  }
+
   private get editingProductPreview(): string {
     if (!this.isEditing) {
       return '';
@@ -377,7 +407,7 @@ export class PanelProductor implements OnInit, OnDestroy {
       const reader = new FileReader();
 
       reader.onload = () => resolve(String(reader.result ?? ''));
-      reader.onerror = () => reject(new Error('No se pudo leer la imagen.'));
+      reader.onerror = () => reject(new Error('No se pudo leer el archivo.'));
 
       reader.readAsDataURL(file);
     });
@@ -397,4 +427,5 @@ interface Product {
   image?: string;
   certificate?: string;
   certificate_url?: string;
+  verification_status?: string;
 }
