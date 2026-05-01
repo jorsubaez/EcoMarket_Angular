@@ -14,14 +14,97 @@
   color: #2a7a38;
   font-size: 2.2rem;
   font-weight: bold;
-  margin-bottom: 0.5rem;
-  margin-top: 0;
+  margin: 0 0 0.5rem;
 }
 
 .subtitle {
   color: #555;
   font-size: 1rem;
-  margin-top: 0;
+  margin: 0;
+}
+
+.filtros-panel {
+  margin-bottom: 2rem;
+  padding: 1.25rem;
+  border: 1px solid #e4ece1;
+  border-radius: 12px;
+  background: #f8fbf7;
+}
+
+.filtros-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.filtros-head h2 {
+  margin: 0 0 0.35rem;
+  color: #205c2b;
+  font-size: 1.15rem;
+}
+
+.filtros-head p,
+.filtros-resumen {
+  margin: 0;
+  color: #5f6f60;
+  font-size: 0.92rem;
+}
+
+.filtros-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.9rem;
+  margin-bottom: 0.85rem;
+}
+
+.filtro-campo {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.filtro-campo span {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #3a4c3c;
+}
+
+.filtro-campo input,
+.filtro-campo select {
+  width: 100%;
+  min-height: 44px;
+  padding: 0.75rem 0.85rem;
+  border: 1px solid #cfd8cc;
+  border-radius: 8px;
+  background: #fff;
+  box-sizing: border-box;
+  font: inherit;
+  color: #253127;
+}
+
+.filtro-campo input:focus,
+.filtro-campo select:focus,
+.input-cantidad:focus {
+  outline: none;
+  border-color: #2a7a38;
+  box-shadow: 0 0 0 3px rgba(42, 122, 56, 0.12);
+}
+
+.btn-limpiar {
+  min-height: 42px;
+  padding: 0.7rem 1rem;
+  border: 1px solid #cfe0d1;
+  border-radius: 8px;
+  background: #fff;
+  color: #245c30;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-limpiar:hover {
+  background: #eef6ed;
 }
 
 .divider {
@@ -30,15 +113,12 @@
   margin-bottom: 2rem;
 }
 
-/* Grid adaptable */
 .productos-grid {
   display: grid;
-  /* Crea columnas de mínimo 250px que se expanden para llenar el espacio */
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 1.5rem;
 }
 
-/* Tarjeta de Producto */
 .producto-card {
   background-color: #fff;
   border-radius: 12px;
@@ -55,9 +135,8 @@
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
 }
 
-/* Contenedor de Imagen */
 .img-container {
-  background-color: #f7f9f7; /* Color de fondo suave simulando el mockup */
+  background-color: #f7f9f7;
   height: 200px;
   position: relative;
   display: flex;
@@ -76,12 +155,11 @@
   position: absolute;
   bottom: 10px;
   right: 10px;
-  width: 60px; /* Ajusta según el tamaño de tu logo EcoSello */
+  width: 60px;
   height: auto;
   mix-blend-mode: multiply;
 }
 
-/* Información del Producto */
 .producto-info {
   padding: 1.5rem;
   display: flex;
@@ -93,16 +171,27 @@
   font-size: 1.2rem;
   font-weight: 700;
   color: #222;
-  margin: 0 0 0.5rem 0;
+  margin: 0 0 0.5rem;
+}
+
+.producto-categoria {
+  display: inline-flex;
+  align-self: flex-start;
+  margin: 0 0 0.65rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  background: #eaf5eb;
+  color: #2a7a38;
+  font-size: 0.78rem;
+  font-weight: 700;
 }
 
 .producto-detalle {
   font-size: 0.85rem;
   color: #666;
-  margin: 0 0 0.3rem 0;
+  margin: 0 0 0.3rem;
 }
 
-/* Precio y Stock */
 .precio-stock-container {
   display: flex;
   justify-content: space-between;
@@ -127,11 +216,10 @@
   overflow-wrap: anywhere;
 }
 
-/* Acciones (Input y Botón) */
 .acciones-container {
   display: flex;
   gap: 0.8rem;
-  margin-top: auto; /* Empuja los controles hacia abajo si la tarjeta crece */
+  margin-top: auto;
 }
 
 .input-cantidad {
@@ -142,11 +230,6 @@
   text-align: center;
   font-size: 1rem;
   font-family: inherit;
-}
-
-.input-cantidad:focus {
-  outline: none;
-  border-color: #2a7a38;
 }
 
 .btn-anadir {
@@ -172,13 +255,9 @@
   color: #666;
 }
 
-/* Modal Overlay */
 .modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
@@ -187,7 +266,6 @@
   padding: 1rem;
 }
 
-/* Modal Content */
 .modal-content {
   background-color: #fff;
   border-radius: 16px;
@@ -205,13 +283,13 @@
     opacity: 0;
     transform: scale(0.95);
   }
+
   to {
     opacity: 1;
     transform: scale(1);
   }
 }
 
-/* Close Button */
 .close-btn {
   position: absolute;
   top: 15px;
@@ -230,7 +308,6 @@
   color: #000;
 }
 
-/* Modal Body */
 .modal-body {
   display: flex;
   flex-direction: row;
@@ -274,14 +351,15 @@
 .modal-title {
   font-size: 1.8rem;
   color: #2a7a38;
-  margin: 0 0 1rem 0;
+  margin: 0 0 1rem;
 }
 
+.modal-categoria,
 .modal-origen,
 .modal-productor {
   font-size: 0.95rem;
   color: #555;
-  margin: 0 0 0.4rem 0;
+  margin: 0 0 0.4rem;
 }
 
 .modal-desc {
@@ -319,17 +397,6 @@
   margin-top: 0;
 }
 
-/* Responsive Modal */
-@media (max-width: 768px) {
-  .modal-body {
-    flex-direction: column;
-  }
-  
-  .modal-img-container {
-    min-height: 200px;
-  }
-}
-
 .modal-cert {
   margin-top: 15px;
   margin-bottom: 20px;
@@ -349,4 +416,15 @@
 
 .btn-cert:hover {
   background-color: var(--color-primary, #2a7a38);
+}
+
+@media (max-width: 768px) {
+  .filtros-head,
+  .modal-body {
+    flex-direction: column;
+  }
+
+  .modal-img-container {
+    min-height: 200px;
+  }
 }
