@@ -14,17 +14,18 @@ export interface ApiProduct {
   image_url_legacy?: string;
   certificate?: string;
   certificate_url?: string;
+  verification_status?: string;
   ownerId: number | string;
   ownerName?: string;
   image_url?: string;
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ProductService {
   private apiUrl = 'http://localhost:8000/api/productos/';
-  
+
   private productsSubject = new BehaviorSubject<ApiProduct[]>([]);
   public products$ = this.productsSubject.asObservable();
 
@@ -47,7 +48,9 @@ export class ProductService {
   }
 
   async updateProduct(id: number | string, payload: Partial<ApiProduct>): Promise<ApiProduct> {
-    const updatedProduct = await firstValueFrom(this.http.patch<ApiProduct>(`${this.apiUrl}${id}/`, payload));
+    const updatedProduct = await firstValueFrom(
+      this.http.patch<ApiProduct>(`${this.apiUrl}${id}/`, payload),
+    );
     await this.refreshProducts();
     return updatedProduct;
   }

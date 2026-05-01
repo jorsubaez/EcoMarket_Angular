@@ -3,18 +3,18 @@ from .models import Producto, CartItem
 from .serializers import ProductoSerializer, CartItemSerializer
 from .permissions import IsOwnerOrReadOnly, IsProductor
 
+
 class ProductoViewSet(viewsets.ModelViewSet):
     queryset = Producto.objects.all().order_by('-id')
     serializer_class = ProductoSerializer
     filter_backends = [filters.SearchFilter]
     search_fields = ['name', 'origin']
-    
+
     def get_permissions(self):
         """
-        Instantiates and returns the list of permissions that this view requires.
-        - GET list/retrieve: Allow any.
-        - POST create: Must be authenticated AND have role PRODUCTOR.
-        - PUT/PATCH/DELETE: Must be authenticated AND be the owner.
+        - GET list/retrieve: cualquiera puede ver productos.
+        - POST create: solo usuarios autenticados con rol PRODUCTOR.
+        - PUT/PATCH/DELETE: solo el dueño del producto.
         """
         if self.action in ['create']:
             permission_classes = [permissions.IsAuthenticated, IsProductor]
@@ -22,11 +22,22 @@ class ProductoViewSet(viewsets.ModelViewSet):
             permission_classes = [permissions.IsAuthenticated, IsOwnerOrReadOnly]
         else:
             permission_classes = [permissions.AllowAny]
+
         return [permission() for permission in permission_classes]
 
     def perform_create(self, serializer):
-        # Automatically assign the producer that makes the request as owner
-        serializer.save(owner=self.request.user)
+        # Al crear un producto, siempre queda pendiente de verificación.
+        serializer.save(
+            owner=self.request.user,
+            verification_status='PENDIENTE'
+        )
+
+    def perform_update(self, serializer):
+        # Si el productor edita el producto, vuelve a quedar pendiente.
+        serializer.save(
+            verification_status='PENDIENTE'
+        )
+
 
 class CartItemViewSet(viewsets.ModelViewSet):
     serializer_class = CartItemSerializer

@@ -24,8 +24,8 @@
           <p>
             {{
               isEditing
-                ? 'Actualiza los datos del producto seleccionado.'
-                : 'Completa el formulario para publicar un nuevo producto.'
+                ? 'Actualiza los datos del producto seleccionado. Si lo modificas, volverá a quedar pendiente de verificación.'
+                : 'Completa el formulario para publicar un nuevo producto. El administrador deberá verificar el certificado ecológico.'
             }}
           </p>
         </div>
@@ -133,7 +133,7 @@
             <strong>{{ selectedCertName }}</strong>
           </label>
           <small>
-            Sube el documento del certificado en formato PDF para que el producto muestre el sello ecológico verificado.
+            Obligatorio para publicar productos. El producto quedará pendiente hasta que el administrador verifique el certificado.
           </small>
         </div>
 
@@ -149,7 +149,7 @@
       <div class="table-head">
         <div>
           <h2>Mis productos en venta</h2>
-          <p>Consulta tu catálogo actual y gestiona cada publicación.</p>
+          <p>Consulta tu catálogo actual, el estado de verificación y gestiona cada publicación.</p>
         </div>
 
         <label class="search-box">
@@ -176,6 +176,7 @@
               <th>Origen</th>
               <th>Precio</th>
               <th>Disponibilidad</th>
+              <th>Estado verificación</th>
               <th>Acciones</th>
             </tr>
             </thead>
@@ -205,6 +206,12 @@
                   </td>
 
                   <td>{{ product.quantity }}</td>
+
+                  <td>
+                    <span [class]="getStatusClass(product.verification_status)">
+                      {{ getStatusLabel(product.verification_status) }}
+                    </span>
+                  </td>
 
                   <td class="td-actions">
                     <button class="btn-mini btn-edit" type="button" (click)="editProduct(product)">

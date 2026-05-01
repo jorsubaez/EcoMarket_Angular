@@ -310,6 +310,33 @@ h2 {
   font-size: 0.9rem;
 }
 
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 115px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.status-badge.pending {
+  background: rgba(214, 158, 46, 0.14);
+  color: #9a6a00;
+}
+
+.status-badge.verified {
+  background: rgba(47, 125, 50, 0.14);
+  color: #1f6b24;
+}
+
+.status-badge.rejected {
+  background: rgba(182, 60, 47, 0.14);
+  color: #b63c2f;
+}
+
 .td-actions {
   display: flex;
   gap: 8px;
