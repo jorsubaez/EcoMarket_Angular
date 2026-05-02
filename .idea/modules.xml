@@ -2,11 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-<<<<<<< Updated upstream
       <module fileurl="file://$PROJECT_DIR$/.idea/EcoMarket_AngularDef.iml" filepath="$PROJECT_DIR$/.idea/EcoMarket_AngularDef.iml" />
-=======
-      <module fileurl="file://$PROJECT_DIR$/.idea/EcoMarket_Angular.iml" filepath="$PROJECT_DIR$/.idea/EcoMarket_Angular.iml" />
->>>>>>> Stashed changes
     </modules>
   </component>
 </project>
