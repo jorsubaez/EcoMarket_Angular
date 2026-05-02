@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterLink, Router } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { AuthService } from '../services/auth.service';
+import { PROVINCIAS_ESPANA } from '../shared/provincias';
 
 @Component({
   selector: 'app-registro',
@@ -13,8 +14,11 @@ import { AuthService } from '../services/auth.service';
 })
 export class RegistroComponent {
   passwordVisible = false;
+  passwordConfirmVisible = false;
   submitting = false;
   errorMessage = '';
+
+  readonly provincias = PROVINCIAS_ESPANA;
 
   private fb = inject(FormBuilder);
 
@@ -24,13 +28,18 @@ export class RegistroComponent {
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(6)]],
     passwordConfirm: ['', Validators.required],
+    provincia: ['', Validators.required],
     terms: [false, Validators.requiredTrue]
   });
 
   constructor(private authService: AuthService, private router: Router) {}
 
-  togglePassword() {
+  togglePassword(): void {
     this.passwordVisible = !this.passwordVisible;
+  }
+
+  togglePasswordConfirm(): void {
+    this.passwordConfirmVisible = !this.passwordConfirmVisible;
   }
 
   isInvalid(controlName: string): boolean {
@@ -58,7 +67,7 @@ export class RegistroComponent {
 
     const userData = {
       ...this.registerForm.value,
-      rol: 'CLIENTE' // Roles as requested
+      rol: 'CLIENTE'
     };
 
     this.authService.register(userData).subscribe({

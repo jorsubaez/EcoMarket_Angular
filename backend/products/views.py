@@ -1,14 +1,31 @@
 from rest_framework import viewsets, permissions, filters
+from django.db.models import Q
 from .models import Producto, CartItem
 from .serializers import ProductoSerializer, CartItemSerializer
 from .permissions import IsOwnerOrReadOnly, IsProductor
 
 
 class ProductoViewSet(viewsets.ModelViewSet):
-    queryset = Producto.objects.all().order_by('-id')
+    # Placeholder requerido por DRF para introspección (schemas, etc.).
+    # La lógica real de filtrado la gestiona get_queryset().
+    queryset = Producto.objects.none()
     serializer_class = ProductoSerializer
     filter_backends = [filters.SearchFilter]
     search_fields = ['name', 'origin']
+
+    def get_queryset(self):
+        """
+        - Usuarios anónimos o CLIENTE: solo productos VERIFICADO.
+        - PRODUCTOR autenticado: sus propios productos (todos los estados) + el resto VERIFICADO.
+        """
+        user = self.request.user
+        if user.is_authenticated and getattr(user, 'rol', None) == 'PRODUCTOR':
+            return Producto.objects.filter(
+                Q(owner=user) | Q(verification_status='VERIFICADO')
+            ).order_by('-id').distinct()
+        return Producto.objects.filter(
+            verification_status='VERIFICADO'
+        ).order_by('-id')
 
     def get_permissions(self):
         """

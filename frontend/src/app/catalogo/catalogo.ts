@@ -2,6 +2,8 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CartService } from '../services/cart.service';
 import { ApiProduct, ProductService } from '../services/product.service';
+import { AuthService } from '../services/auth.service';
+import { PROVINCIAS_ESPANA } from '../shared/provincias';
 
 export interface Producto {
   id: number;
@@ -30,9 +32,10 @@ export class Catalogo implements OnInit {
   selectedProducto: Producto | null = null;
   loading = true;
   selectedCategoria = 'Todos';
-  selectedLocalidad = 'Todas';
+  selectedProvincia = 'Todas';
   minPrecio: number | null = null;
   maxPrecio: number | null = null;
+  cercaDeMiActivo = false;
 
   readonly categoriasDisponibles = [
     'Todos',
@@ -46,9 +49,12 @@ export class Catalogo implements OnInit {
     'Otros',
   ];
 
+  readonly provinciasDisponibles = ['Todas', ...PROVINCIAS_ESPANA];
+
   constructor(
     private cartService: CartService,
     private productService: ProductService,
+    private authService: AuthService,
     private cdr: ChangeDetectorRef,
   ) {}
 
@@ -65,7 +71,7 @@ export class Catalogo implements OnInit {
         disponibilidad: item.quantity,
         imagenUrl:
           item.image_url || item.image_url_legacy || 'assets/images/placeholder.png',
-        tieneEcoSello: !!item.certificate_url,
+        tieneEcoSello: item.verification_status === 'VERIFICADO',
         descripcion: item.description || '',
         certificadoUrl: item.certificate_url,
       }));
@@ -81,24 +87,14 @@ export class Catalogo implements OnInit {
       const categoriaValida =
         this.selectedCategoria === 'Todos' ||
         producto.categoria === this.selectedCategoria;
-      const localidadValida =
-        this.selectedLocalidad === 'Todas' ||
-        producto.origen.toLowerCase() === this.selectedLocalidad.toLowerCase();
+      const provinciaValida =
+        this.selectedProvincia === 'Todas' ||
+        producto.origen === this.selectedProvincia;
       const minValido = this.minPrecio === null || producto.precio >= this.minPrecio;
       const maxValido = this.maxPrecio === null || producto.precio <= this.maxPrecio;
 
-      return categoriaValida && localidadValida && minValido && maxValido;
+      return categoriaValida && provinciaValida && minValido && maxValido;
     });
-  }
-
-  get localidadesDisponibles(): string[] {
-    const localidades = new Set(
-      this.productos
-        .map((producto) => producto.origen.trim())
-        .filter((origen) => origen.length > 0),
-    );
-
-    return ['Todas', ...Array.from(localidades).sort((a, b) => a.localeCompare(b))];
   }
 
   abrirModal(producto: Producto) {
@@ -123,8 +119,9 @@ export class Catalogo implements OnInit {
     this.selectedCategoria = categoria;
   }
 
-  actualizarLocalidad(localidad: string) {
-    this.selectedLocalidad = localidad;
+  actualizarProvincia(provincia: string) {
+    this.selectedProvincia = provincia;
+    this.cercaDeMiActivo = false;
   }
 
   actualizarMinPrecio(value: string) {
@@ -137,9 +134,28 @@ export class Catalogo implements OnInit {
 
   limpiarFiltros() {
     this.selectedCategoria = 'Todos';
-    this.selectedLocalidad = 'Todas';
+    this.selectedProvincia = 'Todas';
     this.minPrecio = null;
     this.maxPrecio = null;
+    this.cercaDeMiActivo = false;
+  }
+
+  aplicarCercaDeMi() {
+    const usuario = this.authService.currentUser;
+
+    if (!usuario) {
+      alert('Debes iniciar sesión para usar el filtro "Cerca de mí".');
+      return;
+    }
+
+    if (!usuario.provincia) {
+      alert('Tu perfil no tiene una provincia configurada. Completa tu registro para usar esta función.');
+      return;
+    }
+
+    this.selectedProvincia = usuario.provincia;
+    this.cercaDeMiActivo = true;
+    this.cdr.detectChanges();
   }
 
   agregarAlCarrito(producto: Producto, cantidadInput: string) {

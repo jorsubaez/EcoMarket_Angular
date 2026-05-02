@@ -10,7 +10,7 @@
     <div class="filtros-head">
       <div>
         <h2>Filtrar productos</h2>
-        <p>Ajusta categoria, localidad y precio para encontrar lo que buscas.</p>
+        <p>Ajusta categoria, provincia y precio para encontrar lo que buscas.</p>
       </div>
       <button class="btn-limpiar" type="button" (click)="limpiarFiltros()">
         Limpiar filtros
@@ -32,14 +32,14 @@
       </label>
 
       <label class="filtro-campo">
-        <span>Localidad</span>
+        <span>Provincia</span>
         <select
-          [value]="selectedLocalidad"
-          (change)="actualizarLocalidad(localidadRef.value)"
-          #localidadRef
+          [value]="selectedProvincia"
+          (change)="actualizarProvincia(provinciaRef.value)"
+          #provinciaRef
         >
-          @for (localidad of localidadesDisponibles; track localidad) {
-            <option [value]="localidad">{{ localidad }}</option>
+          @for (provincia of provinciasDisponibles; track provincia) {
+            <option [value]="provincia">{{ provincia }}</option>
           }
         </select>
       </label>
@@ -69,9 +69,25 @@
       </label>
     </div>
 
-    <p class="filtros-resumen">
-      Mostrando {{ productosFiltrados.length }} de {{ productos.length }} productos.
-    </p>
+    <div class="filtros-acciones">
+      <button
+        class="btn-cerca"
+        type="button"
+        [class.active]="cercaDeMiActivo"
+        (click)="aplicarCercaDeMi()"
+        title="Filtrar por tu provincia"
+      >
+        <i class="fa-solid fa-location-dot"></i>
+        Cerca de mí
+      </button>
+
+      <p class="filtros-resumen">
+        Mostrando {{ productosFiltrados.length }} de {{ productos.length }} productos.
+        @if (cercaDeMiActivo) {
+          <span class="provincia-badge">{{ selectedProvincia }}</span>
+        }
+      </p>
+    </div>
   </section>
 
   <hr class="divider" />

@@ -107,6 +107,51 @@
   background: #eef6ed;
 }
 
+.filtros-acciones {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 0.6rem;
+}
+
+.btn-cerca {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 36px;
+  padding: 0.5rem 1rem;
+  border: 1.5px solid #2a7a38;
+  border-radius: 999px;
+  background: #fff;
+  color: #2a7a38;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.btn-cerca:hover {
+  background: #eef6ed;
+}
+
+.btn-cerca.active {
+  background: #2a7a38;
+  color: #fff;
+}
+
+.provincia-badge {
+  display: inline-block;
+  padding: 0.2rem 0.65rem;
+  background: #e0f0e3;
+  color: #205c2b;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+
 .divider {
   border: none;
   border-top: 1px solid #e0e0e0;

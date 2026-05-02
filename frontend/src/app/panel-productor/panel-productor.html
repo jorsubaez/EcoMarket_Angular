@@ -55,10 +55,15 @@
         </label>
 
         <label class="field">
-          <span>Origen</span>
-          <input type="text" formControlName="origin" placeholder="Ej. Gran Canaria" />
+          <span>Provincia de origen</span>
+          <select formControlName="origin">
+            <option value="" disabled>Selecciona la provincia</option>
+            @for (p of provincias; track p) {
+              <option [value]="p">{{ p }}</option>
+            }
+          </select>
           @if (productForm.controls.origin.invalid && productForm.controls.origin.touched) {
-            <small>El origen es obligatorio.</small>
+            <small>Selecciona la provincia de origen.</small>
           }
         </label>
 
@@ -108,16 +113,19 @@
               #imageInput
               id="product-image"
               type="file"
-              accept="image/jpeg, image/png, image/jpg"
+              accept="image/jpeg, image/png, image/jpg, image/webp"
               (change)="onImageSelected($event)"
             />
-            <span class="btn btn-secondary">Seleccionar imagen</span>
+            <span class="btn btn-secondary" [class.btn-loading]="compressing">
+              @if (compressing) { Comprimiendo… } @else { Seleccionar imagen }
+            </span>
             <strong>{{ selectedFileName }}</strong>
           </label>
           <small>
-            Opcional. Si no subes una imagen, se mostrará un placeholder. Solo se admiten formatos JPG o PNG.
+            Opcional. Formatos admitidos: JPG, PNG o WebP. La imagen se comprimirá automáticamente antes de subirse.
           </small>
         </div>
+
 
         <div class="field">
           <span>Certificado ecológico</span>

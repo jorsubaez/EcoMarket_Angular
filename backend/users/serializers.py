@@ -10,7 +10,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('id', 'username', 'email', 'first_name', 'last_name', 'password', 'rol', 'telefono', 'direccion')
+        fields = ('id', 'username', 'email', 'first_name', 'last_name', 'password', 'rol', 'telefono', 'direccion', 'provincia')
         read_only_fields = ('id',)
 
     def create(self, validated_data):
@@ -20,7 +20,8 @@ class UserSerializer(serializers.ModelSerializer):
             password=validated_data['password'],
             first_name=validated_data.get('first_name', ''),
             last_name=validated_data.get('last_name', ''),
-            rol=validated_data.get('rol', 'CLIENTE') # Default to CLIENTE
+            rol=validated_data.get('rol', 'CLIENTE'), # Default to CLIENTE
+            provincia=validated_data.get('provincia', ''),
         )
         return user
 
@@ -42,12 +43,13 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
         attrs['username'] = attrs.get('email')
         data = super().validate(attrs)
-        
+
         # Add custom claims
         data['user'] = {
             'id': self.user.id,
             'email': self.user.email,
             'name': f"{self.user.first_name} {self.user.last_name}".strip() or self.user.username,
-            'rol': self.user.rol
+            'rol': self.user.rol,
+            'provincia': self.user.provincia or '',
         }
         return data

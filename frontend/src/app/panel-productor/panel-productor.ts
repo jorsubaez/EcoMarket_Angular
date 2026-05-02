@@ -12,7 +12,9 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 
 import { AuthService } from '../services/auth.service';
+import { ImageCompressionService } from '../services/image-compression.service';
 import { ApiProduct, ProductService } from '../services/product.service';
+import { PROVINCIAS_ESPANA } from '../shared/provincias';
 
 @Component({
   selector: 'app-panel-productor',
@@ -27,6 +29,7 @@ export class PanelProductor implements OnInit, OnDestroy {
   private readonly fb = inject(FormBuilder);
   private readonly authService = inject(AuthService);
   private readonly productService = inject(ProductService);
+  private readonly imageCompressor = inject(ImageCompressionService);
   private readonly cdr = inject(ChangeDetectorRef);
 
   private productsSub?: Subscription;
@@ -46,8 +49,9 @@ export class PanelProductor implements OnInit, OnDestroy {
   protected accessDenied = false;
   protected loading = true;
   protected submitting = false;
+  protected compressing = false;
   protected searchTerm = '';
-
+  protected readonly provincias = PROVINCIAS_ESPANA;
   protected successMessage = '';
   protected errorMessage = '';
 
@@ -66,8 +70,10 @@ export class PanelProductor implements OnInit, OnDestroy {
     quantity: [0, [Validators.required, Validators.min(0)]],
   });
 
-  private selectedImageDataUrl = '';
-  private selectedCertDataUrl = '';
+  /** Compressed File ready to upload, or null if none selected. */
+  private selectedImageFile: File | null = null;
+  /** Raw cert File ready to upload, or null if none selected. */
+  private selectedCertFile: File | null = null;
   private ownerId: number | string | null = null;
 
   async ngOnInit(): Promise<void> {
@@ -139,7 +145,7 @@ export class PanelProductor implements OnInit, OnDestroy {
       return;
     }
 
-    if (!this.isEditing && !this.selectedCertDataUrl) {
+    if (!this.isEditing && !this.selectedCertFile) {
       this.errorMessage = 'Debes subir un certificado ecológico en PDF para publicar el producto.';
       return;
     }
@@ -159,12 +165,13 @@ export class PanelProductor implements OnInit, OnDestroy {
       quantity: Number(formValue.quantity),
     };
 
-    if (this.selectedImageDataUrl && this.selectedImageDataUrl.startsWith('data:')) {
-      payload.image = this.selectedImageDataUrl;
+    // Only attach image / certificate if the user selected a new file.
+    if (this.selectedImageFile) {
+      payload.image = this.selectedImageFile;
     }
 
-    if (this.selectedCertDataUrl && this.selectedCertDataUrl.startsWith('data:')) {
-      payload.certificate = this.selectedCertDataUrl;
+    if (this.selectedCertFile) {
+      payload.certificate = this.selectedCertFile;
     }
 
     try {
@@ -194,9 +201,9 @@ export class PanelProductor implements OnInit, OnDestroy {
     this.clearMessages();
 
     this.editingProductId = product.id ?? null;
-    this.selectedImageDataUrl = product.image || '';
+    this.selectedImageFile = null;
     this.selectedFileName = product.image ? 'Imagen actual' : 'Ningún archivo seleccionado';
-    this.selectedCertDataUrl = '';
+    this.selectedCertFile = null;
     this.selectedCertName = product.certificate_url
       ? 'Certificado actual'
       : 'Ningún archivo seleccionado';
@@ -252,21 +259,26 @@ export class PanelProductor implements OnInit, OnDestroy {
     this.clearMessages();
   }
 
+  /**
+   * Handles the image <input> change event.
+   * Validates the format, then uses ImageCompressionService to compress
+   * the file (≤1MB, ≤1280px, EXIF preserved) before storing it.
+   */
   protected async onImageSelected(event: Event): Promise<void> {
     const input = event.target as HTMLInputElement | null;
     const file = input?.files?.[0];
 
     if (!file) {
       this.selectedFileName = this.isEditing ? 'Imagen actual' : 'Ningún archivo seleccionado';
-      this.selectedImageDataUrl = this.editingProductPreview;
+      this.selectedImageFile = null;
       return;
     }
 
-    if (!file.type.match(/image\/(jpeg|jpg|png)/)) {
+    if (!file.type.match(/image\/(jpeg|jpg|png|webp)/)) {
       this.errorMessage =
-        'Formato de imagen inválido. Por favor sube una foto en formato JPG o PNG.';
+        'Formato de imagen inválido. Por favor sube una foto en formato JPG, PNG o WebP.';
       this.selectedFileName = 'Ningún archivo seleccionado';
-      this.selectedImageDataUrl = '';
+      this.selectedImageFile = null;
 
       if (this.imageInput) {
         this.imageInput.nativeElement.value = '';
@@ -276,8 +288,22 @@ export class PanelProductor implements OnInit, OnDestroy {
     }
 
     this.errorMessage = '';
-    this.selectedFileName = file.name;
-    this.selectedImageDataUrl = await this.readFileAsDataUrl(file);
+    this.compressing = true;
+    this.selectedFileName = 'Comprimiendo imagen…';
+    this.cdr.detectChanges();
+
+    try {
+      this.selectedImageFile = await this.imageCompressor.compress(file);
+      const sizeMB = (this.selectedImageFile.size / 1024 / 1024).toFixed(2);
+      this.selectedFileName = `${file.name} (${sizeMB} MB → comprimido)`;
+    } catch {
+      // Fallback: use the original file if compression fails.
+      this.selectedImageFile = file;
+      this.selectedFileName = file.name;
+    } finally {
+      this.compressing = false;
+      this.cdr.detectChanges();
+    }
   }
 
   protected async onCertSelected(event: Event): Promise<void> {
@@ -291,7 +317,7 @@ export class PanelProductor implements OnInit, OnDestroy {
           ? 'Certificado actual'
           : 'Ningún archivo seleccionado';
 
-      this.selectedCertDataUrl = '';
+      this.selectedCertFile = null;
       return;
     }
 
@@ -299,7 +325,7 @@ export class PanelProductor implements OnInit, OnDestroy {
       this.errorMessage =
         'Formato de certificado inválido. Por favor sube un documento en formato PDF.';
       this.selectedCertName = 'Ningún archivo seleccionado';
-      this.selectedCertDataUrl = '';
+      this.selectedCertFile = null;
 
       if (this.certInput) {
         this.certInput.nativeElement.value = '';
@@ -309,8 +335,8 @@ export class PanelProductor implements OnInit, OnDestroy {
     }
 
     this.errorMessage = '';
+    this.selectedCertFile = file;
     this.selectedCertName = file.name;
-    this.selectedCertDataUrl = await this.readFileAsDataUrl(file);
   }
 
   protected logout(): void {
@@ -360,18 +386,6 @@ export class PanelProductor implements OnInit, OnDestroy {
     }
   }
 
-  private get editingProductPreview(): string {
-    if (!this.isEditing) {
-      return '';
-    }
-
-    const currentProduct = this.products.find(
-      (product) => String(product.id) === String(this.editingProductId),
-    );
-
-    return currentProduct?.image || '';
-  }
-
   private resetForm(): void {
     this.productForm.reset({
       name: '',
@@ -383,9 +397,9 @@ export class PanelProductor implements OnInit, OnDestroy {
     });
 
     this.editingProductId = null;
-    this.selectedImageDataUrl = '';
+    this.selectedImageFile = null;
     this.selectedFileName = 'Ningún archivo seleccionado';
-    this.selectedCertDataUrl = '';
+    this.selectedCertFile = null;
     this.selectedCertName = 'Ningún archivo seleccionado';
 
     if (this.imageInput) {
@@ -400,17 +414,6 @@ export class PanelProductor implements OnInit, OnDestroy {
   private clearMessages(): void {
     this.successMessage = '';
     this.errorMessage = '';
-  }
-
-  private readFileAsDataUrl(file: File): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-
-      reader.onload = () => resolve(String(reader.result ?? ''));
-      reader.onerror = () => reject(new Error('No se pudo leer el archivo.'));
-
-      reader.readAsDataURL(file);
-    });
   }
 }
 

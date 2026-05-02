@@ -8,6 +8,7 @@ export interface SessionData {
   name: string;
   email: string;
   rol: string;
+  provincia?: string;
 }
 
 @Injectable({

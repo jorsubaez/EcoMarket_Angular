@@ -247,6 +247,32 @@ h2 {
   border: 1px solid rgba(47, 125, 50, 0.12);
 }
 
+.btn-loading {
+  opacity: 0.75;
+  cursor: progress;
+  pointer-events: none;
+  position: relative;
+  padding-left: 34px;
+}
+
+.btn-loading::before {
+  content: '';
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid rgba(47, 125, 50, 0.35);
+  border-top-color: var(--primary);
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: translateY(-50%) rotate(360deg); }
+}
+
 .table-head {
   margin-bottom: 14px;
 }

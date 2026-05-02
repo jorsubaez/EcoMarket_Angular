@@ -1,17 +1,5 @@
 from rest_framework import serializers
 from .models import Producto, CartItem
-from drf_extra_fields.fields import Base64ImageField, Base64FileField
-import filetype
-
-
-class PDFBase64FileField(Base64FileField):
-    ALLOWED_TYPES = ['pdf', 'png', 'jpg', 'jpeg']
-
-    def get_file_extension(self, filename, decoded_file):
-        kind = filetype.guess(decoded_file)
-        if kind and kind.extension in self.ALLOWED_TYPES:
-            return kind.extension
-        return None
 
 
 class ProductoSerializer(serializers.ModelSerializer):
@@ -19,8 +7,14 @@ class ProductoSerializer(serializers.ModelSerializer):
     ownerName = serializers.ReadOnlyField(source='owner.first_name')
     image_url = serializers.SerializerMethodField()
     certificate_url = serializers.SerializerMethodField()
-    image = Base64ImageField(required=False, allow_null=True)
-    certificate = PDFBase64FileField(required=False, allow_null=True)
+
+    # Standard ImageField — accepts multipart/form-data uploads.
+    # The model's save() method handles WebP conversion and resizing via Pillow.
+    image = serializers.ImageField(required=False, allow_null=True)
+
+    # Certificate remains a generic file upload (PDF).
+    certificate = serializers.FileField(required=False, allow_null=True)
+
     verification_status = serializers.ReadOnlyField()
 
     class Meta:
