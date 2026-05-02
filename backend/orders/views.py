@@ -1,6 +1,10 @@
 from decimal import Decimal
 
 from django.core.mail import send_mail
+from django.core.mail import EmailMultiAlternatives
+from django.conf import settings
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 from django.utils import timezone
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
@@ -8,7 +12,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from products.models import CartItem
-from .models import Order, OrderItem
+from .models import Order, OrderItem, EmailLog
 from .serializers import (
     OrderSerializer,
     CreateOrderSerializer,
@@ -121,18 +125,61 @@ def simulate_payment(request, order_id):
             item.product.quantity = max(0, item.product.quantity - item.quantity)
             item.product.save()
 
-    send_mail(
-        subject=f'Confirmación de pedido #{order.id}',
-        message=f'Tu pedido #{order.id} ha sido pagado correctamente. Total: {order.total} €.',
-        from_email=None,
-        recipient_list=[request.user.email],
-        fail_silently=True,
-    )
+    # Decrement product stock
+    for item in order.items.all():
+        if item.product:
+            item.product.quantity = max(0, item.product.quantity - item.quantity)
+            item.product.save()
+
+    # =========================================================
+    # LÓGICA DE ENVÍO DE EMAIL TRANSACCIONAL CON REGISTRO
+    # =========================================================
+
+    # 1. Preparamos los datos para la plantilla
+    context = {
+        'user': request.user,
+        'order': order,
+        'items': order.items.all()
+    }
+
+    # 2. Renderizamos el HTML y creamos una versión en texto plano
+    html_message = render_to_string('emails/order_confirmation.html', context)
+    plain_message = strip_tags(html_message)
+
+    try:
+        email = EmailMultiAlternatives(
+            subject=f'🌱 EcoMarket - Confirmación de tu pedido #{order.id}',
+            body=plain_message,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            to=[request.user.email]
+        )
+        email.attach_alternative(html_message, "text/html")
+
+        # OJO: fail_silently=False es vital para que si falla, salte al "except"
+        email.send(fail_silently=False)
+
+        # 4. Registramos el ÉXITO
+        EmailLog.objects.create(
+            order=order,
+            email_address=request.user.email,
+            status='ENVIADO'
+        )
+
+    except Exception as e:
+        # 4. Registramos el FALLO
+        EmailLog.objects.create(
+            order=order,
+            email_address=request.user.email,
+            status='FALLIDO',
+            error_message=str(e)
+        )
+        # Aquí no paramos el flujo, el usuario ya ha pagado.
+        # Devolvemos el 200 OK igual, pero nosotros sabemos que el email falló.
 
     return Response(
         {
             'success': True,
-            'detail': 'Pago realizado correctamente.',
+            'detail': 'Pago realizado correctamente. Te hemos enviado un correo.',
             'order': OrderSerializer(order).data,
         },
         status=status.HTTP_200_OK

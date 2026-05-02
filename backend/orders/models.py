@@ -64,3 +64,18 @@ class OrderItem(models.Model):
 
     def __str__(self):
         return f"{self.product_name} x {self.quantity}"
+
+class EmailLog(models.Model):
+    STATUS_CHOICES = [
+        ('ENVIADO', 'Enviado'),
+        ('FALLIDO', 'Fallido'),
+    ]
+
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='email_logs')
+    email_address = models.EmailField()
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES)
+    error_message = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Email {self.status} para Pedido #{self.order.id}"

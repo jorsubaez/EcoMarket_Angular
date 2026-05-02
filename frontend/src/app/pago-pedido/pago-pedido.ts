@@ -55,7 +55,7 @@ export class PagoPedidoComponent {
       .subscribe({
         next: () => {
           this.loading = false;
-          this.successMessage = 'Compra realizada correctamente.';
+          this.successMessage = 'Compra realizada correctamente. Te hemos enviado un email con el resumen de tu pedido';
 
           setTimeout(() => {
             this.router.navigate(['/perfil']);
