@@ -113,7 +113,7 @@
                 <span>Total:</span>
                 <span>{{ cartTotal | number:'1.2-2' }} €</span>
             </div>
-          <button class="btn-checkout" routerLink="/confirmar-pedido">
+          <button class="btn-checkout" (click)="irAConfirmarPedido()">
             Finalizar Compra
           </button>
         </div>

@@ -248,6 +248,18 @@
   background-color: #1e5a28;
 }
 
+.btn-out-of-stock {
+  flex-grow: 1;
+  background-color: #f0f0f0;
+  color: #999;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: not-allowed;
+  padding: 0.5rem 1rem;
+}
+
 .no-productos {
   grid-column: 1 / -1;
   text-align: center;

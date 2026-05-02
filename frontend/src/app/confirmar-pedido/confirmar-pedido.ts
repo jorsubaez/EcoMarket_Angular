@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -30,6 +30,7 @@ export class ConfirmarPedidoComponent implements OnInit, OnDestroy {
     private cartService: CartService,
     private orderService: OrderService,
     private router: Router,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   async ngOnInit(): Promise<void> {
@@ -38,6 +39,7 @@ export class ConfirmarPedidoComponent implements OnInit, OnDestroy {
     this.cartSub = this.cartService.cart$.subscribe((items: CartItem[]) => {
       this.cartItems = items;
       this.total = this.cartService.getCartTotal();
+      this.cdr.detectChanges();
     });
   }
 

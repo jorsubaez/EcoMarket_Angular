@@ -115,6 +115,12 @@ def simulate_payment(request, order_id):
     order.paid_at = timezone.now()
     order.save()
 
+    # Decrement product stock
+    for item in order.items.all():
+        if item.product:
+            item.product.quantity = max(0, item.product.quantity - item.quantity)
+            item.product.save()
+
     send_mail(
         subject=f'Confirmación de pedido #{order.id}',
         message=f'Tu pedido #{order.id} ha sido pagado correctamente. Total: {order.total} €.',

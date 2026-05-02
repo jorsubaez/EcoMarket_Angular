@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { CartService, CartItem } from '../../services/cart.service';
 import { AuthService } from '../../services/auth.service';
@@ -23,6 +23,7 @@ export class HeaderComponent implements OnInit {
   constructor(
     private cartService: CartService,
     public authService: AuthService,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -76,6 +77,12 @@ export class HeaderComponent implements OnInit {
     setTimeout(() => {
       this.bumpCart = false;
     }, 300);
+  }
+
+  irAConfirmarPedido() {
+    this.isCartDrawerOpen = false;
+    document.body.style.overflow = 'auto';
+    this.router.navigate(['/confirmar-pedido']);
   }
 
   toggleMenu() {
