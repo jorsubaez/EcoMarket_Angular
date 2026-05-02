@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-productores',
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './productores.html',
   styleUrl: './productores.css',
 })
