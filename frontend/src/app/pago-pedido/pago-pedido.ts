@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { OrderService } from '../services/order.service';
+import { CartService } from '../services/cart.service';
 
 @Component({
   selector: 'app-pago-pedido',
@@ -28,6 +29,7 @@ export class PagoPedidoComponent {
     private route: ActivatedRoute,
     private router: Router,
     private orderService: OrderService,
+    private cartService: CartService,
   ) {
     this.orderId = Number(this.route.snapshot.paramMap.get('id'));
   }
@@ -55,10 +57,11 @@ export class PagoPedidoComponent {
       .subscribe({
         next: () => {
           this.loading = false;
-          this.successMessage = 'Compra realizada correctamente. Te hemos enviado un email con el resumen de tu pedido';
+          this.successMessage = 'Compra realizada correctamente.';
+          this.cartService.clearCartLocal();
 
           setTimeout(() => {
-            this.router.navigate(['/perfil']);
+            this.router.navigate(['/catalogo']);
           }, 2000);
         },
         error: (error) => {

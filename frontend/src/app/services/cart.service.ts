@@ -93,7 +93,7 @@ export class CartService {
     }
   }
 
-  async removeFromCart(productoId: string | number) {
+  async removeFromCart(productoId: number) {
     const item = this.cartItems.find((item) => item.producto.id === productoId);
     if (item && item.id) {
       try {
@@ -106,7 +106,7 @@ export class CartService {
     }
   }
 
-  async updateQuantity(productoId: string | number, cantidad: number) {
+  async updateQuantity(productoId: number, cantidad: number) {
     const item = this.cartItems.find((item) => item.producto.id === productoId);
     if (item) {
       if (cantidad <= 0) {

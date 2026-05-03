@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../services/auth.service';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'app-login',
@@ -19,13 +20,17 @@ export class LoginComponent {
   submitting = false;
   submitted = false;
 
-  constructor(private router: Router, private authService: AuthService) {}
+  constructor(
+    private router: Router,
+    private authService: AuthService,
+    private cdr: ChangeDetectorRef,
+  ) {}
 
   togglePassword() {
     this.passwordVisible = !this.passwordVisible;
   }
 
-  async onSubmit() {
+  onSubmit() {
     this.submitted = true;
     this.email = this.email.trim();
 
@@ -42,14 +47,24 @@ export class LoginComponent {
     this.submitting = true;
     this.errorMessage = '';
 
-    try {
-      await this.authService.login({ email: this.email, password: this.password });
-      this.submitting = false;
-      this.router.navigate(['/perfil']); // o panel-productor según el rol, Firebase Auth simplificado
-    } catch (err: any) {
-      this.submitting = false;
-      this.errorMessage = 'Email o contraseña incorrectos.';
-      console.error("Error al iniciar sesión:", err);
-    }
+    this.authService.login({ email: this.email, password: this.password }).pipe(
+      finalize(() => {
+        // Garantiza reset del estado siempre, e informa a Angular del cambio.
+        this.submitting = false;
+        this.cdr.detectChanges();
+      })
+    ).subscribe({
+      next: (response) => {
+        if (response.user && response.user.rol === 'PRODUCTOR') {
+          this.router.navigate(['/panel-productor']);
+        } else {
+          this.router.navigate(['/perfil']);
+        }
+      },
+      error: (err) => {
+        this.errorMessage = 'Email o contraseña incorrectos.';
+        console.error('Error al iniciar sesión:', err);
+      }
+    });
   }
 }

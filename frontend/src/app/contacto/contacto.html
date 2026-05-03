@@ -41,8 +41,8 @@
           <textarea id="mensaje" formControlName="mensaje" placeholder="Cuéntanos en qué podemos ayudarte..." rows="5"></textarea>
         </div>
 
-        <button type="submit" [disabled]="contactoForm.invalid" class="btn-submit">
-          Enviar consulta
+        <button type="submit" [disabled]="contactoForm.invalid || submitting" class="btn-submit">
+          {{ submitting ? 'Enviando...' : 'Enviar consulta' }}
         </button>
       </form>
     </div>

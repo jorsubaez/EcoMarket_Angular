@@ -50,7 +50,7 @@ export class HeaderComponent implements OnInit {
     }
   }
 
-  updateQuantity(productoId: string | number, cantidad: number) {
+  updateQuantity(productoId: number, cantidad: number) {
     this.cartService.updateQuantity(productoId, cantidad);
   }
 

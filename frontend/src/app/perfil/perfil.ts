@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { firstValueFrom } from 'rxjs';
 import { ChangeDetectorRef } from '@angular/core';
 import { AuthService } from '../services/auth.service';
-import { Database, ref, get, update } from '@angular/fire/database';
 
 @Component({
   selector: 'app-perfil',
@@ -13,9 +14,10 @@ import { Database, ref, get, update } from '@angular/fire/database';
 })
 export class Perfil implements OnInit {
   private readonly fb = inject(FormBuilder);
+  private readonly http = inject(HttpClient);
   private readonly authService = inject(AuthService);
   private readonly cdr = inject(ChangeDetectorRef);
-  private readonly db = inject(Database);
+  private readonly apiUrl = 'http://localhost:8000/api/users/me/';
 
   protected loading = false;
   protected accessDenied = false;
@@ -58,10 +60,10 @@ export class Perfil implements OnInit {
     }
 
     this.user = {
-      id: session.uid,
-      nombre: session.displayName || 'Usuario EcoMarket',
+      id: session.id,
+      nombre: session.name || 'Usuario EcoMarket',
       email: session.email || 'email@ejemplo.com',
-      rol: 'PRODUCTOR', // Default to productor to avoid template errors for now
+      rol: session.rol || 'cliente',
       telefono: '',
       direccion: '',
     };
@@ -81,7 +83,7 @@ export class Perfil implements OnInit {
   }
 
   protected get roleLabel(): string {
-    switch (this.user.rol.toLowerCase()) {
+    switch (this.user.rol) {
       case 'productor':
         return 'Cuenta de productor';
       case 'cliente':
@@ -129,23 +131,37 @@ export class Perfil implements OnInit {
     this.saving = true;
 
     try {
-      const userRef = ref(this.db, `users/${this.user.id}`);
-      await update(userRef, payload);
+      const updatedUser = await firstValueFrom(
+        this.http.patch<any>(this.apiUrl, {
+          first_name: payload.nombre.split(' ')[0] || '',
+          last_name: payload.nombre.split(' ').slice(1).join(' ') || '',
+          email: payload.email,
+          telefono: payload.telefono,
+          direccion: payload.direccion
+        }),
+      );
 
       this.user = {
         ...this.user,
-        ...payload
+        nombre: updatedUser.first_name + ' ' + updatedUser.last_name,
+        email: updatedUser.email,
+        telefono: updatedUser.telefono,
+        direccion: updatedUser.direccion
       };
+
+      this.authService.updateSession({
+        name: this.user.nombre,
+        email: this.user.email
+      });
 
       this.syncFormWithUser();
       this.editing = false;
       this.successMessage = 'Perfil actualizado correctamente.';
     } catch {
       this.errorMessage =
-        'No se pudo guardar el perfil en Firebase.';
+        'No se pudo guardar el perfil. Comprueba que el backend de Django esté funcionando.';
     } finally {
       this.saving = false;
-      this.cdr.detectChanges();
     }
   }
 
@@ -167,30 +183,30 @@ export class Perfil implements OnInit {
     this.successMessage = `La sección "${item}" estará disponible en futuras versiones.`;
   }
 
-  private async loadUserDetails(): Promise<void> {
+  private loadUserDetails(): void {
     this.clearMessages();
 
-    try {
-      const userRef = ref(this.db, `users/${this.user.id}`);
-      const snapshot = await get(userRef);
-      const remoteUser = snapshot.val();
-      
-      if (remoteUser) {
+    this.http.get<any>(this.apiUrl).subscribe({
+      next: (remoteUser) => {
         this.user = {
           ...this.user,
-          nombre: remoteUser.nombre || this.user.nombre,
+          nombre: remoteUser.first_name ? remoteUser.first_name + ' ' + remoteUser.last_name : remoteUser.username,
+          email: remoteUser.email,
+          rol: remoteUser.rol,
           telefono: remoteUser.telefono || '',
           direccion: remoteUser.direccion || ''
         };
+        this.syncFormWithUser();
+        this.loading = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.errorMessage =
+          'No se pudieron cargar los detalles completos del perfil. Se muestran los datos de la sesion local.';
+        this.loading = false;
+        this.cdr.detectChanges();
       }
-      this.syncFormWithUser();
-    } catch (e) {
-      this.errorMessage =
-        'No se pudieron cargar los detalles completos del perfil.';
-    } finally {
-      this.loading = false;
-      this.cdr.detectChanges();
-    }
+    });
   }
 
   private syncFormWithUser(): void {
@@ -206,6 +222,13 @@ export class Perfil implements OnInit {
     this.successMessage = '';
     this.errorMessage = '';
   }
+}
+
+interface Session {
+  id: number | string;
+  name: string;
+  email?: string;
+  rol?: string;
 }
 
 interface UserProfile {

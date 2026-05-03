@@ -12,8 +12,9 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 
 import { AuthService } from '../services/auth.service';
+import { ImageCompressionService } from '../services/image-compression.service';
 import { ApiProduct, ProductService } from '../services/product.service';
-import { StorageService } from '../services/storage.service';
+import { PROVINCIAS_ESPANA } from '../shared/provincias';
 
 @Component({
   selector: 'app-panel-productor',
@@ -28,7 +29,7 @@ export class PanelProductor implements OnInit, OnDestroy {
   private readonly fb = inject(FormBuilder);
   private readonly authService = inject(AuthService);
   private readonly productService = inject(ProductService);
-  private readonly storageService = inject(StorageService);
+  private readonly imageCompressor = inject(ImageCompressionService);
   private readonly cdr = inject(ChangeDetectorRef);
 
   private productsSub?: Subscription;
@@ -48,8 +49,9 @@ export class PanelProductor implements OnInit, OnDestroy {
   protected accessDenied = false;
   protected loading = true;
   protected submitting = false;
+  protected compressing = false;
   protected searchTerm = '';
-
+  protected readonly provincias = PROVINCIAS_ESPANA;
   protected successMessage = '';
   protected errorMessage = '';
 
@@ -68,23 +70,23 @@ export class PanelProductor implements OnInit, OnDestroy {
     quantity: [0, [Validators.required, Validators.min(0)]],
   });
 
+  /** Compressed File ready to upload, or null if none selected. */
   private selectedImageFile: File | null = null;
+  /** Raw cert File ready to upload, or null if none selected. */
   private selectedCertFile: File | null = null;
-  private selectedImageDataUrl = '';
-  private selectedCertDataUrl = '';
   private ownerId: number | string | null = null;
 
   async ngOnInit(): Promise<void> {
     const session = this.authService.currentUser;
 
-    if (!session) { // || session.rol !== 'PRODUCTOR' -> Para Firebase Auth simple omitimos check estricto de ROL en este momento para simplificar.
+    if (!session || session.rol !== 'PRODUCTOR') {
       this.accessDenied = true;
       this.loading = false;
       return;
     }
 
-    this.sessionName = session.displayName || 'Productor';
-    this.ownerId = session.uid;
+    this.sessionName = session.name || 'Productor';
+    this.ownerId = session.id;
 
     this.productsSub = this.productService.products$.subscribe((allProducts) => {
       this.products = allProducts
@@ -99,8 +101,8 @@ export class PanelProductor implements OnInit, OnDestroy {
           unit: p.unit,
           description: p.description,
           quantity: p.quantity,
-          image: p.image_url || p.image_url_legacy || p.image || '',
-          certificate_url: p.certificate_url || p.certificate || '',
+          image: p.image_url || p.image_url_legacy || '',
+          certificate_url: p.certificate_url,
           verification_status: p.verification_status || 'PENDIENTE',
         }));
 
@@ -163,17 +165,18 @@ export class PanelProductor implements OnInit, OnDestroy {
       quantity: Number(formValue.quantity),
     };
 
+    // Only attach image / certificate if the user selected a new file.
+    if (this.selectedImageFile) {
+      payload.image = this.selectedImageFile;
+    }
+
+    if (this.selectedCertFile) {
+      payload.certificate = this.selectedCertFile;
+    }
+
     try {
-      if (this.selectedImageFile) {
-        payload.image = await this.storageService.uploadFileAndGetUrl(this.selectedImageFile, 'products');
-      }
-
-      if (this.selectedCertFile) {
-        payload.certificate_url = await this.storageService.uploadFileAndGetUrl(this.selectedCertFile, 'certificates');
-      }
-
       if (this.editingProductId !== null) {
-        await this.productService.updateProduct(String(this.editingProductId), payload);
+        await this.productService.updateProduct(this.editingProductId, payload);
         this.successMessage =
           'Producto actualizado correctamente. Queda pendiente de nueva verificación.';
       } else {
@@ -199,11 +202,8 @@ export class PanelProductor implements OnInit, OnDestroy {
 
     this.editingProductId = product.id ?? null;
     this.selectedImageFile = null;
-    this.selectedImageDataUrl = product.image || '';
     this.selectedFileName = product.image ? 'Imagen actual' : 'Ningún archivo seleccionado';
-    
     this.selectedCertFile = null;
-    this.selectedCertDataUrl = '';
     this.selectedCertName = product.certificate_url
       ? 'Certificado actual'
       : 'Ningún archivo seleccionado';
@@ -239,7 +239,7 @@ export class PanelProductor implements OnInit, OnDestroy {
         return;
       }
 
-      await this.productService.deleteProduct(String(product.id));
+      await this.productService.deleteProduct(product.id);
 
       if (String(this.editingProductId) === String(product.id)) {
         this.resetForm();
@@ -259,22 +259,25 @@ export class PanelProductor implements OnInit, OnDestroy {
     this.clearMessages();
   }
 
+  /**
+   * Handles the image <input> change event.
+   * Validates the format, then uses ImageCompressionService to compress
+   * the file (≤1MB, ≤1280px, EXIF preserved) before storing it.
+   */
   protected async onImageSelected(event: Event): Promise<void> {
     const input = event.target as HTMLInputElement | null;
     const file = input?.files?.[0];
 
     if (!file) {
       this.selectedFileName = this.isEditing ? 'Imagen actual' : 'Ningún archivo seleccionado';
-      this.selectedImageDataUrl = this.editingProductPreview;
       this.selectedImageFile = null;
       return;
     }
 
     if (!file.type.match(/image\/(jpeg|jpg|png|webp)/)) {
       this.errorMessage =
-        'Formato de imagen inválido. Por favor sube una foto en formato JPG, WEBP o PNG.';
+        'Formato de imagen inválido. Por favor sube una foto en formato JPG, PNG o WebP.';
       this.selectedFileName = 'Ningún archivo seleccionado';
-      this.selectedImageDataUrl = '';
       this.selectedImageFile = null;
 
       if (this.imageInput) {
@@ -285,9 +288,22 @@ export class PanelProductor implements OnInit, OnDestroy {
     }
 
     this.errorMessage = '';
-    this.selectedFileName = file.name;
-    this.selectedImageFile = file;
-    this.selectedImageDataUrl = await this.readFileAsDataUrl(file);
+    this.compressing = true;
+    this.selectedFileName = 'Comprimiendo imagen…';
+    this.cdr.detectChanges();
+
+    try {
+      this.selectedImageFile = await this.imageCompressor.compress(file);
+      const sizeMB = (this.selectedImageFile.size / 1024 / 1024).toFixed(2);
+      this.selectedFileName = `${file.name} (${sizeMB} MB → comprimido)`;
+    } catch {
+      // Fallback: use the original file if compression fails.
+      this.selectedImageFile = file;
+      this.selectedFileName = file.name;
+    } finally {
+      this.compressing = false;
+      this.cdr.detectChanges();
+    }
   }
 
   protected async onCertSelected(event: Event): Promise<void> {
@@ -301,7 +317,6 @@ export class PanelProductor implements OnInit, OnDestroy {
           ? 'Certificado actual'
           : 'Ningún archivo seleccionado';
 
-      this.selectedCertDataUrl = '';
       this.selectedCertFile = null;
       return;
     }
@@ -310,7 +325,6 @@ export class PanelProductor implements OnInit, OnDestroy {
       this.errorMessage =
         'Formato de certificado inválido. Por favor sube un documento en formato PDF.';
       this.selectedCertName = 'Ningún archivo seleccionado';
-      this.selectedCertDataUrl = '';
       this.selectedCertFile = null;
 
       if (this.certInput) {
@@ -321,9 +335,8 @@ export class PanelProductor implements OnInit, OnDestroy {
     }
 
     this.errorMessage = '';
-    this.selectedCertName = file.name;
     this.selectedCertFile = file;
-    this.selectedCertDataUrl = await this.readFileAsDataUrl(file);
+    this.selectedCertName = file.name;
   }
 
   protected logout(): void {
@@ -373,18 +386,6 @@ export class PanelProductor implements OnInit, OnDestroy {
     }
   }
 
-  private get editingProductPreview(): string {
-    if (!this.isEditing) {
-      return '';
-    }
-
-    const currentProduct = this.products.find(
-      (product) => String(product.id) === String(this.editingProductId),
-    );
-
-    return currentProduct?.image || '';
-  }
-
   private resetForm(): void {
     this.productForm.reset({
       name: '',
@@ -396,12 +397,10 @@ export class PanelProductor implements OnInit, OnDestroy {
     });
 
     this.editingProductId = null;
-    this.selectedImageDataUrl = '';
-    this.selectedFileName = 'Ningún archivo seleccionado';
     this.selectedImageFile = null;
-    this.selectedCertDataUrl = '';
-    this.selectedCertName = 'Ningún archivo seleccionado';
+    this.selectedFileName = 'Ningún archivo seleccionado';
     this.selectedCertFile = null;
+    this.selectedCertName = 'Ningún archivo seleccionado';
 
     if (this.imageInput) {
       this.imageInput.nativeElement.value = '';
@@ -415,17 +414,6 @@ export class PanelProductor implements OnInit, OnDestroy {
   private clearMessages(): void {
     this.successMessage = '';
     this.errorMessage = '';
-  }
-
-  private readFileAsDataUrl(file: File): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-
-      reader.onload = () => resolve(String(reader.result ?? ''));
-      reader.onerror = () => reject(new Error('No se pudo leer el archivo.'));
-
-      reader.readAsDataURL(file);
-    });
   }
 }
 

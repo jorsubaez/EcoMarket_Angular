@@ -1,12 +1,13 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 import { CartService } from '../services/cart.service';
 import { ApiProduct, ProductService } from '../services/product.service';
 import { AuthService } from '../services/auth.service';
 import { PROVINCIAS_ESPANA } from '../shared/provincias';
 
 export interface Producto {
-  id: string | number;
+  id: number;
   nombre: string;
   origen: string;
   productor: string;
@@ -19,7 +20,6 @@ export interface Producto {
   descripcion?: string;
   certificadoUrl?: string;
 }
-
 
 @Component({
   selector: 'app-catalogo',
@@ -52,11 +52,15 @@ export class Catalogo implements OnInit {
 
   readonly provinciasDisponibles = ['Todas', ...PROVINCIAS_ESPANA];
 
+  errorCertificado = false;
+  animatingProductId: number | null = null;
+
   constructor(
     private cartService: CartService,
     private productService: ProductService,
     private authService: AuthService,
     private cdr: ChangeDetectorRef,
+    private http: HttpClient
   ) {}
 
   ngOnInit() {
@@ -100,6 +104,7 @@ export class Catalogo implements OnInit {
 
   abrirModal(producto: Producto) {
     this.selectedProducto = producto;
+    this.errorCertificado = false;
     document.body.style.overflow = 'hidden';
   }
 
@@ -159,10 +164,40 @@ export class Catalogo implements OnInit {
     this.cdr.detectChanges();
   }
 
-  agregarAlCarrito(producto: Producto, cantidadInput: string) {
+  agregarAlCarrito(producto: Producto, cantidadInput: string, event?: Event) {
+    if (event) {
+      event.stopPropagation();
+    }
     const cantidad = parseInt(cantidadInput, 10) || 1;
     this.cartService.addToCart(producto, cantidad);
-    this.cerrarModal();
+    
+    this.animatingProductId = producto.id;
+    setTimeout(() => {
+      this.animatingProductId = null;
+      if (this.selectedProducto?.id === producto.id) {
+        this.cerrarModal();
+      }
+    }, 800);
+  }
+
+  abrirCertificado(url: string, event: Event) {
+    event.preventDefault();
+    this.errorCertificado = false;
+
+    this.http.head(url, { observe: 'response' }).subscribe({
+      next: () => {
+        window.open(url, '_blank', 'noopener,noreferrer');
+      },
+      error: (err) => {
+        if (err.status === 404) {
+          this.errorCertificado = true;
+          this.cdr.detectChanges();
+        } else {
+          // Si el servidor bloquea CORS en llamadas HEAD, abrimos como fallback
+          window.open(url, '_blank', 'noopener,noreferrer');
+        }
+      }
+    });
   }
 
   private inferirCategoria(item: ApiProduct): string {

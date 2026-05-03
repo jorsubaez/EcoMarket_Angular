@@ -286,7 +286,13 @@
   font-weight: 600;
   font-size: 0.95rem;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.btn-anadir.animating {
+  background-color: #1e5a28;
+  transform: scale(1.05);
+  box-shadow: 0 4px 15px rgba(42, 122, 56, 0.4);
 }
 
 .btn-anadir:hover {
@@ -484,4 +490,17 @@
   .modal-img-container {
     min-height: 200px;
   }
+}
+
+.error-cert-msg {
+  color: #d32f2f;
+  background-color: #fde0e0;
+  padding: 0.8rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  animation: slideDownFadeIn 0.3s ease forwards;
 }

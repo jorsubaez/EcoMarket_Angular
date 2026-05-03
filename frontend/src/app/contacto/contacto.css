@@ -98,6 +98,11 @@ input:focus, select:focus, textarea:focus {
   border-color: #2a7a38;
 }
 
+textarea {
+  resize: vertical;
+  max-height: 200px;
+}
+
 /* Botón */
 .btn-submit {
   background-color: #2a7a38;

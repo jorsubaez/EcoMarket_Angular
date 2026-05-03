@@ -126,8 +126,8 @@
                 [max]="producto.disponibilidad"
                 #cantidadRefCard
               />
-              <button class="btn-anadir" (click)="agregarAlCarrito(producto, cantidadRefCard.value)">
-                Añadir carrito
+              <button class="btn-anadir" [class.animating]="animatingProductId === producto.id" (click)="agregarAlCarrito(producto, cantidadRefCard.value, $event)">
+                {{ animatingProductId === producto.id ? '¡Añadido!' : 'Añadir carrito' }}
               </button>
             } @else {
               <button class="btn-out-of-stock" disabled>
@@ -180,13 +180,18 @@
             @if (selectedProducto.certificadoUrl) {
               <div class="modal-cert">
                 <a
-                  [href]="selectedProducto.certificadoUrl"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href="#"
+                  (click)="abrirCertificado(selectedProducto.certificadoUrl, $event)"
                   class="btn-cert"
                 >
-                  Ver certificado oficial
+                  <i class="fa-solid fa-file-pdf"></i> Ver certificado oficial
                 </a>
+                @if (errorCertificado) {
+                  <div class="error-cert-msg">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    Certificado no encontrado en el servidor.
+                  </div>
+                }
               </div>
             }
 
@@ -200,8 +205,8 @@
                   [max]="selectedProducto.disponibilidad"
                   #cantidadRef
                 />
-                <button class="btn-anadir" (click)="agregarAlCarrito(selectedProducto, cantidadRef.value)">
-                  Añadir al carrito
+                <button class="btn-anadir" [class.animating]="animatingProductId === selectedProducto.id" (click)="agregarAlCarrito(selectedProducto, cantidadRef.value, $event)">
+                  {{ animatingProductId === selectedProducto.id ? '¡Añadido!' : 'Añadir al carrito' }}
                 </button>
               } @else {
                 <button class="btn-out-of-stock" disabled>

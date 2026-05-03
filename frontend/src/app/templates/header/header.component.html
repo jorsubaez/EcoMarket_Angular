@@ -25,7 +25,9 @@
                 <li><a routerLink="/productores" routerLinkActive="active">Productores</a></li>
                 <li><a routerLink="/contacto" routerLinkActive="active">Contacto</a></li>
                 @if (authService.session$ | async; as session) {
-                    <li><a routerLink="/panel-productor" routerLinkActive="active">Panel Productor</a></li>
+                    @if (session.rol === 'PRODUCTOR') {
+                        <li><a routerLink="/panel-productor" routerLinkActive="active">Panel Productor</a></li>
+                    }
                 }
                 <li class="mobile-only-menu"><a routerLink="/login">Iniciar sesión</a></li>
             </ul>
@@ -97,7 +99,9 @@
                                 <span class="qty-value">{{ item.cantidad }}</span>
                                 <button class="qty-btn" (click)="updateQuantity(item.producto.id, item.cantidad + 1)">+</button>
                             </div>
-                          <button class="remove-btn" type="button" (click)="removeItem(item)">Eliminar</button>
+                          <button class="remove-btn" type="button" (click)="removeItem(item)">
+                              <i class="fa-solid fa-trash-can"></i> Eliminar
+                          </button>
                         </div>
                     </div>
                 </div>

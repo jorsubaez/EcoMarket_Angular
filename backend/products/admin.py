@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.utils.html import format_html
 from .models import Producto, CartItem
 
 
@@ -27,7 +28,12 @@ class ProductoAdmin(admin.ModelAdmin):
         'price',
         'quantity',
         'verification_status',
+        'delete_button',
     )
+
+    def delete_button(self, obj):
+        return format_html('<a class="button" style="color:white; background-color:#ba2121; padding:5px 10px; border-radius:3px;" href="/admin/products/producto/{}/delete/">Eliminar</a>', obj.id)
+    delete_button.short_description = 'Eliminar'
 
     list_display_links = ('id', 'name')
 

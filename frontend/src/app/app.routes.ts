@@ -12,8 +12,6 @@ import { PanelProductor } from './panel-productor/panel-productor';
 import { ConfirmarPedidoComponent } from './confirmar-pedido/confirmar-pedido';
 import { PagoPedidoComponent } from './pago-pedido/pago-pedido';
 
-import { authGuard } from './core/guards/auth.guard';
-
 export const routes: Routes = [
   { path: '', component: Inicio },
   { path: 'catalogo', component: Catalogo },
@@ -22,8 +20,8 @@ export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'productores', component: Productores },
   { path: 'registro', component: RegistroComponent },
-  { path: 'perfil', component: Perfil, canActivate: [authGuard] },
-  { path: 'panel-productor', component: PanelProductor, canActivate: [authGuard] },
-  { path: 'confirmar-pedido', component: ConfirmarPedidoComponent, canActivate: [authGuard] },
-  { path: 'pago-pedido/:id', component: PagoPedidoComponent, canActivate: [authGuard] },
+  { path: 'perfil', component: Perfil },
+  { path: 'panel-productor', component: PanelProductor },
+  { path: 'confirmar-pedido', component: ConfirmarPedidoComponent },
+  { path: 'pago-pedido/:id', component: PagoPedidoComponent },
 ];
