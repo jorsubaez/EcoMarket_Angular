@@ -5,6 +5,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
 import { ChangeDetectorRef } from '@angular/core';
 import { AuthService } from '../services/auth.service';
+import { PROVINCIAS_ESPANA } from '../shared/provincias';
 
 @Component({
   selector: 'app-perfil',
@@ -34,6 +35,8 @@ export class Perfil implements OnInit {
     'Cerrar sesion',
   ];
 
+  protected readonly provincias = PROVINCIAS_ESPANA;
+
   protected user: UserProfile = {
     id: '',
     nombre: 'Usuario EcoMarket',
@@ -41,6 +44,7 @@ export class Perfil implements OnInit {
     rol: 'cliente',
     telefono: '',
     direccion: '',
+    provincia: '',
   };
 
   protected readonly profileForm = this.fb.nonNullable.group({
@@ -48,6 +52,7 @@ export class Perfil implements OnInit {
     email: ['', [Validators.required, Validators.email]],
     telefono: ['', [Validators.maxLength(20)]],
     direccion: ['', [Validators.maxLength(160)]],
+    provincia: [''],
   });
 
   async ngOnInit(): Promise<void> {
@@ -66,6 +71,7 @@ export class Perfil implements OnInit {
       rol: session.rol || 'cliente',
       telefono: '',
       direccion: '',
+      provincia: session.provincia || '',
     };
 
     this.syncFormWithUser();
@@ -126,6 +132,7 @@ export class Perfil implements OnInit {
       email: this.profileForm.controls.email.value.trim(),
       telefono: this.profileForm.controls.telefono.value.trim(),
       direccion: this.profileForm.controls.direccion.value.trim(),
+      provincia: this.profileForm.controls.provincia.value,
     };
 
     this.saving = true;
@@ -137,7 +144,8 @@ export class Perfil implements OnInit {
           last_name: payload.nombre.split(' ').slice(1).join(' ') || '',
           email: payload.email,
           telefono: payload.telefono,
-          direccion: payload.direccion
+          direccion: payload.direccion,
+          provincia: payload.provincia
         }),
       );
 
@@ -146,12 +154,14 @@ export class Perfil implements OnInit {
         nombre: updatedUser.first_name + ' ' + updatedUser.last_name,
         email: updatedUser.email,
         telefono: updatedUser.telefono,
-        direccion: updatedUser.direccion
+        direccion: updatedUser.direccion,
+        provincia: updatedUser.provincia
       };
 
       this.authService.updateSession({
         name: this.user.nombre,
-        email: this.user.email
+        email: this.user.email,
+        provincia: this.user.provincia
       });
 
       this.syncFormWithUser();
@@ -194,7 +204,8 @@ export class Perfil implements OnInit {
           email: remoteUser.email,
           rol: remoteUser.rol,
           telefono: remoteUser.telefono || '',
-          direccion: remoteUser.direccion || ''
+          direccion: remoteUser.direccion || '',
+          provincia: remoteUser.provincia || ''
         };
         this.syncFormWithUser();
         this.loading = false;
@@ -215,6 +226,7 @@ export class Perfil implements OnInit {
       email: this.user.email || '',
       telefono: this.user.telefono || '',
       direccion: this.user.direccion || '',
+      provincia: this.user.provincia || '',
     });
   }
 
@@ -238,4 +250,5 @@ interface UserProfile {
   rol: string;
   telefono?: string;
   direccion?: string;
+  provincia?: string;
 }

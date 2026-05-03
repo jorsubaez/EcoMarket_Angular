@@ -117,12 +117,12 @@
               (change)="onImageSelected($event)"
             />
             <span class="btn btn-secondary" [class.btn-loading]="compressing">
-              @if (compressing) { Comprimiendo… } @else { Seleccionar imagen }
+              @if (compressing) { Subiendo… } @else { Seleccionar imagen }
             </span>
             <strong>{{ selectedFileName }}</strong>
           </label>
           <small>
-            Opcional. Formatos admitidos: JPG, PNG o WebP. La imagen se comprimirá automáticamente antes de subirse.
+            Opcional. Formatos admitidos: JPG, PNG o WebP.
           </small>
         </div>
 

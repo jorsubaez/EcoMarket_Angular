@@ -62,6 +62,11 @@
           <p class="info-label">Direccion principal</p>
           <p class="info-value">{{ displayAddress }}</p>
         </article>
+        
+        <article class="info-card">
+          <p class="info-label">Provincia</p>
+          <p class="info-value">{{ user.provincia || 'No especificada' }}</p>
+        </article>
       </div>
 
       <div class="description-text">
@@ -116,6 +121,16 @@
             <label class="field">
               <span>Direccion</span>
               <input type="text" formControlName="direccion" placeholder="Calle, numero, puerta" />
+            </label>
+
+            <label class="field">
+              <span>Provincia</span>
+              <select formControlName="provincia">
+                <option value="">Selecciona una provincia</option>
+                @for (prov of provincias; track prov) {
+                  <option [value]="prov">{{ prov }}</option>
+                }
+              </select>
             </label>
 
             <div class="form-actions">
