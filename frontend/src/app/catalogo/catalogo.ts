@@ -37,6 +37,7 @@ export class Catalogo implements OnInit {
   minPrecio: number | null = null;
   maxPrecio: number | null = null;
   cercaDeMiActivo = false;
+  searchTerm = '';
 
   readonly categoriasDisponibles = [
     'Todos',
@@ -97,8 +98,15 @@ export class Catalogo implements OnInit {
         producto.origen === this.selectedProvincia;
       const minValido = this.minPrecio === null || producto.precio >= this.minPrecio;
       const maxValido = this.maxPrecio === null || producto.precio <= this.maxPrecio;
+      
+      let searchValido = true;
+      if (this.searchTerm.trim() !== '') {
+        const term = this.searchTerm.toLowerCase().trim();
+        const textoBusqueda = `${producto.nombre} ${producto.productor} ${producto.descripcion || ''}`.toLowerCase();
+        searchValido = textoBusqueda.includes(term);
+      }
 
-      return categoriaValida && provinciaValida && minValido && maxValido;
+      return categoriaValida && provinciaValida && minValido && maxValido && searchValido;
     });
   }
 
@@ -138,12 +146,17 @@ export class Catalogo implements OnInit {
     this.maxPrecio = value === '' ? null : Number(value);
   }
 
+  actualizarBusqueda(value: string) {
+    this.searchTerm = value;
+  }
+
   limpiarFiltros() {
     this.selectedCategoria = 'Todos';
     this.selectedProvincia = 'Todas';
     this.minPrecio = null;
     this.maxPrecio = null;
     this.cercaDeMiActivo = false;
+    this.searchTerm = '';
   }
 
   aplicarCercaDeMi() {

@@ -17,6 +17,19 @@
       </button>
     </div>
 
+    <div class="filtros-busqueda">
+      <div class="search-wrapper">
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        <input
+          type="text"
+          placeholder="Buscar por nombre, productor o descripción..."
+          [value]="searchTerm"
+          (input)="actualizarBusqueda(searchRef.value)"
+          #searchRef
+        />
+      </div>
+    </div>
+
     <div class="filtros-grid">
       <label class="filtro-campo">
         <span>Categoria</span>
