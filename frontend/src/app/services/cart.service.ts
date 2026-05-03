@@ -49,8 +49,11 @@ export class CartService {
           id: item.id,
           producto: {
             ...producto,
+            id: producto?.id,
             nombre: producto?.nombre || producto?.name || producto?.titulo || '',
             precio: Number(producto?.precio || producto?.price || 0),
+            unidad: producto?.unidad || producto?.unit || '',
+            imagenUrl: producto?.imagenUrl || producto?.image_url || producto?.image_url_legacy || 'assets/images/placeholder.png',
           },
           cantidad: Number(item.cantidad || item.quantity || 1),
         };
