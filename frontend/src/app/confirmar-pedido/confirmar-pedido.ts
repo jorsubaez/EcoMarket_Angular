@@ -6,6 +6,8 @@ import { Subscription } from 'rxjs';
 
 import { CartItem, CartService } from '../services/cart.service';
 import { OrderService } from '../services/order.service';
+import { PROVINCIAS_ESPANA } from '../shared/provincias';
+import { CIUDADES_POR_PROVINCIA } from '../shared/ciudades';
 
 @Component({
   selector: 'app-confirmar-pedido',
@@ -20,6 +22,12 @@ export class ConfirmarPedidoComponent implements OnInit, OnDestroy {
 
   deliveryType: 'ADDRESS' | 'PICKUP' = 'ADDRESS';
   deliveryAddress = '';
+
+  // Punto de recogida
+  provincias = PROVINCIAS_ESPANA;
+  ciudadesDisponibles: string[] = [];
+  selectedProvince = '';
+  selectedCity = '';
 
   errorMessage = '';
   loading = false;
@@ -89,6 +97,24 @@ export class ConfirmarPedidoComponent implements OnInit, OnDestroy {
     await this.cartService.updateQuantity(item.producto.id, nuevaCantidad);
 
     this.total = this.cartService.getCartTotal();
+  }
+
+  onProvinceChange(): void {
+    this.selectedCity = '';
+    this.deliveryAddress = '';
+    if (this.selectedProvince) {
+      this.ciudadesDisponibles = CIUDADES_POR_PROVINCIA[this.selectedProvince] || [];
+    } else {
+      this.ciudadesDisponibles = [];
+    }
+  }
+
+  onCityChange(): void {
+    if (this.selectedProvince && this.selectedCity) {
+      this.deliveryAddress = `${this.selectedCity} (${this.selectedProvince})`;
+    } else {
+      this.deliveryAddress = '';
+    }
   }
 
   confirmOrder(): void {

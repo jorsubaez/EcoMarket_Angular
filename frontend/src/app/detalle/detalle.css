@@ -145,18 +145,22 @@
 }
 
 .quantity-wrapper input {
-  width: 80px;
-  padding: 0.8rem;
+  width: 90px;
+  padding: 12px;
   border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 1.1rem;
+  border-radius: 12px;
+  font-size: 1rem;
   text-align: center;
   font-family: inherit;
+  background-color: #f9f9f9;
+  transition: all 0.2s ease;
 }
 
 .quantity-wrapper input:focus {
+  background-color: #fff;
   outline: none;
   border-color: #2a7a38;
+  box-shadow: 0 0 0 3px rgba(42, 122, 56, 0.1);
 }
 
 .btn-buy {

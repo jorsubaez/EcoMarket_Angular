@@ -35,6 +35,32 @@
   color: #1f4f24;
 }
 
+.quantity-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 14px 0;
+  font-weight: 600;
+}
+
+.quantity-label input {
+  width: 85px;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  background-color: #f9f9f9;
+}
+
+.quantity-label input:focus {
+  background-color: #fff;
+  border-color: #2f7d32;
+  box-shadow: 0 0 0 3px rgba(47, 125, 50, 0.1);
+  outline: none;
+}
+
 .cart-item {
   display: flex;
   justify-content: space-between;
@@ -111,6 +137,16 @@
 .empty-cart a {
   color: #2f7d32;
   font-weight: 700;
+}
+
+.pickup-info {
+  margin-top: -8px;
+  margin-bottom: 18px;
+  font-size: 0.95rem;
+  color: #2f7d32;
+  background: #f1f8f1;
+  padding: 10px;
+  border-radius: 8px;
 }
 
 @media (max-width: 850px) {

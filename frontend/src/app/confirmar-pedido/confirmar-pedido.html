@@ -58,20 +58,44 @@
 
       <label>
         Tipo de entrega
-        <select [(ngModel)]="deliveryType">
+        <select [(ngModel)]="deliveryType" (change)="deliveryAddress = ''; selectedProvince = ''; selectedCity = ''">
           <option value="ADDRESS">Entrega a domicilio</option>
           <option value="PICKUP">Punto de recogida</option>
         </select>
       </label>
 
-      <label>
-        Dirección o punto de recogida
-        <input
-          type="text"
-          [(ngModel)]="deliveryAddress"
-          placeholder="Ej: Calle Mayor 12 o Mercado Central"
-        />
-      </label>
+      <div *ngIf="deliveryType === 'ADDRESS'">
+        <label>
+          Dirección de entrega
+          <input
+            type="text"
+            [(ngModel)]="deliveryAddress"
+            placeholder="Ej: Calle Mayor 12, 3º Izq"
+          />
+        </label>
+      </div>
+
+      <div *ngIf="deliveryType === 'PICKUP'" class="pickup-selectors">
+        <label>
+          Provincia
+          <select [(ngModel)]="selectedProvince" (change)="onProvinceChange()">
+            <option value="" disabled selected>Selecciona una provincia</option>
+            <option *ngFor="let prov of provincias" [value]="prov">{{ prov }}</option>
+          </select>
+        </label>
+
+        <label *ngIf="selectedProvince">
+          Ciudad / Punto de recogida
+          <select [(ngModel)]="selectedCity" (change)="onCityChange()">
+            <option value="" disabled selected>Selecciona una ciudad</option>
+            <option *ngFor="let ciudad of ciudadesDisponibles" [value]="ciudad">{{ ciudad }}</option>
+          </select>
+        </label>
+
+        <p class="pickup-info" *ngIf="deliveryAddress">
+          <strong>Punto seleccionado:</strong> {{ deliveryAddress }}
+        </p>
+      </div>
 
       <button
         type="button"
