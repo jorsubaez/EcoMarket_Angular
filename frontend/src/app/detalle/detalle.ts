@@ -1,13 +1,11 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
-import { ChangeDetectorRef } from '@angular/core';
 import { CartService } from '../services/cart.service';
+import { ProductService, ApiProduct } from '../services/product.service';
 
-// Usamos la misma estructura del catálogo, pero le añadimos una descripción
 export interface Producto {
-  id: number;
+  id: string | number;
   nombre: string;
   origen: string;
   productor: string;
@@ -28,34 +26,40 @@ export interface Producto {
 })
 export class Detalle implements OnInit {
   private route = inject(ActivatedRoute);
+  private productService = inject(ProductService);
+  private cartService = inject(CartService);
+  private cdr = inject(ChangeDetectorRef);
+
   producto: Producto | undefined;
-
   loading = true;
-
-  constructor(private http: HttpClient, private cartService: CartService, private cdr: ChangeDetectorRef) { }
 
   ngOnInit() {
     const idParam = this.route.snapshot.queryParamMap.get('id');
-    const id = idParam ? Number(idParam) : 1;
+    const id = idParam ? idParam : '1';
     this.cargarProducto(id);
   }
 
-  cargarProducto(id: number) {
+  cargarProducto(id: string) {
     this.loading = true;
-    this.http.get<any>(`http://localhost:8000/api/productos/${id}/`).subscribe({
-      next: (item) => {
-        this.producto = {
-          id: item.id,
-          nombre: item.name,
-          origen: item.origin,
-          productor: item.ownerName || 'Productor Anónimo',
-          precio: parseFloat(item.price),
-          unidad: item.unit,
-          disponibilidad: item.quantity,
-          imagenUrl: item.image_url || item.image_url_legacy || 'assets/images/placeholder.png',
-          tieneEcoSello: true,
-          descripcion: item.description || ''
-        };
+    
+    // We get the products from the service instead of an HTTP call directly
+    this.productService.products$.subscribe({
+      next: (products: ApiProduct[]) => {
+        const item = products.find(p => String(p.id) === id);
+        if (item) {
+          this.producto = {
+            id: item.id,
+            nombre: item.name,
+            origen: item.origin,
+            productor: item.ownerName || 'Productor Anónimo',
+            precio: typeof item.price === 'string' ? parseFloat(item.price) : item.price,
+            unidad: item.unit,
+            disponibilidad: item.quantity,
+            imagenUrl: item.image_url || item.image_url_legacy || item.image || 'assets/images/placeholder.png',
+            tieneEcoSello: !!(item.certificate_url || item.certificate),
+            descripcion: item.description || ''
+          };
+        }
         this.loading = false;
         this.cdr.detectChanges();
       },
@@ -65,6 +69,9 @@ export class Detalle implements OnInit {
         this.cdr.detectChanges();
       }
     });
+
+    // Make sure we trigger a fetch if the BehaviorSubject is empty
+    this.productService.refreshProducts();
   }
 
   agregarAlCarrito(cantidadInput: string) {

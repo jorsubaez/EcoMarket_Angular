@@ -1,22 +1,18 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, firstValueFrom } from 'rxjs';
+import { Injectable, inject } from '@angular/core';
+import { Database, ref, set, push, onValue, update, remove, get } from '@angular/fire/database';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 export interface ApiProduct {
-  id: number;
+  id: string; // Firebase IDs are strings
   name: string;
   origin: string;
   price: number | string;
   unit: string;
   description: string;
   quantity: number;
-  /**
-   * `image` is a File object when uploading; the API response returns a URL
-   * string via `image_url`. The field is kept optional to cover both cases.
-   */
-  image?: File | string | null;
+  image?: string;
   image_url_legacy?: string;
-  certificate?: File | string | null;
+  certificate?: string;
   certificate_url?: string;
   verification_status?: string;
   ownerId: number | string;
@@ -24,79 +20,61 @@ export interface ApiProduct {
   image_url?: string;
 }
 
-/** Fields that are always sent as plain text in a multipart request. */
-type TextPayloadKey = Exclude<keyof ApiProduct, 'image' | 'certificate'>;
-
 @Injectable({
   providedIn: 'root',
 })
 export class ProductService {
-  private apiUrl = 'http://localhost:8000/api/productos/';
+  private db: Database = inject(Database);
 
   private productsSubject = new BehaviorSubject<ApiProduct[]>([]);
   public products$ = this.productsSubject.asObservable();
 
-  constructor(private http: HttpClient) {}
+  constructor() {
+    this.setupRealtimeListener();
+  }
+
+  private setupRealtimeListener() {
+    const productsRef = ref(this.db, 'products');
+    onValue(productsRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        const products = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+        this.productsSubject.next(products);
+      } else {
+        this.productsSubject.next([]);
+      }
+    });
+  }
 
   async refreshProducts(): Promise<void> {
-    try {
-      const products = await firstValueFrom(this.http.get<ApiProduct[]>(this.apiUrl));
+    // The realtime listener automatically updates the subject,
+    // but we keep this method for backward compatibility in components.
+    const productsRef = ref(this.db, 'products');
+    const snapshot = await get(productsRef);
+    const data = snapshot.val();
+    if (data) {
+      const products = Object.keys(data).map(key => ({ id: key, ...data[key] }));
       this.productsSubject.next(products);
-    } catch (error) {
-      console.error('Error fetching products:', error);
-      throw error;
+    } else {
+      this.productsSubject.next([]);
     }
   }
 
   async createProduct(payload: Partial<ApiProduct>): Promise<ApiProduct> {
-    const formData = this.buildFormData(payload);
-    const newProduct = await firstValueFrom(
-      this.http.post<ApiProduct>(this.apiUrl, formData),
-    );
-    await this.refreshProducts();
-    return newProduct;
+    const productsRef = ref(this.db, 'products');
+    const newProductRef = push(productsRef);
+    await set(newProductRef, payload);
+    return { id: newProductRef.key as string, ...payload } as ApiProduct;
   }
 
-  async updateProduct(id: number | string, payload: Partial<ApiProduct>): Promise<ApiProduct> {
-    const formData = this.buildFormData(payload);
-    const updatedProduct = await firstValueFrom(
-      // PATCH is used so that fields not included in the payload are preserved.
-      this.http.patch<ApiProduct>(`${this.apiUrl}${id}/`, formData),
-    );
-    await this.refreshProducts();
-    return updatedProduct;
+  async updateProduct(id: string, payload: Partial<ApiProduct>): Promise<ApiProduct> {
+    const productRef = ref(this.db, `products/${id}`);
+    await update(productRef, payload);
+    return { id, ...payload } as ApiProduct;
   }
 
-  async deleteProduct(id: number | string): Promise<void> {
-    await firstValueFrom(this.http.delete<void>(`${this.apiUrl}${id}/`));
-    await this.refreshProducts();
-  }
-
-  /**
-   * Convert a plain object payload into a FormData instance.
-   *
-   * - File fields (`image`, `certificate`) are appended as Blob/File objects
-   *   so that Django's DRF `ImageField` / `FileField` can parse them.
-   * - All other fields are appended as strings.
-   * - `null` values for file fields send an explicit empty string so that
-   *   DRF interprets the field as "cleared" when the model allows null.
-   */
-  private buildFormData(payload: Partial<ApiProduct>): FormData {
-    const fd = new FormData();
-
-    for (const [key, value] of Object.entries(payload)) {
-      if (key === 'image' || key === 'certificate') {
-        if (value instanceof File) {
-          fd.append(key, value, (value as File).name);
-        } else if (value === null) {
-          fd.append(key, '');
-        }
-        // If undefined, omit the field entirely (field is left unchanged by PATCH).
-      } else if (value !== undefined && value !== null) {
-        fd.append(key as TextPayloadKey, String(value));
-      }
-    }
-
-    return fd;
+  async deleteProduct(id: string): Promise<void> {
+    const productRef = ref(this.db, `products/${id}`);
+    await remove(productRef);
   }
 }

@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { RouterLink, Router } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { AuthService } from '../services/auth.service';
-import { PROVINCIAS_ESPANA } from '../shared/provincias';
 
 @Component({
   selector: 'app-registro',
@@ -14,11 +13,8 @@ import { PROVINCIAS_ESPANA } from '../shared/provincias';
 })
 export class RegistroComponent {
   passwordVisible = false;
-  passwordConfirmVisible = false;
   submitting = false;
   errorMessage = '';
-
-  readonly provincias = PROVINCIAS_ESPANA;
 
   private fb = inject(FormBuilder);
 
@@ -28,18 +24,13 @@ export class RegistroComponent {
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(6)]],
     passwordConfirm: ['', Validators.required],
-    provincia: ['', Validators.required],
     terms: [false, Validators.requiredTrue]
   });
 
   constructor(private authService: AuthService, private router: Router) {}
 
-  togglePassword(): void {
+  togglePassword() {
     this.passwordVisible = !this.passwordVisible;
-  }
-
-  togglePasswordConfirm(): void {
-    this.passwordConfirmVisible = !this.passwordConfirmVisible;
   }
 
   isInvalid(controlName: string): boolean {
@@ -47,14 +38,14 @@ export class RegistroComponent {
     return !!control && control.invalid && control.touched;
   }
 
-  onSubmit() {
+  async onSubmit() {
     if (this.registerForm.invalid) {
       this.registerForm.markAllAsTouched();
       this.errorMessage = 'Revisa los campos marcados antes de continuar.';
       return;
     }
 
-    const { password, passwordConfirm } = this.registerForm.value;
+    const { password, passwordConfirm, email, first_name, last_name } = this.registerForm.value;
     if (password !== passwordConfirm) {
       this.errorMessage = 'Las contraseñas no coinciden.';
       this.registerForm.get('passwordConfirm')?.setErrors({ mismatch: true });
@@ -66,27 +57,19 @@ export class RegistroComponent {
     this.errorMessage = '';
 
     const userData = {
-      ...this.registerForm.value,
-      rol: 'CLIENTE'
+      email,
+      password,
+      name: `${first_name} ${last_name}`
     };
 
-    this.authService.register(userData).subscribe({
-      next: () => {
-        // Automatically login after register
-        this.authService.login({ email: userData.email, password: userData.password }).subscribe({
-          next: () => {
-            this.router.navigate(['/catalogo']);
-          },
-          error: () => {
-            this.router.navigate(['/login']);
-          }
-        });
-      },
-      error: (err) => {
-        this.submitting = false;
-        this.errorMessage = 'Hubo un error al registrar tu cuenta. Puede que el email ya esté en uso.';
-        console.error(err);
-      }
-    });
+    try {
+      await this.authService.register(userData);
+      await this.authService.login({ email, password });
+      this.router.navigate(['/catalogo']);
+    } catch (err: any) {
+      this.submitting = false;
+      this.errorMessage = 'Hubo un error al registrar tu cuenta. Puede que el email ya esté en uso.';
+      console.error(err);
+    }
   }
 }

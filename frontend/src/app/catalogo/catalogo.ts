@@ -6,7 +6,7 @@ import { AuthService } from '../services/auth.service';
 import { PROVINCIAS_ESPANA } from '../shared/provincias';
 
 export interface Producto {
-  id: number;
+  id: string | number;
   nombre: string;
   origen: string;
   productor: string;
@@ -19,6 +19,7 @@ export interface Producto {
   descripcion?: string;
   certificadoUrl?: string;
 }
+
 
 @Component({
   selector: 'app-catalogo',

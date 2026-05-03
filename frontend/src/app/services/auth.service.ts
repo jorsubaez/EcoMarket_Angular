@@ -1,72 +1,46 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, tap, Observable } from 'rxjs';
+import { Injectable, inject } from '@angular/core';
+import { Auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, authState, User, updateProfile } from '@angular/fire/auth';
+import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
-
-export interface SessionData {
-  id: number | string;
-  name: string;
-  email: string;
-  rol: string;
-  provincia?: string;
-}
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:8000/api/users';
-  private sessionSubject = new BehaviorSubject<SessionData | null>(this.getSessionFromStorage());
-  public session$ = this.sessionSubject.asObservable();
+  private auth: Auth = inject(Auth);
+  private router: Router = inject(Router);
+  
+  // Observable que emite el estado del usuario en tiempo real
+  readonly session$: Observable<User | null> = authState(this.auth);
 
-  constructor(private http: HttpClient, private router: Router) {}
+  get currentUser(): User | null {
+    return this.auth.currentUser;
+  }
 
-  private getSessionFromStorage(): SessionData | null {
+  async login(credentials: any): Promise<void> {
     try {
-      const data = localStorage.getItem('ecomarket_session');
-      return data ? JSON.parse(data) : null;
-    } catch {
-      return null;
+      await signInWithEmailAndPassword(this.auth, credentials.email, credentials.password);
+    } catch (error) {
+      console.error("Error en login:", error);
+      throw error;
     }
   }
 
-  get currentUser(): SessionData | null {
-    return this.sessionSubject.value;
+  async register(userData: any): Promise<void> {
+    try {
+      const userCredential = await createUserWithEmailAndPassword(this.auth, userData.email, userData.password);
+      // Podemos guardar el nombre usando updateProfile
+      await updateProfile(userCredential.user, {
+        displayName: userData.name || userData.first_name
+      });
+    } catch (error) {
+      console.error("Error en registro:", error);
+      throw error;
+    }
   }
 
-  getToken(): string | null {
-    return localStorage.getItem('ecomarket_token');
-  }
-
-  login(credentials: any): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/login/`, credentials).pipe(
-      tap(response => {
-        if (response.access && response.user) {
-          localStorage.setItem('ecomarket_token', response.access);
-          localStorage.setItem('ecomarket_session', JSON.stringify(response.user));
-          this.sessionSubject.next(response.user);
-        }
-      })
-    );
-  }
-
-  register(userData: any): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/register/`, userData);
-  }
-
-  logout(): void {
-    localStorage.removeItem('ecomarket_token');
-    localStorage.removeItem('ecomarket_session');
-    this.sessionSubject.next(null);
+  async logout(): Promise<void> {
+    await signOut(this.auth);
     this.router.navigate(['/login']);
-  }
-
-  updateSession(newData: Partial<SessionData>): void {
-    const currentSession = this.currentUser;
-    if (currentSession) {
-      const updatedSession = { ...currentSession, ...newData };
-      localStorage.setItem('ecomarket_session', JSON.stringify(updatedSession));
-      this.sessionSubject.next(updatedSession);
-    }
   }
 }
