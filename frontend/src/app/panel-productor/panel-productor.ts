@@ -289,17 +289,16 @@ export class PanelProductor implements OnInit, OnDestroy {
 
     this.errorMessage = '';
     this.compressing = true;
-    this.selectedFileName = 'Comprimiendo imagen…';
+    this.selectedFileName = 'Subiendo imagen…';
     this.cdr.detectChanges();
 
     try {
       this.selectedImageFile = await this.imageCompressor.compress(file);
-      const sizeMB = (this.selectedImageFile.size / 1024 / 1024).toFixed(2);
-      this.selectedFileName = `${file.name} (${sizeMB} MB → comprimido)`;
+      this.selectedFileName = 'Imagen subida exitosamente';
     } catch {
       // Fallback: use the original file if compression fails.
       this.selectedImageFile = file;
-      this.selectedFileName = file.name;
+      this.selectedFileName = 'Imagen subida exitosamente';
     } finally {
       this.compressing = false;
       this.cdr.detectChanges();
