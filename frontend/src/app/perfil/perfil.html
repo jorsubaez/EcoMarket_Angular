@@ -5,7 +5,7 @@
         <button
           class="sidebar-button"
           type="button"
-          [class.sidebar-button-active]="item === 'Mi perfil'"
+          [class.sidebar-button-active]="item === 'Mi Perfil'"
           (click)="handleSidebarAction(item)"
         >
           {{ item }}
@@ -40,109 +40,248 @@
         <p>Estamos recuperando los datos del usuario desde la API local.</p>
       </div>
     } @else {
-      <div class="profile-pic profile-pic-placeholder">
-        <span>{{ avatarInitials }}</span>
-      </div>
+      @if (activeSection === 'Mi Perfil') {
+        <div class="profile-pic profile-pic-placeholder">
+          <span>{{ avatarInitials }}</span>
+        </div>
 
-      <h3>{{ user.nombre }}</h3>
-      <h4>{{ roleLabel }}</h4>
+        <h3>{{ user.nombre }}</h3>
+        <h4>{{ roleLabel }}</h4>
 
-      <div class="profile-cards">
-        <article class="info-card">
-          <p class="info-label">Email</p>
-          <p class="info-value">{{ user.email }}</p>
-        </article>
+        <div class="profile-cards">
+          <article class="info-card">
+            <p class="info-label">Email</p>
+            <p class="info-value">{{ user.email }}</p>
+          </article>
 
-        <article class="info-card">
-          <p class="info-label">Telefono</p>
-          <p class="info-value">{{ displayPhone }}</p>
-        </article>
+          <article class="info-card">
+            <p class="info-label">Telefono</p>
+            <p class="info-value">{{ displayPhone }}</p>
+          </article>
 
-        <article class="info-card">
-          <p class="info-label">Direccion principal</p>
-          <p class="info-value">{{ displayAddress }}</p>
-        </article>
-        
-        <article class="info-card">
-          <p class="info-label">Provincia</p>
-          <p class="info-value">{{ user.provincia || 'No especificada' }}</p>
-        </article>
-      </div>
+          <article class="info-card">
+            <p class="info-label">Direccion principal</p>
+            <p class="info-value">{{ displayAddress }}</p>
+          </article>
+          
+          <article class="info-card">
+            <p class="info-label">Provincia</p>
+            <p class="info-value">{{ user.provincia || 'No especificada' }}</p>
+          </article>
+        </div>
 
-      <div class="description-text">
-        <p>
-          Este espacio resume tus datos de cuenta y te permite actualizarlos sin depender
-          todavia de la navegacion global del proyecto.
-        </p>
+        <div class="description-text">
+          <p>
+            Este espacio resume tus datos de cuenta y te permite actualizarlos sin depender
+            todavia de la navegacion global del proyecto.
+          </p>
 
-        @if (!editing) {
-          <div class="profile-actions">
-            <button class="btn btn-primary" type="button" (click)="beginEdit()">
-              Editar perfil
-            </button>
-            <button class="btn btn-secondary" type="button" (click)="handleSidebarAction('Mis pedidos')">
-              Ver pedidos
-            </button>
-          </div>
-        }
-      </div>
-
-      @if (editing) {
-        <section class="edit-card">
-          <div class="edit-head">
-            <div>
-              <h5>Editar perfil</h5>
-              <p>Actualiza tus datos personales y guardalos en la API local.</p>
+          @if (!editing) {
+            <div class="profile-actions">
+              <button class="btn btn-primary" type="button" (click)="beginEdit()">
+                Editar Perfil
+              </button>
+              <button class="btn btn-secondary" type="button" (click)="handleSidebarAction('Mis Pedidos')">
+                Ver Pedidos
+              </button>
             </div>
-          </div>
+          }
+        </div>
 
-          <form class="profile-form" [formGroup]="profileForm" (ngSubmit)="saveProfile()">
-            <label class="field">
-              <span>Nombre</span>
-              <input type="text" formControlName="nombre" placeholder="Nombre y apellidos" />
-              @if (profileForm.controls.nombre.invalid && profileForm.controls.nombre.touched) {
-                <small>El nombre es obligatorio.</small>
-              }
-            </label>
+        @if (editing) {
+          <section class="edit-card">
+            <div class="edit-head">
+              <div>
+                <h5>Editar perfil</h5>
+                <p>Actualiza tus datos personales y guardalos en la API local.</p>
+              </div>
+            </div>
 
-            <label class="field">
-              <span>Email</span>
-              <input type="email" formControlName="email" placeholder="correo@ejemplo.com" />
-              @if (profileForm.controls.email.invalid && profileForm.controls.email.touched) {
-                <small>Introduce un email valido.</small>
-              }
-            </label>
-
-            <label class="field">
-              <span>Telefono</span>
-              <input type="text" formControlName="telefono" placeholder="+34 600000000" />
-            </label>
-
-            <label class="field">
-              <span>Direccion</span>
-              <input type="text" formControlName="direccion" placeholder="Calle, numero, puerta" />
-            </label>
-
-            <label class="field">
-              <span>Provincia</span>
-              <select formControlName="provincia">
-                <option value="">Selecciona una provincia</option>
-                @for (prov of provincias; track prov) {
-                  <option [value]="prov">{{ prov }}</option>
+            <form class="profile-form" [formGroup]="profileForm" (ngSubmit)="saveProfile()">
+              <label class="field">
+                <span>Nombre</span>
+                <input type="text" formControlName="nombre" placeholder="Nombre y apellidos" />
+                @if (profileForm.controls.nombre.invalid && profileForm.controls.nombre.touched) {
+                  <small>El nombre es obligatorio.</small>
                 }
-              </select>
-            </label>
+              </label>
 
-            <div class="form-actions">
-              <button class="btn btn-primary" type="submit" [disabled]="saving">
-                {{ saving ? 'Guardando...' : 'Guardar cambios' }}
-              </button>
-              <button class="btn btn-secondary" type="button" (click)="cancelEdit()">
-                Cancelar
-              </button>
+              <label class="field">
+                <span>Email</span>
+                <input type="email" formControlName="email" placeholder="correo@ejemplo.com" />
+                @if (profileForm.controls.email.invalid && profileForm.controls.email.touched) {
+                  <small>Introduce un email valido.</small>
+                }
+              </label>
+
+              <label class="field">
+                <span>Telefono</span>
+                <input type="text" formControlName="telefono" placeholder="+34 600000000" />
+              </label>
+
+              <label class="field">
+                <span>Direccion</span>
+                <input type="text" formControlName="direccion" placeholder="Calle, numero, puerta" />
+              </label>
+
+              <label class="field">
+                <span>Provincia</span>
+                <select formControlName="provincia">
+                  <option value="">Selecciona una provincia</option>
+                  @for (prov of provincias; track prov) {
+                    <option [value]="prov">{{ prov }}</option>
+                  }
+                </select>
+              </label>
+
+              <div class="form-actions">
+                <button class="btn btn-primary" type="submit" [disabled]="saving">
+                  {{ saving ? 'Guardando...' : 'Guardar Cambios' }}
+                </button>
+                <button class="btn btn-secondary" type="button" (click)="cancelEdit()">
+                  Cancelar
+                </button>
+              </div>
+            </form>
+          </section>
+        }
+      } @else if (activeSection === 'Mis Pedidos') {
+        <div class="orders-section">
+          <h3>{{ user.rol === 'productor' ? 'Mis Ventas' : 'Mis Pedidos' }}</h3>
+          <p class="orders-subtitle">
+            {{ user.rol === 'productor' ? 'Aquí puedes ver los productos que has vendido a los clientes.' : 'Consulta el estado y los detalles de todas tus compras.' }}
+          </p>
+
+          @if (loadingOrders) {
+            <p>Cargando información...</p>
+          } @else if (user.rol === 'productor' && sales.length === 0) {
+            <div class="state-card">
+              <p>Aún no tienes ventas registradas.</p>
             </div>
-          </form>
-        </section>
+          } @else if (user.rol === 'cliente' && orders.length === 0) {
+            <div class="state-card">
+              <p>No tienes ningún pedido todavía.</p>
+            </div>
+          } @else {
+            <div class="orders-list">
+              @if (user.rol === 'productor') {
+                @for (sale of sales; track sale.id) {
+                  <article class="order-card" [class.expanded]="expandedItemId === sale.id">
+                    <div class="order-header" (click)="toggleExpandedItem(sale.id)" style="cursor: pointer;">
+                      <div>
+                        <strong>Pedido #{{ sale.order_id }}</strong>
+                        <span class="order-date">{{ sale.order_date | date:'dd/MM/yyyy HH:mm' }}</span>
+                      </div>
+                      <div>
+                        <span class="status-badge" [class]="'status-' + sale.order_status.toLowerCase()">
+                          {{ translateStatus(sale.order_status) }}
+                        </span>
+                        <span class="expand-icon" style="margin-left: 12px; color: var(--primary-green);">
+                          {{ expandedItemId === sale.id ? '▲' : '▼' }}
+                        </span>
+                      </div>
+                    </div>
+                    @if (expandedItemId === sale.id) {
+                      <div class="order-body">
+                        <div class="order-customer-info">
+                          <p><strong>Comprador:</strong> {{ sale.buyer_name }} ({{ sale.buyer_email }})</p>
+                          <p><strong>Dirección:</strong> {{ sale.delivery_address }}</p>
+                        </div>
+                        <table class="order-items-table">
+                          <thead>
+                            <tr>
+                              <th>Producto</th>
+                              <th>Cantidad</th>
+                              <th>Precio Und.</th>
+                              <th>Certificado</th>
+                              <th>Subtotal</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td>{{ sale.product_name }}</td>
+                              <td>{{ sale.quantity }}</td>
+                              <td>{{ sale.unit_price }} €</td>
+                              <td>
+                                @if (sale.certificate_url) {
+                                  <a [href]="sale.certificate_url" target="_blank" class="cert-link">Ver PDF</a>
+                                } @else {
+                                  <span class="muted" style="color: #888;">N/A</span>
+                                }
+                              </td>
+                              <td><strong>{{ sale.subtotal }} €</strong></td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    }
+                  </article>
+                }
+              } @else {
+                @for (order of orders; track order.id) {
+                  <article class="order-card" [class.expanded]="expandedItemId === order.id">
+                    <div class="order-header" (click)="toggleExpandedItem(order.id)" style="cursor: pointer;">
+                      <div>
+                        <strong>Pedido #{{ order.id }}</strong>
+                        <span class="order-date">{{ order.created_at | date:'dd/MM/yyyy HH:mm' }}</span>
+                        <span class="order-delivery-type">{{ order.delivery_type === 'ADDRESS' ? 'A Domicilio' : 'Punto de Recogida' }}</span>
+                      </div>
+                      <div>
+                        <span class="status-badge" [class]="'status-' + order.status.toLowerCase()">
+                          {{ translateStatus(order.status) }}
+                        </span>
+                        <span class="expand-icon" style="margin-left: 12px; color: var(--primary-green);">
+                          {{ expandedItemId === order.id ? '▲' : '▼' }}
+                        </span>
+                      </div>
+                    </div>
+                    @if (expandedItemId === order.id) {
+                      <div class="order-body">
+                        <div class="order-customer-info">
+                          <p><strong>Dirección de envío:</strong> {{ order.delivery_address }}</p>
+                        </div>
+                        <table class="order-items-table">
+                          <thead>
+                            <tr>
+                              <th>Producto</th>
+                              <th>Cantidad</th>
+                              <th>Certificado</th>
+                              <th>Subtotal</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            @for (item of order.items; track item.id) {
+                              <tr>
+                                <td>{{ item.product_name }}</td>
+                                <td>{{ item.quantity }}</td>
+                                <td>
+                                  @if (item.certificate_url) {
+                                    <a [href]="item.certificate_url" target="_blank" class="cert-link">Ver PDF</a>
+                                  } @else {
+                                    <span class="muted" style="color: #888;">N/A</span>
+                                  }
+                                </td>
+                                <td>{{ item.subtotal }} €</td>
+                              </tr>
+                            }
+                          </tbody>
+                        </table>
+                      </div>
+                      <div class="order-footer">
+                        <strong>Total del pedido: {{ order.total }} €</strong>
+                      </div>
+                    }
+                  </article>
+                }
+              }
+            </div>
+          }
+        </div>
+      } @else if (activeSection === 'Mis Suscripciones') {
+        <div class="state-card">
+          <h3>Mis Suscripciones</h3>
+          <p>Esta funcionalidad será añadida próximamente por el equipo correspondiente.</p>
+        </div>
       }
     }
   </section>

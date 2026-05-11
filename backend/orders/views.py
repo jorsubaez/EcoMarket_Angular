@@ -17,6 +17,7 @@ from .serializers import (
     OrderSerializer,
     CreateOrderSerializer,
     SimulatedPaymentSerializer,
+    ProducerSaleSerializer,
 )
 
 
@@ -24,7 +25,17 @@ from .serializers import (
 @permission_classes([IsAuthenticated])
 def my_orders(request):
     orders = Order.objects.filter(user=request.user).order_by('-created_at')
-    serializer = OrderSerializer(orders, many=True)
+    serializer = OrderSerializer(orders, many=True, context={'request': request})
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def producer_sales(request):
+    sales = OrderItem.objects.filter(
+        product__owner=request.user
+    ).select_related('order', 'order__user').order_by('-order__created_at')
+    serializer = ProducerSaleSerializer(sales, many=True, context={'request': request})
     return Response(serializer.data)
 
 
