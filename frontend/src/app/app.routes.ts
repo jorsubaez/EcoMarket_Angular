@@ -24,4 +24,8 @@ export const routes: Routes = [
   { path: 'panel-productor', component: PanelProductor },
   { path: 'confirmar-pedido', component: ConfirmarPedidoComponent },
   { path: 'pago-pedido/:id', component: PagoPedidoComponent },
+  {
+    path: 'trazabilidad/:id',
+    loadComponent: () => import('./trazabilidad/trazabilidad').then((m) => m.TrazabilidadComponent),
+  },
 ];

@@ -1,10 +1,12 @@
 import io
 import uuid
+import qrcode
 
 from django.conf import settings
 from django.core.files.base import ContentFile
 from django.db import models
 from PIL import Image
+from django.core.files import File
 
 
 MAX_IMAGE_WIDTH = 1200
@@ -16,6 +18,17 @@ def rename_product_image(instance, filename):
     unique_name = f"producto_{uuid.uuid4().hex}.webp"
     return f"productos/{unique_name}"
 
+def generar_qr_producto(producto):
+    url = f"http://192.168.1.134:4200/trazabilidad/{producto.id}"
+
+    qr = qrcode.make(url)
+
+    buffer = io.BytesIO()
+    qr.save(buffer, format="PNG")
+    buffer.seek(0)
+
+    filename = f"producto_{producto.id}_qr.png"
+    producto.qr_image.save(filename, File(buffer), save=False)
 
 class Producto(models.Model):
     ESTADO_VERIFICACION_CHOICES = (
@@ -37,6 +50,10 @@ class Producto(models.Model):
     quantity = models.IntegerField(default=0)
     image = models.ImageField(upload_to=rename_product_image, blank=True, null=True)
     certificate = models.FileField(upload_to='certificates/', blank=True, null=True)
+    lote = models.CharField(max_length=100, blank=True, null=True)
+    fecha_cosecha = models.DateField(blank=True, null=True)
+    finca_origen = models.CharField(max_length=150, blank=True, null=True)
+    qr_image = models.ImageField(upload_to='qr/', blank=True, null=True)
 
     verification_status = models.CharField(
         max_length=20,
@@ -58,8 +75,11 @@ class Producto(models.Model):
         - Save at WEBP_QUALITY % quality.
         The DB stores only the relative file path, never binary data.
         """
-        # Persist the record first so the file is already on disk.
         super().save(*args, **kwargs)
+
+        if not self.qr_image:
+            generar_qr_producto(self)
+            super().save(update_fields=["qr_image"])
 
         if not self.image:
             return

@@ -7,6 +7,7 @@ class ProductoSerializer(serializers.ModelSerializer):
     ownerName = serializers.ReadOnlyField(source='owner.first_name')
     image_url = serializers.SerializerMethodField()
     certificate_url = serializers.SerializerMethodField()
+    qr_url = serializers.SerializerMethodField()
 
     # Standard ImageField — accepts multipart/form-data uploads.
     # The model's save() method handles WebP conversion and resizing via Pillow.
@@ -35,8 +36,14 @@ class ProductoSerializer(serializers.ModelSerializer):
             'image_url',
             'certificate_url',
             'verification_status',
+            'lote',
+            'fecha_cosecha',
+            'finca_origen',
+            'qr_url',
         ]
+
         read_only_fields = ['owner', 'verification_status']
+
 
     def get_image_url(self, obj):
         request = self.context.get('request')
@@ -52,6 +59,14 @@ class ProductoSerializer(serializers.ModelSerializer):
             if request is not None:
                 return request.build_absolute_uri(obj.certificate.url)
             return obj.certificate.url
+        return ""
+
+    def get_qr_url(self, obj):
+        request = self.context.get('request')
+        if obj.qr_image and hasattr(obj.qr_image, 'url'):
+            if request is not None:
+                return request.build_absolute_uri(obj.qr_image.url)
+            return obj.qr_image.url
         return ""
 
     def validate_price(self, value):

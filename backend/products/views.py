@@ -1,6 +1,7 @@
 from rest_framework import viewsets, permissions, filters
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
 from django.db.models import Q
 from .models import Producto, CartItem
 from .serializers import ProductoSerializer, CartItemSerializer
@@ -15,6 +16,23 @@ class ProductoViewSet(viewsets.ModelViewSet):
     serializer_class = ProductoSerializer
     filter_backends = [filters.SearchFilter]
     search_fields = ['name', 'origin']
+    @action(detail=True, methods=['get'], permission_classes=[AllowAny])
+
+    def trazabilidad(self, request, pk=None):
+        producto = self.get_object()
+
+        return Response({
+            "id": producto.id,
+            "nombre": producto.name,
+            "origen": producto.origin,
+            "lote": producto.lote,
+            "finca_origen": producto.finca_origen,
+            "fecha_cosecha": producto.fecha_cosecha,
+            "certificado": request.build_absolute_uri(producto.certificate.url)
+            if producto.certificate else None,
+            "productor": producto.owner.first_name or producto.owner.username,
+        })
+
 
     def get_queryset(self):
         """
