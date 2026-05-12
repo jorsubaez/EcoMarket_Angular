@@ -25,6 +25,9 @@
                 <li><a routerLink="/productores" routerLinkActive="active">Productores</a></li>
                 <li><a routerLink="/contacto" routerLinkActive="active">Contacto</a></li>
                 @if (authService.session$ | async; as session) {
+                    @if (session.rol === 'ADMIN' || session.is_staff || session.is_superuser) {
+                        <li><a routerLink="/admin" routerLinkActive="active">Admin</a></li>
+                    }
                     @if (session.rol === 'PRODUCTOR') {
                         <li><a routerLink="/panel-productor" routerLinkActive="active">Panel Productor</a></li>
                     }

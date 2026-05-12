@@ -39,3 +39,25 @@ class UserEmailLog(models.Model):
 
     def __str__(self):
         return f"{self.tipo_email} a {self.user.email} - {self.status}"
+
+
+class AdminActionLog(models.Model):
+    admin = models.ForeignKey(
+        CustomUser,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='admin_actions'
+    )
+    action = models.CharField(max_length=80)
+    target_type = models.CharField(max_length=40)
+    target_id = models.CharField(max_length=40, blank=True)
+    detail = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        admin_email = self.admin.email if self.admin else 'admin eliminado'
+        return f"{admin_email} - {self.action} - {self.target_type} {self.target_id}"

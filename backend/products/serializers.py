@@ -5,6 +5,7 @@ from .models import Producto, CartItem
 class ProductoSerializer(serializers.ModelSerializer):
     ownerId = serializers.ReadOnlyField(source='owner.id')
     ownerName = serializers.ReadOnlyField(source='owner.first_name')
+    ownerEmail = serializers.ReadOnlyField(source='owner.email')
     image_url = serializers.SerializerMethodField()
     certificate_url = serializers.SerializerMethodField()
 
@@ -32,6 +33,7 @@ class ProductoSerializer(serializers.ModelSerializer):
             'image_url_legacy',
             'ownerId',
             'ownerName',
+            'ownerEmail',
             'image_url',
             'certificate_url',
             'verification_status',

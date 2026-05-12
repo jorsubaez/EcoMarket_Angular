@@ -11,6 +11,8 @@ import { Perfil } from './perfil/perfil';
 import { PanelProductor } from './panel-productor/panel-productor';
 import { ConfirmarPedidoComponent } from './confirmar-pedido/confirmar-pedido';
 import { PagoPedidoComponent } from './pago-pedido/pago-pedido';
+import { PanelAdmin } from './panel-admin/panel-admin';
+import { adminGuard } from './guards/admin.guard';
 
 export const routes: Routes = [
   { path: '', component: Inicio },
@@ -22,6 +24,7 @@ export const routes: Routes = [
   { path: 'registro', component: RegistroComponent },
   { path: 'perfil', component: Perfil },
   { path: 'panel-productor', component: PanelProductor },
+  { path: 'admin', component: PanelAdmin, canActivate: [adminGuard] },
   { path: 'confirmar-pedido', component: ConfirmarPedidoComponent },
   { path: 'pago-pedido/:id', component: PagoPedidoComponent },
 ];

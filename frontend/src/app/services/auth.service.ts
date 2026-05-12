@@ -9,6 +9,8 @@ export interface SessionData {
   email: string;
   rol: string;
   provincia?: string;
+  is_staff?: boolean;
+  is_superuser?: boolean;
 }
 
 @Injectable({
@@ -36,6 +38,11 @@ export class AuthService {
 
   getToken(): string | null {
     return localStorage.getItem('ecomarket_token');
+  }
+
+  get isAdmin(): boolean {
+    const user = this.currentUser;
+    return !!user && (user.rol === 'ADMIN' || !!user.is_staff || !!user.is_superuser);
   }
 
   login(credentials: any): Observable<any> {
