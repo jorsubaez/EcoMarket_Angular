@@ -20,14 +20,15 @@
 
         <nav class="main-nav" id="main-nav" [class.active]="isMenuOpen">
             <ul>
-                <li><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Inicio</a></li>
+                <li><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Inicio</a>
+                </li>
                 <li><a routerLink="/catalogo" routerLinkActive="active">Catálogo</a></li>
                 <li><a routerLink="/productores" routerLinkActive="active">Productores</a></li>
                 <li><a routerLink="/contacto" routerLinkActive="active">Contacto</a></li>
                 @if (authService.session$ | async; as session) {
-                    @if (session.rol === 'PRODUCTOR') {
-                        <li><a routerLink="/panel-productor" routerLinkActive="active">Panel Productor</a></li>
-                    }
+                @if (session.rol === 'PRODUCTOR') {
+                <li><a routerLink="/panel-productor" routerLinkActive="active">Panel Productor</a></li>
+                }
                 }
                 <li class="mobile-only-menu"><a routerLink="/login">Iniciar sesión</a></li>
             </ul>
@@ -35,25 +36,27 @@
 
         <div class="user-actions">
             @if (authService.session$ | async; as session) {
-                <a class="login-link" routerLink="/perfil" id="login-link">
-                    <span class="account-icon mobile-login-icon">
-                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="12" cy="7" r="4"></circle>
-                        </svg>
-                    </span>
-                    <span class="login-text">Mi Perfil</span>
-                </a>
+            <a class="login-link" routerLink="/perfil" id="login-link">
+                <span class="account-icon mobile-login-icon">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </span>
+                <span class="login-text">Mi Perfil</span>
+            </a>
             } @else {
-                <a class="login-link" routerLink="/login" id="login-link">
-                    <span class="account-icon mobile-login-icon">
-                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="12" cy="7" r="4"></circle>
-                        </svg>
-                    </span>
-                    <span class="login-text">Iniciar sesión</span>
-                </a>
+            <a class="login-link" routerLink="/login" id="login-link">
+                <span class="account-icon mobile-login-icon">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </span>
+                <span class="login-text">Iniciar sesión</span>
+            </a>
             }
             <a class="cart-link cart-icon-only" href="#" aria-label="Ir al carrito" (click)="toggleCartDrawer($event)">
                 <span class="cart-icon" [class.cart-bump]="bumpCart">
@@ -82,42 +85,43 @@
 
     <div class="cart-items">
         @if (cartItems.length === 0) {
-            <div class="empty-cart">
-                <p>Tu carrito está vacío.</p>
-                <p>¡Descubre productos locales y ecológicos!</p>
-            </div>
+        <div class="empty-cart">
+            <p>Tu carrito está vacío.</p>
+            <p>¡Descubre productos locales y ecológicos!</p>
+        </div>
         } @else {
-            @for (item of cartItems; track item.producto.id) {
-                <div class="cart-item">
-                    <img [src]="item.producto.imagenUrl" [alt]="item.producto.nombre" class="cart-item-img">
-                    <div class="cart-item-details">
-                        <h4 class="cart-item-title">{{ item.producto.nombre }}</h4>
-                        <div class="cart-item-price">{{ item.producto.precio | number:'1.2-2' }} {{ item.producto.unidad }}</div>
-                        <div class="cart-item-actions">
-                            <div class="quantity-controls">
-                                <button class="qty-btn" (click)="updateQuantity(item.producto.id, item.cantidad - 1)">-</button>
-                                <span class="qty-value">{{ item.cantidad }}</span>
-                                <button class="qty-btn" (click)="updateQuantity(item.producto.id, item.cantidad + 1)">+</button>
-                            </div>
-                          <button class="remove-btn" type="button" (click)="removeItem(item)">
-                              <i class="fa-solid fa-trash-can"></i> Eliminar
-                          </button>
-                        </div>
-                    </div>
+        @for (item of cartItems; track item.producto.id) {
+        <div class="cart-item">
+            <img [src]="item.producto.imagenUrl" [alt]="item.producto.nombre" class="cart-item-img">
+            <div class="cart-item-details">
+                <h4 class="cart-item-title">{{ item.producto.nombre }}</h4>
+                <div class="cart-item-price">{{ item.producto.precio | number:'1.2-2' }} {{ item.producto.unidad }}
                 </div>
-            }
+                <div class="cart-item-actions">
+                    <div class="quantity-controls">
+                        <button class="qty-btn" (click)="updateQuantity(item.producto.id, item.cantidad - 1)">-</button>
+                        <span class="qty-value">{{ item.cantidad }}</span>
+                        <button class="qty-btn" (click)="updateQuantity(item.producto.id, item.cantidad + 1)">+</button>
+                    </div>
+                    <button class="remove-btn" type="button" (click)="removeItem(item)">
+                        <i class="fa-solid fa-trash-can"></i> Eliminar
+                    </button>
+                </div>
+            </div>
+        </div>
+        }
         }
     </div>
 
     @if (cartItems.length > 0) {
-        <div class="cart-footer">
-            <div class="cart-total">
-                <span>Total:</span>
-                <span>{{ cartTotal | number:'1.2-2' }} €</span>
-            </div>
-          <button class="btn-checkout" (click)="irAConfirmarPedido()">
-            Finalizar Compra
-          </button>
+    <div class="cart-footer">
+        <div class="cart-total">
+            <span>Total:</span>
+            <span>{{ cartTotal | number:'1.2-2' }} €</span>
         </div>
+        <button class="btn-checkout" (click)="irAConfirmarPedido()">
+            Finalizar Compra
+        </button>
+    </div>
     }
 </div>

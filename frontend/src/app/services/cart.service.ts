@@ -142,4 +142,10 @@ export class CartService {
     this.cartItems = [];
     this.cartSubject.next([...this.cartItems]);
   }
+
+  async generateRecipe(): Promise<{ recipe_html: string }> {
+    return firstValueFrom(
+      this.http.post<{ recipe_html: string }>(`${this.apiUrl}generate_recipe/`, {})
+    );
+  }
 }

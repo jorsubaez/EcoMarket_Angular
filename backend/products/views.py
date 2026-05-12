@@ -1,8 +1,11 @@
 from rest_framework import viewsets, permissions, filters
+from rest_framework.decorators import action
+from rest_framework.response import Response
 from django.db.models import Q
 from .models import Producto, CartItem
 from .serializers import ProductoSerializer, CartItemSerializer
 from .permissions import IsOwnerOrReadOnly, IsProductor
+from .services.recipe_service import parse_ingredients, generate_recipe_from_ingredients
 
 
 class ProductoViewSet(viewsets.ModelViewSet):
@@ -65,3 +68,13 @@ class CartItemViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+    @action(detail=False, methods=['post'])
+    def generate_recipe(self, request):
+        cart_items = self.get_queryset()
+        raw_ingredients = [item.producto.name for item in cart_items]
+        
+        cleaned_ingredients = parse_ingredients(raw_ingredients)
+        recipe_html = generate_recipe_from_ingredients(cleaned_ingredients)
+        
+        return Response({'recipe_html': recipe_html})

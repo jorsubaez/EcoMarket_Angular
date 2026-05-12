@@ -24,12 +24,7 @@
 
           <label class="quantity-label">
             Cantidad:
-            <input
-              type="number"
-              min="1"
-              [ngModel]="item.cantidad"
-              (ngModelChange)="updateQuantity(item, $event)"
-            />
+            <input type="number" min="1" [ngModel]="item.cantidad" (ngModelChange)="updateQuantity(item, $event)" />
           </label>
 
           <p>
@@ -38,11 +33,7 @@
           </p>
         </div>
 
-        <button
-          type="button"
-          class="delete-btn"
-          (click)="removeItem(item)"
-        >
+        <button type="button" class="delete-btn" (click)="removeItem(item)">
           Eliminar
         </button>
       </article>
@@ -50,6 +41,25 @@
       <div class="total-box">
         <span>Total</span>
         <strong>{{ total | number:'1.2-2' }} €</strong>
+      </div>
+
+      <div class="recipe-generator-section" style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #eaeaea;">
+        <h3 style="display: flex; align-items: center; gap: 0.5rem;">
+          🧑‍🍳 Chef Virtual
+        </h3>
+        <p style="margin-bottom: 1rem; color: #555;">¿No sabes qué cocinar? Genera una receta inteligente usando solo los ingredientes de tu carrito.</p>
+        
+        <button type="button" class="confirm-btn" style="background-color: #2b6cb0;" [disabled]="recipeLoading || cartItems.length === 0" (click)="onGenerateRecipe()">
+          {{ recipeLoading ? 'El Chef está pensando...' : 'Generar Receta con estos ingredientes' }}
+        </button>
+        
+        <div *ngIf="recipeError" class="alert alert-error" style="margin-top: 1rem;">
+          {{ recipeError }}
+        </div>
+        
+        <div *ngIf="recipeHtml" class="recipe-result" style="margin-top: 1.5rem; padding: 1.5rem; background-color: #f7fafc; border-radius: 8px; border: 1px solid #e2e8f0;">
+          <div [innerHTML]="recipeHtml"></div>
+        </div>
       </div>
     </div>
 
@@ -67,11 +77,7 @@
       <div *ngIf="deliveryType === 'ADDRESS'">
         <label>
           Dirección de entrega
-          <input
-            type="text"
-            [(ngModel)]="deliveryAddress"
-            placeholder="Ej: Calle Mayor 12, 3º Izq"
-          />
+          <input type="text" [(ngModel)]="deliveryAddress" placeholder="Ej: Calle Mayor 12, 3º Izq" />
         </label>
       </div>
 
@@ -97,12 +103,7 @@
         </p>
       </div>
 
-      <button
-        type="button"
-        class="confirm-btn"
-        [disabled]="loading"
-        (click)="confirmOrder()"
-      >
+      <button type="button" class="confirm-btn" [disabled]="loading" (click)="confirmOrder()">
         {{ loading ? 'Confirmando...' : 'Confirmar pedido' }}
       </button>
     </div>

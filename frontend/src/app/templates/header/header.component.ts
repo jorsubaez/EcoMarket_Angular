@@ -24,7 +24,7 @@ export class HeaderComponent implements OnInit {
     private cartService: CartService,
     public authService: AuthService,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.cartService.cart$.subscribe((items) => {
