@@ -33,4 +33,8 @@ export class OrderService {
   getMyOrders(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/`);
   }
+
+  getProducerSales(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/sales/`);
+  }
 }

@@ -5,6 +5,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
 import { ChangeDetectorRef } from '@angular/core';
 import { AuthService } from '../services/auth.service';
+import { OrderService } from '../services/order.service';
 import { PROVINCIAS_ESPANA } from '../shared/provincias';
 
 @Component({
@@ -17,6 +18,7 @@ export class Perfil implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly http = inject(HttpClient);
   private readonly authService = inject(AuthService);
+  private readonly orderService = inject(OrderService);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly apiUrl = 'http://localhost:8000/api/users/me/';
 
@@ -26,13 +28,19 @@ export class Perfil implements OnInit {
   protected saving = false;
   protected successMessage = '';
   protected errorMessage = '';
+  protected activeSection = 'Mi Perfil';
+  protected orders: any[] = [];
+  protected sales: any[] = [];
+  protected loadingOrders = false;
+  protected expandedItemId: number | string | null = null;
 
   protected readonly sidebarItems = [
-    'Mi perfil',
-    'Mis pedidos',
+    'Mi Perfil',
+    'Mis Pedidos',
+    'Mis Suscripciones',
     'Direcciones',
     'Ajustes',
-    'Cerrar sesion',
+    'Cerrar Sesión',
   ];
 
   protected readonly provincias = PROVINCIAS_ESPANA;
@@ -177,20 +185,79 @@ export class Perfil implements OnInit {
 
   protected handleSidebarAction(item: string): void {
     this.clearMessages();
+    this.expandedItemId = null;
 
-    if (item === 'Cerrar sesion') {
+    if (item === 'Cerrar Sesión') {
       this.authService.logout();
       this.accessDenied = true;
       this.editing = false;
       return;
     }
 
-    if (item === 'Mi perfil') {
+    if (item === 'Mi Perfil') {
+      this.activeSection = 'Mi Perfil';
+      this.editing = false;
+      return;
+    }
+
+    if (item === 'Mis Pedidos') {
+      this.activeSection = 'Mis Pedidos';
+      this.editing = false;
+      this.loadOrdersOrSales();
+      return;
+    }
+
+    if (item === 'Mis Suscripciones') {
+      this.activeSection = 'Mis Suscripciones';
       this.editing = false;
       return;
     }
 
     this.successMessage = `La sección "${item}" estará disponible en futuras versiones.`;
+  }
+
+  private loadOrdersOrSales(): void {
+    this.loadingOrders = true;
+    if (this.user.rol === 'productor') {
+      this.orderService.getProducerSales().subscribe({
+        next: (data) => {
+          this.sales = data;
+          this.loadingOrders = false;
+          this.cdr.detectChanges();
+        },
+        error: () => {
+          this.errorMessage = 'No se pudieron cargar las ventas.';
+          this.loadingOrders = false;
+          this.cdr.detectChanges();
+        }
+      });
+    } else {
+      this.orderService.getMyOrders().subscribe({
+        next: (data) => {
+          this.orders = data;
+          this.loadingOrders = false;
+          this.cdr.detectChanges();
+        },
+        error: () => {
+          this.errorMessage = 'No se pudieron cargar los pedidos.';
+          this.loadingOrders = false;
+          this.cdr.detectChanges();
+        }
+      });
+    }
+  }
+
+  protected toggleExpandedItem(id: number | string): void {
+    this.expandedItemId = this.expandedItemId === id ? null : id;
+  }
+
+  protected translateStatus(status: string): string {
+    switch (status) {
+      case 'PAID': return 'Pagado';
+      case 'PENDING_PAYMENT': return 'Pendiente';
+      case 'FAILED': return 'Fallido';
+      default: return status;
+    }
   }
 
   private loadUserDetails(): void {
