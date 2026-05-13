@@ -133,7 +133,7 @@ export class Catalogo implements OnInit {
       return '';
     }
 
-    return unidad.startsWith('EUR/') ? unidad.replace('EUR/', 'EUR/') : `EUR/${unidad}`;
+    return unidad.startsWith('EUR/') ? unidad.replace('EUR/', '€/') : `€/${unidad}`;
   }
 
   actualizarCategoria(categoria: string) {

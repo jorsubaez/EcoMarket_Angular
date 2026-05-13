@@ -36,7 +36,7 @@ type TextPayloadKey = Exclude<keyof ApiProduct, 'image' | 'certificate'>;
   providedIn: 'root',
 })
 export class ProductService {
-  private apiUrl = 'http://192.168.1.134:8000/api/productos/';
+  private apiUrl = 'http://localhost:8000/api/productos/';
 
   private productsSubject = new BehaviorSubject<ApiProduct[]>([]);
   public products$ = this.productsSubject.asObservable();

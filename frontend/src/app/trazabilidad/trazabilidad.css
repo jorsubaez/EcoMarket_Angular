@@ -1,0 +1,104 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  background: #f5f7f4;
+  color: #17251a;
+}
+
+.trace-page {
+  padding: 48px 20px 80px;
+}
+
+.trace-shell {
+  width: min(900px, 100%);
+  margin: 0 auto;
+}
+
+.back-link,
+.cert-link {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 10px 14px;
+  color: #1f5d25;
+  background: rgba(47, 125, 50, 0.1);
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.trace-card {
+  margin-top: 18px;
+  padding: 28px;
+  border: 1px solid rgba(37, 66, 44, 0.13);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 14px 30px rgba(29, 54, 33, 0.08);
+}
+
+.trace-card.state {
+  min-height: 220px;
+  display: grid;
+  place-content: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.eyebrow {
+  margin: 0 0 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: #2f7d32;
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+h1,
+p,
+dl {
+  margin: 0;
+}
+
+h1 {
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  line-height: 1.08;
+}
+
+header p:not(.eyebrow),
+.trace-card.state p {
+  margin-top: 8px;
+  color: #627063;
+}
+
+.trace-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.trace-list div {
+  padding: 16px;
+  border: 1px solid rgba(37, 66, 44, 0.11);
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+dt {
+  color: #627063;
+  font-size: 0.82rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+dd {
+  margin: 8px 0 0;
+  font-weight: 800;
+}
+
+.cert-link {
+  margin-top: 20px;
+  color: #ffffff;
+  background: #2f7d32;
+}

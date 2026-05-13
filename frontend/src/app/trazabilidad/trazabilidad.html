@@ -1,0 +1,50 @@
+<main class="trace-page">
+  <section class="trace-shell">
+    <a class="back-link" routerLink="/catalogo">Volver al catalogo</a>
+
+    @if (loading) {
+      <section class="trace-card state">
+        <h1>Cargando trazabilidad...</h1>
+        <p>Estamos recuperando la informacion del producto.</p>
+      </section>
+    } @else if (errorMessage) {
+      <section class="trace-card state">
+        <h1>No disponible</h1>
+        <p>{{ errorMessage }}</p>
+      </section>
+    } @else if (producto) {
+      <section class="trace-card">
+        <header>
+          <p class="eyebrow">Trazabilidad EcoMarket</p>
+          <h1>{{ producto.nombre }}</h1>
+          <p>{{ producto.productor || 'Productor no disponible' }}</p>
+        </header>
+
+        <dl class="trace-list">
+          <div>
+            <dt>Origen</dt>
+            <dd>{{ producto.origen || 'Sin informacion' }}</dd>
+          </div>
+          <div>
+            <dt>Finca</dt>
+            <dd>{{ producto.finca_origen || 'Sin informacion' }}</dd>
+          </div>
+          <div>
+            <dt>Lote</dt>
+            <dd>{{ producto.lote || 'Sin informacion' }}</dd>
+          </div>
+          <div>
+            <dt>Fecha de cosecha</dt>
+            <dd>{{ producto.fecha_cosecha || 'Sin informacion' }}</dd>
+          </div>
+        </dl>
+
+        @if (producto.certificado) {
+          <a class="cert-link" [href]="producto.certificado" target="_blank" rel="noopener">
+            Ver certificado ecologico
+          </a>
+        }
+      </section>
+    }
+  </section>
+</main>

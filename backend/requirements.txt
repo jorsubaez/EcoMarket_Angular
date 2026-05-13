@@ -1,30 +1,16 @@
 asgiref==3.11.1
-brotlicffi @ file:///opt/miniconda3/conda-bld/brotlicffi_1764961161081/work
-certifi @ file:///Users/ec2-user/croot/certifi_1776971118810/work/certifi
-cffi @ file:///opt/miniconda3/conda-bld/cffi_1761832773185/work
-charset-normalizer @ file:///opt/miniconda3/conda-bld/charset-normalizer_1761744840553/work
-dj-database-url==2.1.0
 Django==5.2.13
 django-cors-headers==4.9.0
 django-environ==0.11.2
+dj-database-url==2.1.0
 djangorestframework==3.17.1
 djangorestframework_simplejwt==5.5.1
 drf-extra-fields==3.7.0
 filetype==1.2.0
-idna @ file:///opt/miniconda3/conda-bld/idna_1761912005426/work
-packaging==26.0
-parts==2.1.0
 pillow==12.2.0
-products==2.0.1
 psycopg2-binary==2.9.11
-pycparser @ file:///Users/ec2-user/croot/pycparser_1774959671227/work
 PyJWT==2.12.1
-PySocks @ file:///opt/miniconda3/conda-bld/pysocks_1761753010927/work
-qrcode==8.2
-requests @ file:///Users/ec2-user/croot/requests_1775066190620/work
-setuptools==82.0.1
+qrcode[pil]==8.2
+requests==2.32.5
 sqlparse==0.5.5
-typing_extensions==4.15.0
 tzdata==2026.1
-urllib3 @ file:///Users/ec2-user/croot/urllib3_1778536192006/work
-wheel==0.46.3
