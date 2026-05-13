@@ -19,6 +19,10 @@ export interface Producto {
   tieneEcoSello: boolean;
   descripcion?: string;
   certificadoUrl?: string;
+  qrUrl?: string;
+  lote?: string;
+  fechaCosecha?: string;
+  fincaOrigen?: string;
 }
 
 @Component({
@@ -75,11 +79,14 @@ export class Catalogo implements OnInit {
         precio: typeof item.price === 'string' ? parseFloat(item.price) : item.price,
         unidad: item.unit,
         disponibilidad: item.quantity,
-        imagenUrl:
-          item.image_url || item.image_url_legacy || 'assets/images/placeholder.png',
+        imagenUrl: item.image_url || item.image_url_legacy || 'assets/images/placeholder.png',
         tieneEcoSello: item.verification_status === 'VERIFICADO',
         descripcion: item.description || '',
         certificadoUrl: item.certificate_url,
+        qrUrl: item.qr_url,
+        lote: item.lote,
+        fechaCosecha: item.fecha_cosecha,
+        fincaOrigen: item.finca_origen,
       }));
       this.loading = false;
       this.cdr.detectChanges();
@@ -98,7 +105,7 @@ export class Catalogo implements OnInit {
         producto.origen === this.selectedProvincia;
       const minValido = this.minPrecio === null || producto.precio >= this.minPrecio;
       const maxValido = this.maxPrecio === null || producto.precio <= this.maxPrecio;
-      
+
       let searchValido = true;
       if (this.searchTerm.trim() !== '') {
         const term = this.searchTerm.toLowerCase().trim();
@@ -183,7 +190,7 @@ export class Catalogo implements OnInit {
     }
     const cantidad = parseInt(cantidadInput, 10) || 1;
     this.cartService.addToCart(producto, cantidad);
-    
+
     this.animatingProductId = producto.id;
     setTimeout(() => {
       this.animatingProductId = null;

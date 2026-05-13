@@ -30,6 +30,39 @@
         {{ producto.descripcion }}
       </p>
 
+      @if (producto.qrUrl) {
+        <div class="qr-section">
+          <h3>Trazabilidad del producto</h3>
+
+          <p>
+            Escanea este código QR para consultar la información de origen,
+            lote, finca y certificado ecológico del producto.
+          </p>
+
+          <img
+            [src]="producto.qrUrl"
+            alt="Código QR de trazabilidad"
+            class="qr-image"
+          >
+
+          <div class="trace-info">
+            <p><strong>Lote:</strong> {{ producto.lote || 'No especificado' }}</p>
+            <p><strong>Finca de origen:</strong> {{ producto.fincaOrigen || 'No especificada' }}</p>
+            <p><strong>Fecha de cosecha:</strong> {{ producto.fechaCosecha || 'No especificada' }}</p>
+          </div>
+
+          @if (producto.certificateUrl) {
+            <a
+              [href]="producto.certificateUrl"
+              target="_blank"
+              class="certificate-link"
+            >
+              Ver certificado ecológico
+            </a>
+          }
+        </div>
+      }
+
       <div class="stock-info">
         <span class="status-dot"></span>
         <span>En stock ({{ producto.disponibilidad }} disponibles)</span>

@@ -199,3 +199,57 @@
     min-height: 300px;
   }
 }
+
+.qr-section {
+  margin-top: 1.5rem;
+  padding: 1.2rem;
+  background-color: #f4f8f4;
+  border-radius: 12px;
+  border: 1px solid #d8ead8;
+  text-align: center;
+}
+
+.qr-section h3 {
+  color: #2a7a38;
+  margin-bottom: 0.7rem;
+}
+
+.qr-section p {
+  font-size: 0.95rem;
+  color: #444;
+}
+
+.qr-image {
+  width: 160px;
+  height: 160px;
+  object-fit: contain;
+  margin: 1rem auto;
+  display: block;
+}
+
+.trace-info {
+  text-align: left;
+  margin-top: 1rem;
+  background-color: #ffffff;
+  border-radius: 10px;
+  padding: 1rem;
+}
+
+.trace-info p {
+  margin: 0.4rem 0;
+}
+
+.certificate-link {
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 0.7rem 1rem;
+  background-color: #2a7a38;
+  color: white;
+  border-radius: 20px;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.certificate-link:hover {
+  background-color: #1e5a28;
+}

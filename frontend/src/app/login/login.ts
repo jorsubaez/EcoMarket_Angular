@@ -55,7 +55,9 @@ export class LoginComponent {
       })
     ).subscribe({
       next: (response) => {
-        if (response.user && response.user.rol === 'PRODUCTOR') {
+        if (response.user && (response.user.rol === 'ADMIN' || response.user.is_staff || response.user.is_superuser)) {
+          this.router.navigate(['/admin']);
+        } else if (response.user && response.user.rol === 'PRODUCTOR') {
           this.router.navigate(['/panel-productor']);
         } else {
           this.router.navigate(['/perfil']);

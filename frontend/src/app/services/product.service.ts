@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, firstValueFrom } from 'rxjs';
+import { BehaviorSubject, firstValueFrom, Observable } from 'rxjs';
 
 export interface ApiProduct {
   id: number;
@@ -23,6 +23,10 @@ export interface ApiProduct {
   ownerName?: string;
   ownerEmail?: string;
   image_url?: string;
+  qr_url?: string;
+  lote?: string;
+  fecha_cosecha?: string;
+  finca_origen?: string;
 }
 
 /** Fields that are always sent as plain text in a multipart request. */
@@ -32,7 +36,7 @@ type TextPayloadKey = Exclude<keyof ApiProduct, 'image' | 'certificate'>;
   providedIn: 'root',
 })
 export class ProductService {
-  private apiUrl = 'http://localhost:8000/api/productos/';
+  private apiUrl = 'http://192.168.1.134:8000/api/productos/';
 
   private productsSubject = new BehaviorSubject<ApiProduct[]>([]);
   public products$ = this.productsSubject.asObservable();
@@ -49,11 +53,13 @@ export class ProductService {
     }
   }
 
+  getTrazabilidadProducto(id: number | string): Observable<ApiProduct> {
+    return this.http.get<ApiProduct>(`${this.apiUrl}${id}/trazabilidad/`);
+  }
+
   async createProduct(payload: Partial<ApiProduct>): Promise<ApiProduct> {
     const formData = this.buildFormData(payload);
-    const newProduct = await firstValueFrom(
-      this.http.post<ApiProduct>(this.apiUrl, formData),
-    );
+    const newProduct = await firstValueFrom(this.http.post<ApiProduct>(this.apiUrl, formData));
     await this.refreshProducts();
     return newProduct;
   }
@@ -61,7 +67,6 @@ export class ProductService {
   async updateProduct(id: number | string, payload: Partial<ApiProduct>): Promise<ApiProduct> {
     const formData = this.buildFormData(payload);
     const updatedProduct = await firstValueFrom(
-      // PATCH is used so that fields not included in the payload are preserved.
       this.http.patch<ApiProduct>(`${this.apiUrl}${id}/`, formData),
     );
     await this.refreshProducts();
@@ -73,15 +78,6 @@ export class ProductService {
     await this.refreshProducts();
   }
 
-  /**
-   * Convert a plain object payload into a FormData instance.
-   *
-   * - File fields (`image`, `certificate`) are appended as Blob/File objects
-   *   so that Django's DRF `ImageField` / `FileField` can parse them.
-   * - All other fields are appended as strings.
-   * - `null` values for file fields send an explicit empty string so that
-   *   DRF interprets the field as "cleared" when the model allows null.
-   */
   private buildFormData(payload: Partial<ApiProduct>): FormData {
     const fd = new FormData();
 
@@ -92,7 +88,6 @@ export class ProductService {
         } else if (value === null) {
           fd.append(key, '');
         }
-        // If undefined, omit the field entirely (field is left unchanged by PATCH).
       } else if (value !== undefined && value !== null) {
         fd.append(key as TextPayloadKey, String(value));
       }

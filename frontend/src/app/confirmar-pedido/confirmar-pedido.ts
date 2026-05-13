@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { Subscription } from 'rxjs';
 
 import { CartItem, CartService } from '../services/cart.service';
@@ -32,6 +33,10 @@ export class ConfirmarPedidoComponent implements OnInit, OnDestroy {
   errorMessage = '';
   loading = false;
 
+  recipeHtml: SafeHtml | null = null;
+  recipeLoading = false;
+  recipeError = '';
+
   private cartSub?: Subscription;
 
   constructor(
@@ -39,7 +44,8 @@ export class ConfirmarPedidoComponent implements OnInit, OnDestroy {
     private orderService: OrderService,
     private router: Router,
     private cdr: ChangeDetectorRef,
-  ) {}
+    private sanitizer: DomSanitizer
+  ) { }
 
   async ngOnInit(): Promise<void> {
     await this.cartService.loadCart();
@@ -147,5 +153,21 @@ export class ConfirmarPedidoComponent implements OnInit, OnDestroy {
           this.errorMessage = error.error?.detail || 'No se pudo confirmar el pedido.';
         },
       });
+  }
+
+  async onGenerateRecipe(): Promise<void> {
+    this.recipeError = '';
+    this.recipeHtml = null;
+    this.recipeLoading = true;
+    try {
+      const response = await this.cartService.generateRecipe();
+      this.recipeHtml = this.sanitizer.bypassSecurityTrustHtml(response.recipe_html);
+    } catch (error: any) {
+      console.error('Error al generar receta:', error);
+      this.recipeError = 'Hubo un problema al contactar con el Chef virtual. Por favor, inténtalo de nuevo.';
+    } finally {
+      this.recipeLoading = false;
+      this.cdr.detectChanges();
+    }
   }
 }

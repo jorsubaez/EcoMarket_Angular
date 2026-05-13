@@ -17,6 +17,11 @@ export interface Producto {
   imagenUrl: string;
   tieneEcoSello: boolean;
   descripcion?: string;
+  qrUrl?: string;
+  lote?: string;
+  fechaCosecha?: string;
+  fincaOrigen?: string;
+  certificateUrl?: string;
 }
 
 @Component({
@@ -54,7 +59,12 @@ export class Detalle implements OnInit {
           disponibilidad: item.quantity,
           imagenUrl: item.image_url || item.image_url_legacy || 'assets/images/placeholder.png',
           tieneEcoSello: true,
-          descripcion: item.description || ''
+          descripcion: item.description || '',
+          qrUrl: item.qr_url,
+          lote: item.lote,
+          fechaCosecha: item.fecha_cosecha,
+          fincaOrigen: item.finca_origen,
+          certificateUrl: item.certificate_url,
         };
         this.loading = false;
         this.cdr.detectChanges();

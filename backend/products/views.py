@@ -1,8 +1,12 @@
 from rest_framework import viewsets, permissions, filters
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
 from django.db.models import Q
 from .models import Producto, CartItem
 from .serializers import ProductoSerializer, CartItemSerializer
 from .permissions import IsOwnerOrReadOnly, IsProductor
+from .services.recipe_service import parse_ingredients, generate_recipe_from_ingredients
 
 
 class ProductoViewSet(viewsets.ModelViewSet):
@@ -12,6 +16,23 @@ class ProductoViewSet(viewsets.ModelViewSet):
     serializer_class = ProductoSerializer
     filter_backends = [filters.SearchFilter]
     search_fields = ['name', 'origin']
+    @action(detail=True, methods=['get'], permission_classes=[AllowAny])
+
+    def trazabilidad(self, request, pk=None):
+        producto = self.get_object()
+
+        return Response({
+            "id": producto.id,
+            "nombre": producto.name,
+            "origen": producto.origin,
+            "lote": producto.lote,
+            "finca_origen": producto.finca_origen,
+            "fecha_cosecha": producto.fecha_cosecha,
+            "certificado": request.build_absolute_uri(producto.certificate.url)
+            if producto.certificate else None,
+            "productor": producto.owner.first_name or producto.owner.username,
+        })
+
 
     def get_queryset(self):
         """
@@ -65,3 +86,13 @@ class CartItemViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+    @action(detail=False, methods=['post'])
+    def generate_recipe(self, request):
+        cart_items = self.get_queryset()
+        raw_ingredients = [item.producto.name for item in cart_items]
+        
+        cleaned_ingredients = parse_ingredients(raw_ingredients)
+        recipe_html = generate_recipe_from_ingredients(cleaned_ingredients)
+        
+        return Response({'recipe_html': recipe_html})

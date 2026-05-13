@@ -207,6 +207,30 @@
                 }
               </div>
             }
+            @if (selectedProducto.qrUrl) {
+              <div class="qr-trazabilidad">
+                <h4>
+                  <i class="fa-solid fa-qrcode"></i>
+                  Trazabilidad del producto
+                </h4>
+
+                <p class="qr-text">
+                  Escanea este código QR para consultar el origen, lote, fecha de cosecha y certificado ecológico.
+                </p>
+
+                <img
+                  [src]="selectedProducto.qrUrl"
+                  alt="Código QR de trazabilidad"
+                  class="qr-img"
+                />
+
+                <div class="qr-info">
+                  <p><strong>Lote:</strong> {{ selectedProducto.lote || 'No especificado' }}</p>
+                  <p><strong>Finca:</strong> {{ selectedProducto.fincaOrigen || 'No especificada' }}</p>
+                  <p><strong>Fecha de cosecha:</strong> {{ selectedProducto.fechaCosecha || 'No especificada' }}</p>
+                </div>
+              </div>
+            }
 
             <div class="acciones-container modal-acciones">
               @if (selectedProducto.disponibilidad > 0) {
