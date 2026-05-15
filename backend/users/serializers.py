@@ -77,7 +77,13 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
             del self.fields['username']
 
     def validate(self, attrs):
-        attrs['username'] = attrs.get('email')
+        email = attrs.get('email')
+        try:
+            user = User.objects.get(email__iexact=email)
+        except User.DoesNotExist:
+            raise serializers.ValidationError('Email o contraseña incorrectos.')
+
+        attrs['username'] = user.username
         data = super().validate(attrs)
 
         # Add custom claims
