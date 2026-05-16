@@ -33,6 +33,11 @@ export class Perfil implements OnInit {
   protected sales: any[] = [];
   protected loadingOrders = false;
   protected expandedItemId: number | string | null = null;
+  
+  protected subscriptions: any[] = [];
+  protected loadingSubscriptions = false;
+  protected creatingSubscription = false;
+  protected showNewSubscriptionForm = false;
 
   protected readonly sidebarItems = [
     'Mi Perfil',
@@ -61,6 +66,11 @@ export class Perfil implements OnInit {
     telefono: ['', [Validators.maxLength(20)]],
     direccion: ['', [Validators.maxLength(160)]],
     provincia: [''],
+  });
+
+  protected readonly subscriptionForm = this.fb.nonNullable.group({
+    size: ['MEDIUM', [Validators.required]],
+    frequency: ['WEEKLY', [Validators.required]],
   });
 
   async ngOnInit(): Promise<void> {
@@ -210,6 +220,7 @@ export class Perfil implements OnInit {
     if (item === 'Mis Suscripciones') {
       this.activeSection = 'Mis Suscripciones';
       this.editing = false;
+      this.loadSubscriptions();
       return;
     }
 
@@ -249,6 +260,54 @@ export class Perfil implements OnInit {
 
   protected toggleExpandedItem(id: number | string): void {
     this.expandedItemId = this.expandedItemId === id ? null : id;
+  }
+
+  private loadSubscriptions(): void {
+    this.loadingSubscriptions = true;
+    this.orderService.getSubscriptions().subscribe({
+      next: (data) => {
+        this.subscriptions = data;
+        this.loadingSubscriptions = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.errorMessage = 'No se pudieron cargar las suscripciones.';
+        this.loadingSubscriptions = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  protected async submitSubscription(): Promise<void> {
+    this.clearMessages();
+    if (this.subscriptionForm.invalid) return;
+
+    this.creatingSubscription = true;
+    try {
+      const data = this.subscriptionForm.getRawValue();
+      await firstValueFrom(this.orderService.createSubscription(data));
+      this.successMessage = 'Suscripción creada correctamente. Te hemos enviado un email.';
+      this.showNewSubscriptionForm = false;
+      this.subscriptionForm.reset({ size: 'MEDIUM', frequency: 'WEEKLY' });
+      this.loadSubscriptions();
+    } catch {
+      this.errorMessage = 'Error al crear la suscripción.';
+    } finally {
+      this.creatingSubscription = false;
+      this.cdr.detectChanges();
+    }
+  }
+
+  protected async updateSubscriptionStatus(subId: number, status: string): Promise<void> {
+    this.clearMessages();
+    try {
+      await firstValueFrom(this.orderService.updateSubscriptionStatus(subId, status));
+      this.successMessage = 'Suscripción actualizada correctamente.';
+      this.loadSubscriptions();
+    } catch {
+      this.errorMessage = 'Error al actualizar la suscripción.';
+      this.cdr.detectChanges();
+    }
   }
 
   protected translateStatus(status: string): string {

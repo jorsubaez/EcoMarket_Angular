@@ -37,4 +37,16 @@ export class OrderService {
   getProducerSales(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/sales/`);
   }
+
+  getSubscriptions(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/subscriptions/`);
+  }
+
+  createSubscription(data: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/subscriptions/`, data);
+  }
+
+  updateSubscriptionStatus(subId: number, status: string): Observable<any> {
+    return this.http.patch<any>(`${this.apiUrl}/subscriptions/${subId}/`, { status });
+  }
 }

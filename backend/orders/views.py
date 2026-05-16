@@ -12,13 +12,9 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from products.models import CartItem
-from .models import Order, OrderItem, EmailLog
-from .serializers import (
-    OrderSerializer,
-    CreateOrderSerializer,
-    SimulatedPaymentSerializer,
-    ProducerSaleSerializer,
-)
+from .serializers import OrderSerializer, CreateOrderSerializer, SimulatedPaymentSerializer, ProducerSaleSerializer, SubscriptionSerializer
+
+from .models import Order, OrderItem, EmailLog, Subscription, SubscriptionItem
 
 
 @api_view(['GET'])
@@ -195,3 +191,77 @@ def simulate_payment(request, order_id):
         },
         status=status.HTTP_200_OK
     )
+
+@api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated])
+def subscriptions_list_create(request):
+    if request.method == 'GET':
+        subscriptions = Subscription.objects.filter(user=request.user).order_by('-created_at')
+        serializer = SubscriptionSerializer(subscriptions, many=True)
+        return Response(serializer.data)
+
+    elif request.method == 'POST':
+        cart_items = CartItem.objects.filter(user=request.user).select_related('producto')
+        if not cart_items.exists():
+            return Response(
+                {'detail': 'El carrito está vacío. Añade productos para crear la suscripción.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        serializer = SubscriptionSerializer(data=request.data)
+        if serializer.is_valid():
+            subscription = serializer.save(user=request.user)
+            
+            for item in cart_items:
+                SubscriptionItem.objects.create(
+                    subscription=subscription,
+                    product=item.producto,
+                    product_name=item.producto.name,
+                    quantity=item.cantidad
+                )
+            
+            cart_items.delete()
+            
+            # Send confirmation email
+            context = {
+                'user': request.user,
+                'subscription': subscription
+            }
+            html_message = render_to_string('emails/subscription_confirmation.html', context)
+            plain_message = strip_tags(html_message)
+
+            try:
+                email = EmailMultiAlternatives(
+                    subject='🌱 EcoMarket - Confirmación de tu Suscripción',
+                    body=plain_message,
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    to=[request.user.email]
+                )
+                email.attach_alternative(html_message, "text/html")
+                email.send(fail_silently=True)
+            except Exception as e:
+                print(f"Failed to send subscription email: {e}")
+
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['PATCH'])
+@permission_classes([IsAuthenticated])
+def subscription_detail(request, sub_id):
+    try:
+        subscription = Subscription.objects.get(id=sub_id, user=request.user)
+    except Subscription.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    # Solo permitimos actualizar el status
+    if 'status' in request.data:
+        new_status = request.data['status']
+        if new_status in dict(Subscription.STATUS_CHOICES).keys():
+            subscription.status = new_status
+            subscription.save()
+            serializer = SubscriptionSerializer(subscription)
+            return Response(serializer.data)
+        else:
+            return Response({'detail': 'Estado inválido.'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    return Response({'detail': 'Debe proporcionar un status.'}, status=status.HTTP_400_BAD_REQUEST)

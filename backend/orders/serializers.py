@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Order, OrderItem
+from .models import Order, OrderItem, Subscription, SubscriptionItem
 
 
 class OrderItemSerializer(serializers.ModelSerializer):
@@ -86,5 +86,37 @@ class ProducerSaleSerializer(serializers.ModelSerializer):
         if obj.product and obj.product.certificate and hasattr(obj.product.certificate, 'url'):
             if request is not None:
                 return request.build_absolute_uri(obj.product.certificate.url)
-            return obj.product.certificate.url
         return ""
+
+class SubscriptionItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SubscriptionItem
+        fields = [
+            'id',
+            'product',
+            'product_name',
+            'quantity',
+        ]
+
+class SubscriptionSerializer(serializers.ModelSerializer):
+    size_display = serializers.CharField(source='get_size_display', read_only=True)
+    frequency_display = serializers.CharField(source='get_frequency_display', read_only=True)
+    status_display = serializers.CharField(source='get_status_display', read_only=True)
+    items = SubscriptionItemSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Subscription
+        fields = [
+            'id',
+            'size',
+            'size_display',
+            'frequency',
+            'frequency_display',
+            'status',
+            'status_display',
+            'created_at',
+            'updated_at',
+            'last_processed_at',
+            'items',
+        ]
+        read_only_fields = ['id', 'status', 'created_at', 'updated_at', 'last_processed_at']

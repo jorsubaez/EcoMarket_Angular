@@ -79,3 +79,57 @@ class EmailLog(models.Model):
 
     def __str__(self):
         return f"Email {self.status} para Pedido #{self.order.id}"
+
+class Subscription(models.Model):
+    SIZE_CHOICES = [
+        ('SMALL', 'Pequeña'),
+        ('MEDIUM', 'Mediana'),
+        ('LARGE', 'Grande'),
+    ]
+
+    FREQUENCY_CHOICES = [
+        ('WEEKLY', 'Semanal'),
+        ('BIWEEKLY', 'Quincenal'),
+        ('MONTHLY', 'Mensual'),
+    ]
+
+    STATUS_CHOICES = [
+        ('ACTIVE', 'Activa'),
+        ('PAUSED', 'Pausada'),
+        ('CANCELLED', 'Cancelada'),
+    ]
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='subscriptions'
+    )
+    
+    size = models.CharField(max_length=20, choices=SIZE_CHOICES)
+    frequency = models.CharField(max_length=20, choices=FREQUENCY_CHOICES)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='ACTIVE')
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    last_processed_at = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return f"Suscripción {self.get_size_display()} {self.get_frequency_display()} - {self.user.email} ({self.get_status_display()})"
+
+class SubscriptionItem(models.Model):
+    subscription = models.ForeignKey(
+        Subscription,
+        on_delete=models.CASCADE,
+        related_name='items'
+    )
+    product = models.ForeignKey(
+        Producto,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
+    product_name = models.CharField(max_length=120)
+    quantity = models.PositiveIntegerField()
+
+    def __str__(self):
+        return f"{self.product_name} x {self.quantity} (Suscripción #{self.subscription.id})"

@@ -278,9 +278,122 @@
           }
         </div>
       } @else if (activeSection === 'Mis Suscripciones') {
-        <div class="state-card">
-          <h3>Mis Suscripciones</h3>
-          <p>Esta funcionalidad será añadida próximamente por el equipo correspondiente.</p>
+        <div class="orders-section">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <h3>Mis Suscripciones a Cestas</h3>
+              <p class="orders-subtitle">Gestiona tus suscripciones recurrentes de cestas de productos.</p>
+            </div>
+            <button class="btn btn-primary" (click)="showNewSubscriptionForm = !showNewSubscriptionForm">
+              {{ showNewSubscriptionForm ? 'Cancelar' : 'Nueva Suscripción' }}
+            </button>
+          </div>
+
+          @if (showNewSubscriptionForm) {
+            <section class="edit-card" style="margin-top: 20px;">
+              <div class="edit-head">
+                <div>
+                  <h5>Crear Suscripción</h5>
+                  <p>Configura el tamaño y la frecuencia de tu cesta recurrente.</p>
+                </div>
+              </div>
+              <form class="profile-form" [formGroup]="subscriptionForm" (ngSubmit)="submitSubscription()">
+                <label class="field">
+                  <span>Tamaño de la Cesta</span>
+                  <select formControlName="size">
+                    <option value="SMALL">Pequeña</option>
+                    <option value="MEDIUM">Mediana</option>
+                    <option value="LARGE">Grande</option>
+                  </select>
+                </label>
+                <label class="field">
+                  <span>Frecuencia de Envío</span>
+                  <select formControlName="frequency">
+                    <option value="WEEKLY">Semanal</option>
+                    <option value="BIWEEKLY">Quincenal</option>
+                    <option value="MONTHLY">Mensual</option>
+                  </select>
+                </label>
+                <div class="form-actions">
+                  <button class="btn btn-primary" type="submit" [disabled]="creatingSubscription">
+                    {{ creatingSubscription ? 'Creando...' : 'Confirmar Suscripción' }}
+                  </button>
+                </div>
+                <p style="margin-top: 15px; font-size: 0.9em; color: #666;">
+                  <em>Nota: Al confirmar, se creará una suscripción con los productos que tienes actualmente en tu carrito. Si tu carrito está vacío, no se podrá crear la suscripción.</em>
+                </p>
+              </form>
+            </section>
+          }
+
+          @if (loadingSubscriptions) {
+            <p>Cargando suscripciones...</p>
+          } @else if (subscriptions.length === 0) {
+            <div class="state-card" style="margin-top: 20px;">
+              <p>No tienes ninguna suscripción activa.</p>
+            </div>
+          } @else {
+            <div class="orders-list" style="margin-top: 20px;">
+              @for (sub of subscriptions; track sub.id) {
+                <article class="order-card" [class.expanded]="expandedItemId === 'sub_' + sub.id">
+                  <div class="order-header" (click)="toggleExpandedItem('sub_' + sub.id)" style="cursor: pointer;">
+                    <div>
+                      <strong>Suscripción Cesta {{ sub.size_display }}</strong>
+                      <span class="order-date">Creada: {{ sub.created_at | date:'dd/MM/yyyy' }}</span>
+                      <span class="order-delivery-type">{{ sub.frequency_display }}</span>
+                    </div>
+                    <div>
+                      <span class="status-badge" 
+                            [class.status-paid]="sub.status === 'ACTIVE'" 
+                            [class.status-failed]="sub.status === 'CANCELLED'" 
+                            [class.status-pending_payment]="sub.status === 'PAUSED'">
+                        {{ sub.status_display }}
+                      </span>
+                      <span class="expand-icon" style="margin-left: 12px; color: var(--primary-green);">
+                        {{ expandedItemId === 'sub_' + sub.id ? '▲' : '▼' }}
+                      </span>
+                    </div>
+                  </div>
+                  
+                  @if (expandedItemId === 'sub_' + sub.id) {
+                    <div class="order-body" style="padding: 15px;">
+                      <table class="order-items-table">
+                        <thead>
+                          <tr>
+                            <th>Producto</th>
+                            <th>Cantidad</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          @for (item of sub.items; track item.id) {
+                            <tr>
+                              <td>{{ item.product_name }}</td>
+                              <td>{{ item.quantity }}</td>
+                            </tr>
+                          }
+                          @if (!sub.items || sub.items.length === 0) {
+                            <tr>
+                              <td colspan="2" style="text-align: center; color: #888;">Sin productos registrados.</td>
+                            </tr>
+                          }
+                        </tbody>
+                      </table>
+                      
+                      <div style="margin-top: 15px; display: flex; gap: 10px;">
+                        @if (sub.status === 'ACTIVE') {
+                          <button class="btn btn-secondary" (click)="updateSubscriptionStatus(sub.id, 'PAUSED')">Pausar</button>
+                          <button class="btn btn-secondary" style="color: #d32f2f; border-color: #d32f2f;" (click)="updateSubscriptionStatus(sub.id, 'CANCELLED')">Cancelar</button>
+                        } @else if (sub.status === 'PAUSED') {
+                          <button class="btn btn-primary" (click)="updateSubscriptionStatus(sub.id, 'ACTIVE')">Reactivar</button>
+                          <button class="btn btn-secondary" style="color: #d32f2f; border-color: #d32f2f;" (click)="updateSubscriptionStatus(sub.id, 'CANCELLED')">Cancelar</button>
+                        }
+                      </div>
+                    </div>
+                  }
+                </article>
+              }
+            </div>
+          }
         </div>
       }
     }
