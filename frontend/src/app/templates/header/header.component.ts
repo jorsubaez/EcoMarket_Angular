@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { CartService, CartItem } from '../../services/cart.service';
@@ -23,7 +23,8 @@ export class HeaderComponent implements OnInit {
   constructor(
     private cartService: CartService,
     public authService: AuthService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit() {
@@ -35,6 +36,9 @@ export class HeaderComponent implements OnInit {
       if (this.cartCount > 0) {
         this.triggerCartBump();
       }
+
+      // Forzar actualización de la vista para reflejar el cambio inmediatamente
+      this.cdr.detectChanges();
     });
   }
 

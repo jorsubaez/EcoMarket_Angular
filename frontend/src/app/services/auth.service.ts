@@ -76,4 +76,14 @@ export class AuthService {
       this.sessionSubject.next(updatedSession);
     }
   }
+
+  /**
+   * Limpia la sesión almacenada sin redirigir al login.
+   * Se usa al arrancar la app para garantizar un inicio limpio.
+   */
+  silentLogout(): void {
+    localStorage.removeItem('ecomarket_token');
+    localStorage.removeItem('ecomarket_session');
+    this.sessionSubject.next(null);
+  }
 }
