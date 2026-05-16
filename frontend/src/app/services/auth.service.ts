@@ -13,6 +13,12 @@ export interface SessionData {
   is_superuser?: boolean;
 }
 
+export interface UserPreferences {
+  theme: 'light' | 'dark';
+  font_size: 'normal' | 'large' | 'x-large';
+  notifications_enabled: boolean;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -21,7 +27,10 @@ export class AuthService {
   private sessionSubject = new BehaviorSubject<SessionData | null>(this.getSessionFromStorage());
   public session$ = this.sessionSubject.asObservable();
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient, private router: Router) {
+    // Apply saved preferences on service init (page reload)
+    this.applyStoredPreferences();
+  }
 
   private getSessionFromStorage(): SessionData | null {
     try {
@@ -52,6 +61,12 @@ export class AuthService {
           localStorage.setItem('ecomarket_token', response.access);
           localStorage.setItem('ecomarket_session', JSON.stringify(response.user));
           this.sessionSubject.next(response.user);
+
+          // Save and apply preferences from login response
+          if (response.preferences) {
+            localStorage.setItem('ecomarket_preferences', JSON.stringify(response.preferences));
+            this.applyPreferences(response.preferences);
+          }
         }
       })
     );
@@ -64,7 +79,9 @@ export class AuthService {
   logout(): void {
     localStorage.removeItem('ecomarket_token');
     localStorage.removeItem('ecomarket_session');
+    localStorage.removeItem('ecomarket_preferences');
     this.sessionSubject.next(null);
+    this.clearPreferences();
     this.router.navigate(['/login']);
   }
 
@@ -84,6 +101,52 @@ export class AuthService {
   silentLogout(): void {
     localStorage.removeItem('ecomarket_token');
     localStorage.removeItem('ecomarket_session');
+    localStorage.removeItem('ecomarket_preferences');
     this.sessionSubject.next(null);
+    this.clearPreferences();
+  }
+
+  // ── Preferences management ─────────────────────────────────
+
+  applyPreferences(prefs: UserPreferences): void {
+    // Theme
+    if (prefs.theme === 'dark') {
+      document.body.classList.add('dark-mode');
+      document.documentElement.classList.add('dark-mode');
+    } else {
+      document.body.classList.remove('dark-mode');
+      document.documentElement.classList.remove('dark-mode');
+    }
+
+    // Font size
+    document.body.classList.remove('font-large', 'font-x-large');
+    if (prefs.font_size === 'large') {
+      document.body.classList.add('font-large');
+    } else if (prefs.font_size === 'x-large') {
+      document.body.classList.add('font-x-large');
+    }
+  }
+
+  savePreferencesLocally(prefs: UserPreferences): void {
+    localStorage.setItem('ecomarket_preferences', JSON.stringify(prefs));
+    this.applyPreferences(prefs);
+  }
+
+  private applyStoredPreferences(): void {
+    try {
+      const stored = localStorage.getItem('ecomarket_preferences');
+      if (stored) {
+        const prefs: UserPreferences = JSON.parse(stored);
+        this.applyPreferences(prefs);
+      }
+    } catch {
+      // Ignore parse errors
+    }
+  }
+
+  private clearPreferences(): void {
+    document.body.classList.remove('dark-mode', 'font-large', 'font-x-large');
+    document.documentElement.classList.remove('dark-mode');
   }
 }
+

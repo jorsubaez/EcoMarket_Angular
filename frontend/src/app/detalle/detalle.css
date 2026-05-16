@@ -253,3 +253,30 @@
 .certificate-link:hover {
   background-color: #1e5a28;
 }
+
+/* ── Dark mode ─────────────────────────────────────────────── */
+:host-context(body.dark-mode) .detalle-container { color: #e0e0e0; }
+:host-context(body.dark-mode) .detalle-content { background: #1e1e1e; border-color: rgba(255,255,255,0.06); box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+:host-context(body.dark-mode) .img-wrapper { background-color: #252525; }
+:host-context(body.dark-mode) .title { color: #e0e0e0; }
+:host-context(body.dark-mode) .meta-info p { color: #aaa; }
+:host-context(body.dark-mode) .back-link { color: #66bb6a; }
+:host-context(body.dark-mode) .back-link:hover { color: #81c784; }
+:host-context(body.dark-mode) .price-box { background-color: rgba(102,187,106,0.08); border-left-color: #66bb6a; }
+:host-context(body.dark-mode) .price { color: #66bb6a; }
+:host-context(body.dark-mode) .unit { color: #999; }
+:host-context(body.dark-mode) .description { color: #ccc; }
+:host-context(body.dark-mode) .stock-info { color: #66bb6a; }
+:host-context(body.dark-mode) .status-dot { background-color: #66bb6a; }
+:host-context(body.dark-mode) .quantity-wrapper label { color: #ccc; }
+:host-context(body.dark-mode) .quantity-wrapper input { background-color: #2a2a2a; border-color: rgba(255,255,255,0.1); color: #e0e0e0; }
+:host-context(body.dark-mode) .btn-buy { background-color: #2e7d32; }
+:host-context(body.dark-mode) .btn-buy:hover { background-color: #388e3c; }
+:host-context(body.dark-mode) .not-found { color: #999; }
+:host-context(body.dark-mode) .qr-section { background-color: rgba(102,187,106,0.06); border-color: rgba(255,255,255,0.06); }
+:host-context(body.dark-mode) .qr-section h3 { color: #66bb6a; }
+:host-context(body.dark-mode) .qr-section p { color: #aaa; }
+:host-context(body.dark-mode) .trace-info { background-color: #1e1e1e; }
+:host-context(body.dark-mode) .trace-info p { color: #ccc; }
+:host-context(body.dark-mode) .certificate-link { background-color: #2e7d32; }
+:host-context(body.dark-mode) .certificate-link:hover { background-color: #388e3c; }

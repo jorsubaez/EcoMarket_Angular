@@ -261,3 +261,31 @@
     width: 100%;
   }
 }
+
+/* ── Dark mode ─────────────────────────────────────────────── */
+:host-context(body.dark-mode) {
+  background: #121212 !important;
+  color: #e0e0e0;
+}
+:host-context(body.dark-mode) .hero-copy,
+:host-context(body.dark-mode) .hero-badge,
+:host-context(body.dark-mode) .text-section,
+:host-context(body.dark-mode) .card,
+:host-context(body.dark-mode) .process-step {
+  background: rgba(30,30,30,0.92);
+  border-color: rgba(255,255,255,0.06);
+  color: #e0e0e0;
+}
+:host-context(body.dark-mode) .hero-badge { background: linear-gradient(180deg, rgba(102,187,106,0.08), rgba(224,168,79,0.08)), rgba(30,30,30,0.95); }
+:host-context(body.dark-mode) .hero-badge strong { color: #e0e0e0; }
+:host-context(body.dark-mode) .hero-badge span { color: #66bb6a; }
+:host-context(body.dark-mode) .eyebrow { color: #e0a84f; }
+:host-context(body.dark-mode) .hero-copy h1 { color: #66bb6a; }
+:host-context(body.dark-mode) .card h2 { color: #66bb6a; }
+:host-context(body.dark-mode) .card { border-top-color: #66bb6a; }
+:host-context(body.dark-mode) .text-section h2 { color: #66bb6a; }
+:host-context(body.dark-mode) .process-step h3 { color: #66bb6a; }
+:host-context(body.dark-mode) .process-step span { background: rgba(102,187,106,0.15); color: #66bb6a; }
+:host-context(body.dark-mode) .grey-container { background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.06); }
+:host-context(body.dark-mode) .btn-primary { background: linear-gradient(135deg, #43a047, #66bb6a); color: #fff; }
+:host-context(body.dark-mode) .btn-secondary { background: rgba(102,187,106,0.12); color: #66bb6a; border-color: rgba(102,187,106,0.2); }

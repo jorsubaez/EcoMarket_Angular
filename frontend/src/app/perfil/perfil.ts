@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
 import { ChangeDetectorRef } from '@angular/core';
-import { AuthService } from '../services/auth.service';
+import { AuthService, UserPreferences } from '../services/auth.service';
 import { OrderService } from '../services/order.service';
+import { ProfileService, Address } from '../services/profile.service';
 import { PROVINCIAS_ESPANA } from '../shared/provincias';
 
 @Component({
@@ -13,12 +14,14 @@ import { PROVINCIAS_ESPANA } from '../shared/provincias';
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './perfil.html',
   styleUrl: './perfil.css',
+  encapsulation: ViewEncapsulation.None,
 })
 export class Perfil implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly http = inject(HttpClient);
   private readonly authService = inject(AuthService);
   private readonly orderService = inject(OrderService);
+  private readonly profileService = inject(ProfileService);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly apiUrl = 'http://localhost:8000/api/users/me/';
 
@@ -33,6 +36,26 @@ export class Perfil implements OnInit {
   protected sales: any[] = [];
   protected loadingOrders = false;
   protected expandedItemId: number | string | null = null;
+
+  // ── Addresses ──────────────────────────────────────────────
+  protected addresses: Address[] = [];
+  protected loadingAddresses = false;
+  protected showAddressForm = false;
+  protected editingAddressId: number | null = null;
+  protected deletingAddressId: number | null = null;
+
+  // ── Settings ───────────────────────────────────────────────
+  protected preferences: UserPreferences = {
+    theme: 'light',
+    font_size: 'normal',
+    notifications_enabled: true,
+  };
+  protected savingPreference = false;
+  protected preferenceSaved = false;
+  protected savingPassword = false;
+  protected passwordSuccess = '';
+  protected passwordError = '';
+  protected savingAccountData = false;
 
   protected readonly sidebarItems = [
     'Mi Perfil',
@@ -63,6 +86,26 @@ export class Perfil implements OnInit {
     provincia: [''],
   });
 
+  protected readonly addressForm = this.fb.nonNullable.group({
+    label: ['', [Validators.required, Validators.maxLength(60)]],
+    address_line: ['', [Validators.required, Validators.maxLength(200)]],
+    city: ['', [Validators.required, Validators.maxLength(100)]],
+    provincia: ['', [Validators.required]],
+    postal_code: ['', [Validators.required, Validators.maxLength(10)]],
+    address_type: ['ENTREGA' as 'ENTREGA' | 'RECOGIDA'],
+    is_default: [false],
+  });
+
+  protected readonly passwordForm = this.fb.nonNullable.group({
+    new_password: ['', [Validators.required, Validators.minLength(6)]],
+    confirm_password: ['', [Validators.required, Validators.minLength(6)]],
+  });
+
+  protected readonly accountForm = this.fb.nonNullable.group({
+    nombre: ['', [Validators.required, Validators.maxLength(80)]],
+    email: ['', [Validators.required, Validators.email]],
+  });
+
   async ngOnInit(): Promise<void> {
     const session = this.authService.currentUser;
 
@@ -83,7 +126,9 @@ export class Perfil implements OnInit {
     };
 
     this.syncFormWithUser();
+    this.syncAccountForm();
     this.loadUserDetails();
+    this.loadPreferences();
   }
 
   protected get avatarInitials(): string {
@@ -112,7 +157,7 @@ export class Perfil implements OnInit {
   }
 
   protected get displayAddress(): string {
-    return this.user.direccion?.trim() || 'Anade una direccion principal';
+    return this.user.direccion?.trim() || 'Añade una dirección principal';
   }
 
   protected beginEdit(): void {
@@ -173,6 +218,7 @@ export class Perfil implements OnInit {
       });
 
       this.syncFormWithUser();
+      this.syncAccountForm();
       this.editing = false;
       this.successMessage = 'Perfil actualizado correctamente.';
     } catch {
@@ -213,8 +259,292 @@ export class Perfil implements OnInit {
       return;
     }
 
+    if (item === 'Direcciones') {
+      this.activeSection = 'Direcciones';
+      this.editing = false;
+      this.loadAddresses();
+      return;
+    }
+
+    if (item === 'Ajustes') {
+      this.activeSection = 'Ajustes';
+      this.editing = false;
+      this.syncAccountForm();
+      this.passwordForm.reset();
+      this.passwordSuccess = '';
+      this.passwordError = '';
+      return;
+    }
+
     this.successMessage = `La sección "${item}" estará disponible en futuras versiones.`;
   }
+
+  protected toggleExpandedItem(id: number | string): void {
+    this.expandedItemId = this.expandedItemId === id ? null : id;
+  }
+
+  protected translateStatus(status: string): string {
+    switch (status) {
+      case 'PAID': return 'Pagado';
+      case 'PENDING_PAYMENT': return 'Pendiente';
+      case 'FAILED': return 'Fallido';
+      default: return status;
+    }
+  }
+
+  // ── Addresses ──────────────────────────────────────────────
+
+  protected loadAddresses(): void {
+    this.loadingAddresses = true;
+    this.profileService.getAddresses().subscribe({
+      next: (data) => {
+        this.addresses = data;
+        this.loadingAddresses = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.errorMessage = 'No se pudieron cargar las direcciones.';
+        this.loadingAddresses = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  protected openAddressForm(): void {
+    this.editingAddressId = null;
+    this.addressForm.reset({
+      label: '',
+      address_line: '',
+      city: '',
+      provincia: '',
+      postal_code: '',
+      address_type: 'ENTREGA',
+      is_default: false,
+    });
+    this.showAddressForm = true;
+  }
+
+  protected editAddress(addr: Address): void {
+    this.editingAddressId = addr.id!;
+    this.addressForm.patchValue({
+      label: addr.label,
+      address_line: addr.address_line,
+      city: addr.city,
+      provincia: addr.provincia,
+      postal_code: addr.postal_code,
+      address_type: addr.address_type,
+      is_default: addr.is_default,
+    });
+    this.showAddressForm = true;
+  }
+
+  protected cancelAddressForm(): void {
+    this.showAddressForm = false;
+    this.editingAddressId = null;
+  }
+
+  protected saveAddress(): void {
+    if (this.addressForm.invalid) {
+      this.addressForm.markAllAsTouched();
+      return;
+    }
+
+    this.clearMessages();
+    const data = this.addressForm.getRawValue();
+
+    if (this.editingAddressId) {
+      this.profileService.updateAddress(this.editingAddressId, data).subscribe({
+        next: () => {
+          this.showAddressForm = false;
+          this.editingAddressId = null;
+          this.successMessage = 'Dirección actualizada correctamente.';
+          this.loadAddresses();
+        },
+        error: () => {
+          this.errorMessage = 'Error al actualizar la dirección.';
+        }
+      });
+    } else {
+      this.profileService.createAddress(data).subscribe({
+        next: () => {
+          this.showAddressForm = false;
+          this.successMessage = 'Dirección añadida correctamente.';
+          this.loadAddresses();
+        },
+        error: () => {
+          this.errorMessage = 'Error al crear la dirección.';
+        }
+      });
+    }
+  }
+
+  protected deleteAddress(id: number): void {
+    this.deletingAddressId = id;
+    // Small delay for animation
+    setTimeout(() => {
+      this.profileService.deleteAddress(id).subscribe({
+        next: () => {
+          this.addresses = this.addresses.filter(a => a.id !== id);
+          this.deletingAddressId = null;
+          this.successMessage = 'Dirección eliminada.';
+          this.cdr.detectChanges();
+        },
+        error: () => {
+          this.deletingAddressId = null;
+          this.errorMessage = 'Error al eliminar la dirección.';
+          this.cdr.detectChanges();
+        }
+      });
+    }, 350);
+  }
+
+  protected setDefaultAddress(id: number): void {
+    this.profileService.updateAddress(id, { is_default: true }).subscribe({
+      next: () => {
+        this.loadAddresses();
+        this.successMessage = 'Dirección predeterminada actualizada.';
+      },
+      error: () => {
+        this.errorMessage = 'Error al actualizar la dirección predeterminada.';
+      }
+    });
+  }
+
+  // ── Settings — Account Data ────────────────────────────────
+
+  protected saveAccountData(): void {
+    if (this.accountForm.invalid) {
+      this.accountForm.markAllAsTouched();
+      return;
+    }
+
+    this.clearMessages();
+    this.savingAccountData = true;
+
+    const nombre = this.accountForm.controls.nombre.value.trim();
+    const email = this.accountForm.controls.email.value.trim();
+
+    this.http.patch<any>(this.apiUrl, {
+      first_name: nombre.split(' ')[0] || '',
+      last_name: nombre.split(' ').slice(1).join(' ') || '',
+      email: email,
+    }).subscribe({
+      next: (updatedUser) => {
+        this.user = {
+          ...this.user,
+          nombre: (updatedUser.first_name + ' ' + updatedUser.last_name).trim(),
+          email: updatedUser.email,
+        };
+        this.authService.updateSession({
+          name: this.user.nombre,
+          email: this.user.email,
+        });
+        this.syncFormWithUser();
+        this.savingAccountData = false;
+        this.successMessage = 'Datos de cuenta actualizados correctamente.';
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.savingAccountData = false;
+        this.errorMessage = 'Error al actualizar los datos de la cuenta.';
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  // ── Settings — Password ────────────────────────────────────
+
+  protected changePassword(): void {
+    this.passwordSuccess = '';
+    this.passwordError = '';
+
+    if (this.passwordForm.invalid) {
+      this.passwordForm.markAllAsTouched();
+      return;
+    }
+
+    const newPwd = this.passwordForm.controls.new_password.value;
+    const confirmPwd = this.passwordForm.controls.confirm_password.value;
+
+    if (newPwd !== confirmPwd) {
+      this.passwordError = 'Las contraseñas no coinciden.';
+      return;
+    }
+
+    this.savingPassword = true;
+    this.profileService.changePassword(newPwd, confirmPwd).subscribe({
+      next: () => {
+        this.savingPassword = false;
+        this.passwordSuccess = 'Contraseña actualizada correctamente.';
+        this.passwordForm.reset();
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.savingPassword = false;
+        this.passwordError = 'Error al cambiar la contraseña.';
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  // ── Settings — Preferences ─────────────────────────────────
+
+  protected loadPreferences(): void {
+    this.profileService.getPreferences().subscribe({
+      next: (prefs) => {
+        this.preferences = prefs;
+        this.authService.savePreferencesLocally(prefs);
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        // Use defaults; non-critical
+      }
+    });
+  }
+
+  protected toggleTheme(): void {
+    const newTheme = this.preferences.theme === 'light' ? 'dark' : 'light';
+    this.updatePreference('theme', newTheme);
+  }
+
+  protected setFontSize(size: 'normal' | 'large' | 'x-large'): void {
+    this.updatePreference('font_size', size);
+  }
+
+  protected toggleNotifications(): void {
+    this.updatePreference('notifications_enabled', !this.preferences.notifications_enabled);
+  }
+
+  private updatePreference(key: string, value: any): void {
+    this.savingPreference = true;
+    this.preferenceSaved = false;
+
+    const payload: any = {};
+    payload[key] = value;
+
+    this.profileService.updatePreferences(payload).subscribe({
+      next: (updated) => {
+        this.preferences = updated;
+        this.authService.savePreferencesLocally(updated);
+        this.savingPreference = false;
+        this.preferenceSaved = true;
+        this.cdr.detectChanges();
+
+        // Hide saved indicator after a moment
+        setTimeout(() => {
+          this.preferenceSaved = false;
+          this.cdr.detectChanges();
+        }, 1500);
+      },
+      error: () => {
+        this.savingPreference = false;
+        this.errorMessage = 'Error al guardar la preferencia.';
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  // ── Private helpers ────────────────────────────────────────
 
   private loadOrdersOrSales(): void {
     this.loadingOrders = true;
@@ -247,19 +577,6 @@ export class Perfil implements OnInit {
     }
   }
 
-  protected toggleExpandedItem(id: number | string): void {
-    this.expandedItemId = this.expandedItemId === id ? null : id;
-  }
-
-  protected translateStatus(status: string): string {
-    switch (status) {
-      case 'PAID': return 'Pagado';
-      case 'PENDING_PAYMENT': return 'Pendiente';
-      case 'FAILED': return 'Fallido';
-      default: return status;
-    }
-  }
-
   private loadUserDetails(): void {
     this.clearMessages();
 
@@ -275,6 +592,7 @@ export class Perfil implements OnInit {
           provincia: remoteUser.provincia || ''
         };
         this.syncFormWithUser();
+        this.syncAccountForm();
         this.loading = false;
         this.cdr.detectChanges();
       },
@@ -294,6 +612,13 @@ export class Perfil implements OnInit {
       telefono: this.user.telefono || '',
       direccion: this.user.direccion || '',
       provincia: this.user.provincia || '',
+    });
+  }
+
+  private syncAccountForm(): void {
+    this.accountForm.reset({
+      nombre: this.user.nombre || '',
+      email: this.user.email || '',
     });
   }
 

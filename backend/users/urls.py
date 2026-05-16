@@ -10,10 +10,18 @@ from .views import (
     ProducerListView,
     CustomTokenObtainPairView,
     UserDetailView,
+    AddressListCreateView,
+    AddressDetailView,
+    UserPreferencesView,
+    ChangePasswordView,
 )
 
 urlpatterns = [
     path('me/', UserDetailView.as_view(), name='user_detail'),
+    path('me/addresses/', AddressListCreateView.as_view(), name='address_list_create'),
+    path('me/addresses/<int:pk>/', AddressDetailView.as_view(), name='address_detail'),
+    path('me/preferences/', UserPreferencesView.as_view(), name='user_preferences'),
+    path('me/change-password/', ChangePasswordView.as_view(), name='change_password'),
     path('register/', RegisterView.as_view(), name='auth_register'),
     path('contact/', ContactMessageCreateView.as_view(), name='contact_create'),
     path('producers/', ProducerListView.as_view(), name='producers_list'),
@@ -24,3 +32,4 @@ urlpatterns = [
     path('admin/products/<int:product_id>/', AdminProductDetailView.as_view(), name='admin_product_detail'),
     path('admin/logs/', AdminActionLogListView.as_view(), name='admin_action_logs'),
 ]
+

@@ -61,3 +61,44 @@ class AdminActionLog(models.Model):
     def __str__(self):
         admin_email = self.admin.email if self.admin else 'admin eliminado'
         return f"{admin_email} - {self.action} - {self.target_type} {self.target_id}"
+
+
+class Address(models.Model):
+    TYPE_CHOICES = (
+        ('ENTREGA', 'Entrega'),
+        ('RECOGIDA', 'Recogida'),
+    )
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='addresses')
+    label = models.CharField(max_length=60)
+    address_line = models.CharField(max_length=200)
+    city = models.CharField(max_length=100)
+    provincia = models.CharField(max_length=100, blank=True, default='')
+    postal_code = models.CharField(max_length=10)
+    address_type = models.CharField(max_length=20, choices=TYPE_CHOICES, default='ENTREGA')
+    is_default = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-is_default', '-updated_at']
+
+    def __str__(self):
+        return f"{self.label} - {self.user.email}"
+
+    def save(self, *args, **kwargs):
+        if self.is_default:
+            Address.objects.filter(user=self.user, is_default=True).exclude(pk=self.pk).update(is_default=False)
+        super().save(*args, **kwargs)
+
+
+class UserPreferences(models.Model):
+    THEME_CHOICES = (('light', 'Claro'), ('dark', 'Oscuro'))
+    FONT_SIZE_CHOICES = (('normal', 'Normal'), ('large', 'Grande'), ('x-large', 'Muy grande'))
+
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='preferences')
+    theme = models.CharField(max_length=10, choices=THEME_CHOICES, default='light')
+    font_size = models.CharField(max_length=10, choices=FONT_SIZE_CHOICES, default='normal')
+    notifications_enabled = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"Preferencias de {self.user.email}"
