@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from .models import AdminActionLog, ContactMessage
+from .models import AdminActionLog, ContactMessage, Address, UserPreferences
 
 User = get_user_model()
 
@@ -27,12 +27,41 @@ class UserSerializer(serializers.ModelSerializer):
             rol=validated_data.get('rol', 'CLIENTE'), # Default to CLIENTE
             provincia=validated_data.get('provincia', ''),
         )
+        # Create default preferences for new users
+        UserPreferences.objects.get_or_create(user=user)
         return user
 
 class ContactMessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = ContactMessage
         fields = '__all__'
+
+
+class AddressSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Address
+        fields = (
+            'id', 'label', 'address_line', 'city', 'provincia',
+            'postal_code', 'address_type', 'is_default',
+            'created_at', 'updated_at'
+        )
+        read_only_fields = ('id', 'created_at', 'updated_at')
+
+
+class UserPreferencesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserPreferences
+        fields = ('theme', 'font_size', 'notifications_enabled')
+
+
+class ChangePasswordSerializer(serializers.Serializer):
+    new_password = serializers.CharField(min_length=6, max_length=128)
+    confirm_password = serializers.CharField(min_length=6, max_length=128)
+
+    def validate(self, data):
+        if data['new_password'] != data['confirm_password']:
+            raise serializers.ValidationError({'confirm_password': 'Las contraseñas no coinciden.'})
+        return data
 
 
 class AdminUserSerializer(serializers.ModelSerializer):
@@ -86,6 +115,9 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         attrs['username'] = user.username
         data = super().validate(attrs)
 
+        # Ensure preferences exist
+        prefs, _ = UserPreferences.objects.get_or_create(user=self.user)
+
         # Add custom claims
         data['user'] = {
             'id': self.user.id,
@@ -96,4 +128,13 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
             'is_staff': self.user.is_staff,
             'is_superuser': self.user.is_superuser,
         }
+
+        # Include preferences in login response
+        data['preferences'] = {
+            'theme': prefs.theme,
+            'font_size': prefs.font_size,
+            'notifications_enabled': prefs.notifications_enabled,
+        }
+
         return data
+

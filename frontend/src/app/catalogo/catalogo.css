@@ -586,3 +586,56 @@
   font-size: 0.85rem;
   color: #444;
 }
+
+/* ── Dark mode ─────────────────────────────────────────────── */
+:host-context(body.dark-mode) .catalogo-container { color: #e0e0e0; }
+:host-context(body.dark-mode) .page-title { color: #66bb6a; }
+:host-context(body.dark-mode) .subtitle { color: #aaa; }
+:host-context(body.dark-mode) .filtros-panel { background: #1e1e1e; border-color: rgba(255,255,255,0.08); }
+:host-context(body.dark-mode) .filtros-head h2 { color: #66bb6a; }
+:host-context(body.dark-mode) .filtros-head p,
+:host-context(body.dark-mode) .filtros-resumen { color: #aaa; }
+:host-context(body.dark-mode) .filtro-campo span { color: #ccc; }
+:host-context(body.dark-mode) .filtro-campo input,
+:host-context(body.dark-mode) .filtro-campo select { background: #2a2a2a; border-color: rgba(255,255,255,0.1); color: #e0e0e0; }
+:host-context(body.dark-mode) .search-wrapper input { background-color: #2a2a2a; border-color: rgba(255,255,255,0.1); color: #e0e0e0; }
+:host-context(body.dark-mode) .search-wrapper input:focus { border-color: #66bb6a; box-shadow: 0 0 0 3px rgba(102,187,106,0.12); }
+:host-context(body.dark-mode) .search-icon { color: #888; }
+:host-context(body.dark-mode) .btn-limpiar { background: #2a2a2a; border-color: rgba(255,255,255,0.1); color: #66bb6a; }
+:host-context(body.dark-mode) .btn-limpiar:hover { background: #333; }
+:host-context(body.dark-mode) .btn-cerca { border-color: #66bb6a; color: #66bb6a; background: transparent; }
+:host-context(body.dark-mode) .btn-cerca:hover { background: rgba(102,187,106,0.1); }
+:host-context(body.dark-mode) .btn-cerca.active { background: #66bb6a; color: #121212; }
+:host-context(body.dark-mode) .provincia-badge { background: rgba(102,187,106,0.15); color: #66bb6a; }
+:host-context(body.dark-mode) .divider { border-top-color: rgba(255,255,255,0.08); }
+:host-context(body.dark-mode) .producto-card { background-color: #1e1e1e; border-color: rgba(255,255,255,0.06); box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+:host-context(body.dark-mode) .producto-card:hover { box-shadow: 0 8px 25px rgba(0,0,0,0.5); }
+:host-context(body.dark-mode) .img-container { background-color: #252525; }
+:host-context(body.dark-mode) .producto-nombre { color: #e0e0e0; }
+:host-context(body.dark-mode) .producto-categoria { background: rgba(102,187,106,0.15); color: #66bb6a; }
+:host-context(body.dark-mode) .producto-detalle { color: #aaa; }
+:host-context(body.dark-mode) .precio { color: #66bb6a; }
+:host-context(body.dark-mode) .stock { color: #999; }
+:host-context(body.dark-mode) .btn-anadir { background-color: #2e7d32; }
+:host-context(body.dark-mode) .btn-anadir:hover { background-color: #388e3c; }
+:host-context(body.dark-mode) .input-cantidad { background: #2a2a2a; border-color: #444; color: #e0e0e0; }
+:host-context(body.dark-mode) .btn-out-of-stock { background-color: #2a2a2a; color: #666; border-color: #333; }
+:host-context(body.dark-mode) .no-productos { color: #999; }
+:host-context(body.dark-mode) .modal-content { background-color: #1e1e1e; box-shadow: 0 10px 40px rgba(0,0,0,0.6); }
+:host-context(body.dark-mode) .modal-img-container { background-color: #252525; }
+:host-context(body.dark-mode) .modal-title { color: #66bb6a; }
+:host-context(body.dark-mode) .modal-categoria,
+:host-context(body.dark-mode) .modal-origen,
+:host-context(body.dark-mode) .modal-productor { color: #aaa; }
+:host-context(body.dark-mode) .modal-desc { color: #ccc; }
+:host-context(body.dark-mode) .modal-precio { color: #66bb6a; }
+:host-context(body.dark-mode) .modal-stock { color: #999; }
+:host-context(body.dark-mode) .modal-price-stock { border-bottom-color: rgba(255,255,255,0.08); }
+:host-context(body.dark-mode) .close-btn { color: #999; }
+:host-context(body.dark-mode) .close-btn:hover { color: #fff; }
+:host-context(body.dark-mode) .qr-trazabilidad { background: #252525; border-color: rgba(255,255,255,0.08); }
+:host-context(body.dark-mode) .qr-trazabilidad h4 { color: #66bb6a; }
+:host-context(body.dark-mode) .qr-text { color: #aaa; }
+:host-context(body.dark-mode) .qr-info { background: #1e1e1e; }
+:host-context(body.dark-mode) .qr-info p { color: #ccc; }
+:host-context(body.dark-mode) .error-cert-msg { color: #f87171; background-color: rgba(244,67,54,0.1); }

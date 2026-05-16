@@ -5,7 +5,7 @@ from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from django.conf import settings
-from .models import AdminActionLog, UserEmailLog
+from .models import AdminActionLog, UserEmailLog, Address, UserPreferences
 from django.contrib.auth import get_user_model
 from .models import ContactMessage
 from products.models import Producto
@@ -15,6 +15,9 @@ from .serializers import (
     AdminUserSerializer,
     UserSerializer,
     ContactMessageSerializer,
+    AddressSerializer,
+    UserPreferencesSerializer,
+    ChangePasswordSerializer,
 )
 
 User = get_user_model()
@@ -76,6 +79,58 @@ class UserDetailView(generics.RetrieveUpdateAPIView):
 
     def get_object(self):
         return self.request.user
+
+
+# ── Addresses CRUD ──────────────────────────────────────────────
+
+class AddressListCreateView(generics.ListCreateAPIView):
+    serializer_class = AddressSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get_queryset(self):
+        return Address.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+
+class AddressDetailView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = AddressSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get_queryset(self):
+        return Address.objects.filter(user=self.request.user)
+
+
+# ── User Preferences ───────────────────────────────────────────
+
+class UserPreferencesView(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get(self, request):
+        prefs, _ = UserPreferences.objects.get_or_create(user=request.user)
+        serializer = UserPreferencesSerializer(prefs)
+        return Response(serializer.data)
+
+    def patch(self, request):
+        prefs, _ = UserPreferences.objects.get_or_create(user=request.user)
+        serializer = UserPreferencesSerializer(prefs, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
+
+# ── Change Password ────────────────────────────────────────────
+
+class ChangePasswordView(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def post(self, request):
+        serializer = ChangePasswordSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        request.user.set_password(serializer.validated_data['new_password'])
+        request.user.save()
+        return Response({'detail': 'Contraseña actualizada correctamente.'})
 
 
 class IsPlatformAdmin(permissions.BasePermission):
@@ -247,3 +302,4 @@ from .serializers import CustomTokenObtainPairSerializer
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
+
