@@ -86,6 +86,11 @@ export class Perfil implements OnInit {
     provincia: [''],
   });
 
+  protected readonly subscriptionForm = this.fb.nonNullable.group({
+    size: ['MEDIUM', [Validators.required]],
+    frequency: ['WEEKLY', [Validators.required]],
+  });
+
   protected readonly addressForm = this.fb.nonNullable.group({
     label: ['', [Validators.required, Validators.maxLength(60)]],
     address_line: ['', [Validators.required, Validators.maxLength(200)]],
