@@ -1,11 +1,10 @@
 from rest_framework import serializers
-from .models import Producto, CartItem
+from .models import Producto, CartItem, Review
 
 
 class ProductoSerializer(serializers.ModelSerializer):
     ownerId = serializers.ReadOnlyField(source='owner.id')
     ownerName = serializers.ReadOnlyField(source='owner.first_name')
-    ownerEmail = serializers.ReadOnlyField(source='owner.email')
     image_url = serializers.SerializerMethodField()
     certificate_url = serializers.SerializerMethodField()
     qr_url = serializers.SerializerMethodField()
@@ -18,6 +17,9 @@ class ProductoSerializer(serializers.ModelSerializer):
     certificate = serializers.FileField(required=False, allow_null=True)
 
     verification_status = serializers.ReadOnlyField()
+
+    average_rating = serializers.SerializerMethodField()
+    reviews_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Producto
@@ -34,7 +36,6 @@ class ProductoSerializer(serializers.ModelSerializer):
             'image_url_legacy',
             'ownerId',
             'ownerName',
-            'ownerEmail',
             'image_url',
             'certificate_url',
             'verification_status',
@@ -42,6 +43,8 @@ class ProductoSerializer(serializers.ModelSerializer):
             'fecha_cosecha',
             'finca_origen',
             'qr_url',
+            'average_rating',
+            'reviews_count',
         ]
 
         read_only_fields = ['owner', 'verification_status']
@@ -62,6 +65,16 @@ class ProductoSerializer(serializers.ModelSerializer):
                 return request.build_absolute_uri(obj.certificate.url)
             return obj.certificate.url
         return ""
+
+    def get_average_rating(self, obj):
+        reviews = obj.reviews.all()
+        if not reviews.exists():
+            return 0
+        total = sum(review.rating for review in reviews)
+        return round(total / reviews.count(), 1)
+
+    def get_reviews_count(self, obj):
+        return obj.reviews.count()
 
     def get_qr_url(self, obj):
         request = self.context.get('request')
@@ -89,3 +102,32 @@ class CartItemSerializer(serializers.ModelSerializer):
         model = CartItem
         fields = ['id', 'user', 'producto', 'cantidad', 'producto_detalles']
         read_only_fields = ['user']
+
+class ReviewSerializer(serializers.ModelSerializer):
+    userName = serializers.SerializerMethodField()
+    productName = serializers.ReadOnlyField(source='product.name')
+    producerName = serializers.ReadOnlyField(source='product.owner.first_name')
+
+    class Meta:
+        model = Review
+        fields = [
+            'id',
+            'user',
+            'userName',
+            'product',
+            'productName',
+            'producerName',
+            'rating',
+            'comment',
+            'created_at',
+        ]
+        read_only_fields = ['user']
+
+    def get_userName(self, obj):
+        full_name = f"{obj.user.first_name} {obj.user.last_name}".strip()
+        return full_name or obj.user.email
+
+    def validate_rating(self, value):
+        if value < 1 or value > 5:
+            raise serializers.ValidationError("La puntuación debe estar entre 1 y 5.")
+        return value

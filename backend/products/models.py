@@ -131,3 +131,28 @@ class CartItem(models.Model):
 
     def __str__(self):
         return f"{self.cantidad} x {self.producto.name} ({self.user.username})"
+
+class Review(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='reviews'
+    )
+
+    product = models.ForeignKey(
+        Producto,
+        on_delete=models.CASCADE,
+        related_name='reviews'
+    )
+
+    rating = models.PositiveSmallIntegerField()
+    comment = models.TextField(blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'product')
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.rating} estrellas - {self.product.name} - {self.user.email}"

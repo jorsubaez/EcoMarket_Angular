@@ -3,8 +3,9 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from django.db.models import Q
-from .models import Producto, CartItem
-from .serializers import ProductoSerializer, CartItemSerializer
+from .models import Producto, CartItem, Review
+from .serializers import ProductoSerializer, CartItemSerializer, ReviewSerializer
+from orders.models import OrderItem
 from .permissions import IsOwnerOrReadOnly, IsProductor
 from .services.recipe_service import parse_ingredients, generate_recipe_from_ingredients
 
@@ -96,3 +97,38 @@ class CartItemViewSet(viewsets.ModelViewSet):
         recipe_html = generate_recipe_from_ingredients(cleaned_ingredients)
         
         return Response({'recipe_html': recipe_html})
+
+class ReviewViewSet(viewsets.ModelViewSet):
+    serializer_class = ReviewSerializer
+
+    def get_permissions(self):
+        if self.action in ['list', 'retrieve']:
+            permission_classes = [permissions.AllowAny]
+        else:
+            permission_classes = [permissions.IsAuthenticated]
+
+        return [permission() for permission in permission_classes]
+
+    def get_queryset(self):
+        queryset = Review.objects.select_related('user', 'product', 'product__owner')
+
+        product_id = self.request.query_params.get('product')
+        if product_id:
+            queryset = queryset.filter(product_id=product_id)
+
+        return queryset
+
+    def perform_create(self, serializer):
+        product = serializer.validated_data['product']
+
+        has_paid_order = OrderItem.objects.filter(
+            order__user=self.request.user,
+            order__status='PAID',
+            product=product
+        ).exists()
+
+        if not has_paid_order:
+            from rest_framework.exceptions import PermissionDenied
+            raise PermissionDenied("Solo puedes reseñar productos que hayas comprado.")
+
+        serializer.save(user=self.request.user)
