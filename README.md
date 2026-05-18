@@ -1,8 +1,4 @@
-# Eco Market
-
-<p align="center">
-   <img src="frontend/src/assets/images/logo.jpg" alt="Logo EcoMarket" width="500">
-</p>
+﻿# Eco Market
 
 ## Integrantes del Grupo
 * Alejandro David Fariña Afonso
@@ -12,36 +8,59 @@
 * Paola Viera Suárez
 
 ## Descripción del Proyecto
-EcoMarket surge como una respuesta tecnológica a la creciente demanda de un consumo responsable y la dificultad de los pequeños productores ecológicos para acceder a mercados digitales competitivos. Consiste en el desarrollo de un marketplace especializado que actúa como puente directo entre productores individuales (o pequeñas empresas) y clientes finales, eliminando intermediarios innecesarios.
+EcoMarket surge como una respuesta tecnológica a la creciente demanda de un consumo responsable.
 
 ## Tecnologías Utilizadas
-El ecosistema técnico de EcoMarket se compone de:
-* **Frontend:** HTML, CSS y JavaScript nativo para la estructuración de las vistas, los estilos y la lógica del lado del cliente.
-* **Backend y Base de Datos (Simulado):** Un archivo JSON gestionado a través de `json-server` para simular la persistencia de datos.
+* **Frontend:** Angular v17+ (TypeScript, CSS).
+* **Backend:** Django con Django Rest Framework.
+* **Base de Datos:** PostgreSQL.
+* **IA:** Integración con OpenAI / Gemini.
 
-## Sprint 0
-Hemos dado por finalizado el Sprint 0, un ciclo inicial enfocado en asentar las bases técnicas del proyecto y entregar un primer núcleo funcional.
+## Guía de Ejecución
 
-### Objetivo del Sprint
-"Tener un entorno de desarrollo funcional y una interfaz gráfica operativa con el CRUD completo del catálogo de productos ecológicos y el sistema de autenticación de usuarios."
+### Frontend
+1. `cd frontend`
+2. `npm install`
+3. `npm start`
 
-### Historias Completadas
-Durante este primer sprint se han completado con éxito las siguientes historias:
-* **HT1:** Configuración del entorno.
-* **HU1:** Registro de usuario.
-* **HU2:** Inicio de sesión.
-* **HU3:** Ver catálogo de productos.
-* **HU4:** Ver detalle de producto.
-* **HU7a:** Dar de alta un producto.
-* **HU8:** Modificar producto.
-* **HU9:** Eliminar el producto.
-* **HU12:** Perfil de usuario.
+### Backend
+1. `cd backend`
+2. `python -m venv .venv`
+3. `.venv\Scripts\activate` (Windows)
+4. `pip install -r requirements.txt`
+5. `python manage.py runserver`
 
-### Definition of Done (DoD) Validado
-Para garantizar una base sólida, hemos asegurado el cumplimiento de los siguientes requisitos de calidad:
-* El entorno de desarrollo está completamente configurado y operativo.
-* El repositorio está estructurado en GitHub con control de versiones activo y el código actualizado.
-* La base de datos está diseñada y conectada al sistema.
-* El sistema de autenticación (registro e login) funciona de forma correcta.
-* El catálogo de productos es visible, permite acceder a los detalles y cuenta con un CRUD funcional (crear, editar, eliminar).
-* Todas las funciones han sido probadas sin presentar errores críticos.
+## Ejecución de Tests
+
+### Frontend
+```bash
+cd frontend
+npm test
+```
+
+### Backend
+```bash
+cd backend
+python manage.py test
+```
+
+## Sprint 2
+El Sprint 2 cierra el proyecto implementando las funcionalidades avanzadas.
+
+### Pila del Sprint 2
+| ID | Nombre de la historia | Pts |
+| **HT3** | Conector con API de IA | 8 |
+| **HT9** | Cobro automático suscripciones | 8 |
+| **HT10** | Motor de menús con IA | 5 |
+| **HT7** | Módulo de generación de QR | 2 |
+| **HU14a** | Suscribirse a cesta recurrente | 5 |
+| **HU15a** | Interfaz generador menús IA | 5 |
+| **HU13** | Trazabilidad mediante QR | 2 |
+| **HU16** | Sistema de reseñas | 3 |
+| **HU17a** | Puntos de recogida (listado) | 2 |
+| **HU17b** | Ahorro de emisiones | 3 |
+| **HU19a** | Perfil y ajustes - Nueva | 3 |
+| **HU19b** | Historial pedidos cliente - Nueva | 3 |
+| **HU20** | Historial ventas productor - Nueva | 3 |
+| **HU21** | Panel de administración web - Nueva | 8 |
+| | **Total Sprint 2** | **60 pts** |
