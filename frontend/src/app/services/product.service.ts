@@ -17,6 +17,7 @@ export interface ApiProduct {
   verification_status?: string;
   ownerId: number | string;
   ownerName?: string;
+  ownerEmail?: string;
   image_url?: string;
   qr_url?: string;
   lote?: string;
