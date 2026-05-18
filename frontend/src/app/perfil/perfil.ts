@@ -37,6 +37,11 @@ export class Perfil implements OnInit {
   protected loadingOrders = false;
   protected expandedItemId: number | string | null = null;
 
+  protected subscriptions: any[] = [];
+  protected loadingSubscriptions = false;
+  protected creatingSubscription = false;
+  protected showNewSubscriptionForm = false;
+
   // ── Addresses ──────────────────────────────────────────────
   protected addresses: Address[] = [];
   protected loadingAddresses = false;
@@ -203,7 +208,7 @@ export class Perfil implements OnInit {
           email: payload.email,
           telefono: payload.telefono,
           direccion: payload.direccion,
-          provincia: payload.provincia
+          provincia: payload.provincia,
         }),
       );
 
@@ -213,13 +218,13 @@ export class Perfil implements OnInit {
         email: updatedUser.email,
         telefono: updatedUser.telefono,
         direccion: updatedUser.direccion,
-        provincia: updatedUser.provincia
+        provincia: updatedUser.provincia,
       };
 
       this.authService.updateSession({
         name: this.user.nombre,
         email: this.user.email,
-        provincia: this.user.provincia
+        provincia: this.user.provincia,
       });
 
       this.syncFormWithUser();
@@ -261,6 +266,7 @@ export class Perfil implements OnInit {
     if (item === 'Mis Suscripciones') {
       this.activeSection = 'Mis Suscripciones';
       this.editing = false;
+      this.loadSubscriptions();
       return;
     }
 
@@ -290,10 +296,62 @@ export class Perfil implements OnInit {
 
   protected translateStatus(status: string): string {
     switch (status) {
-      case 'PAID': return 'Pagado';
-      case 'PENDING_PAYMENT': return 'Pendiente';
-      case 'FAILED': return 'Fallido';
-      default: return status;
+      case 'PAID':
+        return 'Pagado';
+      case 'PENDING_PAYMENT':
+        return 'Pendiente';
+      case 'FAILED':
+        return 'Fallido';
+      default:
+        return status;
+    }
+  }
+
+  private loadSubscriptions(): void {
+    this.loadingSubscriptions = true;
+    this.orderService.getSubscriptions().subscribe({
+      next: (data) => {
+        this.subscriptions = data;
+        this.loadingSubscriptions = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.errorMessage = 'No se pudieron cargar las suscripciones.';
+        this.loadingSubscriptions = false;
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  protected async submitSubscription(): Promise<void> {
+    this.clearMessages();
+    if (this.subscriptionForm.invalid) return;
+
+    this.creatingSubscription = true;
+    try {
+      const data = this.subscriptionForm.getRawValue();
+      await firstValueFrom(this.orderService.createSubscription(data));
+      this.successMessage = 'Suscripción creada correctamente. Te hemos enviado un email.';
+      this.showNewSubscriptionForm = false;
+      this.subscriptionForm.reset({ size: 'MEDIUM', frequency: 'WEEKLY' });
+      this.loadSubscriptions();
+    } catch {
+      this.errorMessage = 'Error al crear la suscripción.';
+    } finally {
+      this.creatingSubscription = false;
+      this.cdr.detectChanges();
+    }
+  }
+
+  protected async updateSubscriptionStatus(subId: number, status: string): Promise<void> {
+    this.clearMessages();
+    try {
+      await firstValueFrom(this.orderService.updateSubscriptionStatus(subId, status));
+      this.successMessage = 'Suscripción actualizada correctamente.';
+      this.loadSubscriptions();
+    } catch {
+      this.errorMessage = 'Error al actualizar la suscripción.';
+      this.cdr.detectChanges();
     }
   }
 
@@ -311,7 +369,7 @@ export class Perfil implements OnInit {
         this.errorMessage = 'No se pudieron cargar las direcciones.';
         this.loadingAddresses = false;
         this.cdr.detectChanges();
-      }
+      },
     });
   }
 
@@ -367,7 +425,7 @@ export class Perfil implements OnInit {
         },
         error: () => {
           this.errorMessage = 'Error al actualizar la dirección.';
-        }
+        },
       });
     } else {
       this.profileService.createAddress(data).subscribe({
@@ -378,7 +436,7 @@ export class Perfil implements OnInit {
         },
         error: () => {
           this.errorMessage = 'Error al crear la dirección.';
-        }
+        },
       });
     }
   }
@@ -389,7 +447,7 @@ export class Perfil implements OnInit {
     setTimeout(() => {
       this.profileService.deleteAddress(id).subscribe({
         next: () => {
-          this.addresses = this.addresses.filter(a => a.id !== id);
+          this.addresses = this.addresses.filter((a) => a.id !== id);
           this.deletingAddressId = null;
           this.successMessage = 'Dirección eliminada.';
           this.cdr.detectChanges();
@@ -398,7 +456,7 @@ export class Perfil implements OnInit {
           this.deletingAddressId = null;
           this.errorMessage = 'Error al eliminar la dirección.';
           this.cdr.detectChanges();
-        }
+        },
       });
     }, 350);
   }
@@ -411,7 +469,7 @@ export class Perfil implements OnInit {
       },
       error: () => {
         this.errorMessage = 'Error al actualizar la dirección predeterminada.';
-      }
+      },
     });
   }
 
@@ -429,32 +487,34 @@ export class Perfil implements OnInit {
     const nombre = this.accountForm.controls.nombre.value.trim();
     const email = this.accountForm.controls.email.value.trim();
 
-    this.http.patch<any>(this.apiUrl, {
-      first_name: nombre.split(' ')[0] || '',
-      last_name: nombre.split(' ').slice(1).join(' ') || '',
-      email: email,
-    }).subscribe({
-      next: (updatedUser) => {
-        this.user = {
-          ...this.user,
-          nombre: (updatedUser.first_name + ' ' + updatedUser.last_name).trim(),
-          email: updatedUser.email,
-        };
-        this.authService.updateSession({
-          name: this.user.nombre,
-          email: this.user.email,
-        });
-        this.syncFormWithUser();
-        this.savingAccountData = false;
-        this.successMessage = 'Datos de cuenta actualizados correctamente.';
-        this.cdr.detectChanges();
-      },
-      error: () => {
-        this.savingAccountData = false;
-        this.errorMessage = 'Error al actualizar los datos de la cuenta.';
-        this.cdr.detectChanges();
-      }
-    });
+    this.http
+      .patch<any>(this.apiUrl, {
+        first_name: nombre.split(' ')[0] || '',
+        last_name: nombre.split(' ').slice(1).join(' ') || '',
+        email: email,
+      })
+      .subscribe({
+        next: (updatedUser) => {
+          this.user = {
+            ...this.user,
+            nombre: (updatedUser.first_name + ' ' + updatedUser.last_name).trim(),
+            email: updatedUser.email,
+          };
+          this.authService.updateSession({
+            name: this.user.nombre,
+            email: this.user.email,
+          });
+          this.syncFormWithUser();
+          this.savingAccountData = false;
+          this.successMessage = 'Datos de cuenta actualizados correctamente.';
+          this.cdr.detectChanges();
+        },
+        error: () => {
+          this.savingAccountData = false;
+          this.errorMessage = 'Error al actualizar los datos de la cuenta.';
+          this.cdr.detectChanges();
+        },
+      });
   }
 
   // ── Settings — Password ────────────────────────────────────
@@ -488,7 +548,7 @@ export class Perfil implements OnInit {
         this.savingPassword = false;
         this.passwordError = 'Error al cambiar la contraseña.';
         this.cdr.detectChanges();
-      }
+      },
     });
   }
 
@@ -503,7 +563,7 @@ export class Perfil implements OnInit {
       },
       error: () => {
         // Use defaults; non-critical
-      }
+      },
     });
   }
 
@@ -545,7 +605,7 @@ export class Perfil implements OnInit {
         this.savingPreference = false;
         this.errorMessage = 'Error al guardar la preferencia.';
         this.cdr.detectChanges();
-      }
+      },
     });
   }
 
@@ -564,7 +624,7 @@ export class Perfil implements OnInit {
           this.errorMessage = 'No se pudieron cargar las ventas.';
           this.loadingOrders = false;
           this.cdr.detectChanges();
-        }
+        },
       });
     } else {
       this.orderService.getMyOrders().subscribe({
@@ -577,7 +637,7 @@ export class Perfil implements OnInit {
           this.errorMessage = 'No se pudieron cargar los pedidos.';
           this.loadingOrders = false;
           this.cdr.detectChanges();
-        }
+        },
       });
     }
   }
@@ -589,12 +649,14 @@ export class Perfil implements OnInit {
       next: (remoteUser) => {
         this.user = {
           ...this.user,
-          nombre: remoteUser.first_name ? remoteUser.first_name + ' ' + remoteUser.last_name : remoteUser.username,
+          nombre: remoteUser.first_name
+            ? remoteUser.first_name + ' ' + remoteUser.last_name
+            : remoteUser.username,
           email: remoteUser.email,
           rol: remoteUser.rol,
           telefono: remoteUser.telefono || '',
           direccion: remoteUser.direccion || '',
-          provincia: remoteUser.provincia || ''
+          provincia: remoteUser.provincia || '',
         };
         this.syncFormWithUser();
         this.syncAccountForm();
@@ -606,7 +668,7 @@ export class Perfil implements OnInit {
           'No se pudieron cargar los detalles completos del perfil. Se muestran los datos de la sesion local.';
         this.loading = false;
         this.cdr.detectChanges();
-      }
+      },
     });
   }
 
