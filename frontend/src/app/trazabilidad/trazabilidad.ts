@@ -1,54 +1,84 @@
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
-
-import { ProductService } from '../services/product.service';
+import { ActivatedRoute } from '@angular/router';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 
 interface TrazabilidadProducto {
   id: number;
   nombre: string;
   origen: string;
-  lote?: string | null;
-  finca_origen?: string | null;
-  fecha_cosecha?: string | null;
-  certificado?: string | null;
-  productor?: string | null;
+  lote: string | null;
+  finca_origen: string | null;
+  fecha_cosecha: string | null;
+  certificado: string | null;
+  productor: string;
 }
 
 @Component({
   selector: 'app-trazabilidad',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, HttpClientModule],
   templateUrl: './trazabilidad.html',
   styleUrl: './trazabilidad.css',
 })
 export class TrazabilidadComponent implements OnInit {
-  private readonly route = inject(ActivatedRoute);
-  private readonly productService = inject(ProductService);
-  private readonly cdr = inject(ChangeDetectorRef);
+  producto: TrazabilidadProducto | null = null;
+  loading = true;
+  error = '';
 
-  protected loading = true;
-  protected errorMessage = '';
-  protected producto: TrazabilidadProducto | null = null;
+  constructor(
+    private route: ActivatedRoute,
+    private http: HttpClient,
+    private cdr: ChangeDetectorRef,
+  ) {}
 
   ngOnInit(): void {
-    const id = this.route.snapshot.paramMap.get('id');
+    console.log('ENTRANDO EN TRAZABILIDAD COMPONENT');
+
+    const id = Number(this.route.snapshot.paramMap.get('id'));
 
     if (!id) {
+      this.producto = null;
+      this.error = 'Producto no válido.';
       this.loading = false;
-      this.errorMessage = 'No se ha encontrado el producto solicitado.';
+      this.cdr.detectChanges();
       return;
     }
 
-    this.productService.getTrazabilidadProducto(id).subscribe({
-      next: (producto) => {
-        this.producto = producto as unknown as TrazabilidadProducto;
+    const apiUrl = `/api/productos/${id}/trazabilidad/`;
+
+    console.log('URL API TRAZABILIDAD:', apiUrl);
+
+    this.http.get<any>(apiUrl).subscribe({
+      next: (data) => {
+        console.log('Datos recibidos:', data);
+
+        this.producto = {
+          id: data.id,
+          nombre: data.nombre || data.name || 'Producto sin nombre',
+          origen: data.origen || data.origin || 'Origen no especificado',
+          lote: data.lote ?? null,
+          finca_origen: data.finca_origen ?? null,
+          fecha_cosecha: data.fecha_cosecha ?? null,
+          certificado: data.certificado || data.certificate_url || null,
+          productor: data.productor || data.ownerName || 'Productor no especificado',
+        };
+
+        this.error = '';
         this.loading = false;
+
+        console.log('Producto preparado para mostrar:', this.producto);
+        console.log('Loading:', this.loading);
+
         this.cdr.detectChanges();
       },
-      error: () => {
-        this.errorMessage = 'No se pudo cargar la trazabilidad del producto.';
+      error: (error) => {
+        console.error('Error cargando trazabilidad:', error);
+
+        this.producto = null;
+        this.error = 'No se pudo cargar la trazabilidad del producto.';
         this.loading = false;
+
         this.cdr.detectChanges();
       },
     });

@@ -1,50 +1,35 @@
-<main class="trace-page">
-  <section class="trace-shell">
-    <a class="back-link" routerLink="/catalogo">Volver al catalogo</a>
+<section class="trazabilidad-page">
+  @if (loading) {
+    <p class="loading">Cargando trazabilidad...</p>
+  }
 
-    @if (loading) {
-      <section class="trace-card state">
-        <h1>Cargando trazabilidad...</h1>
-        <p>Estamos recuperando la informacion del producto.</p>
-      </section>
-    } @else if (errorMessage) {
-      <section class="trace-card state">
-        <h1>No disponible</h1>
-        <p>{{ errorMessage }}</p>
-      </section>
-    } @else if (producto) {
-      <section class="trace-card">
-        <header>
-          <p class="eyebrow">Trazabilidad EcoMarket</p>
-          <h1>{{ producto.nombre }}</h1>
-          <p>{{ producto.productor || 'Productor no disponible' }}</p>
-        </header>
+  @if (!loading && error) {
+    <p class="error">{{ error }}</p>
+  }
 
-        <dl class="trace-list">
-          <div>
-            <dt>Origen</dt>
-            <dd>{{ producto.origen || 'Sin informacion' }}</dd>
-          </div>
-          <div>
-            <dt>Finca</dt>
-            <dd>{{ producto.finca_origen || 'Sin informacion' }}</dd>
-          </div>
-          <div>
-            <dt>Lote</dt>
-            <dd>{{ producto.lote || 'Sin informacion' }}</dd>
-          </div>
-          <div>
-            <dt>Fecha de cosecha</dt>
-            <dd>{{ producto.fecha_cosecha || 'Sin informacion' }}</dd>
-          </div>
-        </dl>
+  @if (!loading && producto) {
+    <div class="trazabilidad-card">
+      <h1>Trazabilidad del producto</h1>
 
-        @if (producto.certificado) {
-          <a class="cert-link" [href]="producto.certificado" target="_blank" rel="noopener">
-            Ver certificado ecologico
-          </a>
-        }
-      </section>
-    }
-  </section>
-</main>
+      <h2>{{ producto.nombre }}</h2>
+
+      <div class="info-box">
+        <p><strong>Productor:</strong> {{ producto.productor }}</p>
+        <p><strong>Origen:</strong> {{ producto.origen }}</p>
+        <p><strong>Finca de origen:</strong> {{ producto.finca_origen || 'No especificada' }}</p>
+        <p><strong>Lote:</strong> {{ producto.lote || 'No especificado' }}</p>
+        <p><strong>Fecha de cosecha:</strong> {{ producto.fecha_cosecha || 'No especificada' }}</p>
+      </div>
+
+      @if (producto.certificado) {
+        <a
+          [href]="producto.certificado"
+          target="_blank"
+          class="certificado-btn"
+        >
+          Ver certificado ecológico
+        </a>
+      }
+    </div>
+  }
+</section>
