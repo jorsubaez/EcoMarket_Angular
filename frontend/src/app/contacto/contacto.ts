@@ -66,7 +66,10 @@ export class Contacto {
         },
         error: (err) => {
           this.submitting = false;
-          this.errorMessage = 'Hubo un error al enviar el mensaje. Por favor, inténtalo más tarde.';
+          this.errorMessage =
+            err.error?.email?.[0] ||
+            err.error?.non_field_errors?.[0] ||
+            'Hubo un error al enviar el mensaje. Por favor, intentalo mas tarde.';
           console.error(err);
         },
       });

@@ -30,44 +30,21 @@
         {{ producto.descripcion }}
       </p>
 
-      <div class="rating-summary">
-        <span class="stars">★</span>
-        <strong>{{ producto.averageRating || 0 }}</strong>
-        <span> / 5</span>
-        <small>({{ producto.reviewsCount || 0 }} reseñas)</small>
-      </div>
-
-      @if (producto.qrUrl) {
-        <div class="qr-section">
-          <h3>Trazabilidad del producto</h3>
-
-          <p>
-            Escanea este código QR para consultar la información de origen,
-            lote, finca y certificado ecológico del producto.
-          </p>
-
-          <img
-            [src]="producto.qrUrl"
-            alt="Código QR de trazabilidad"
-            class="qr-image"
-          >
-
-          <div class="trace-info">
-            <p><strong>Lote:</strong> {{ producto.lote || 'No especificado' }}</p>
-            <p><strong>Finca de origen:</strong> {{ producto.fincaOrigen || 'No especificada' }}</p>
-            <p><strong>Fecha de cosecha:</strong> {{ producto.fechaCosecha || 'No especificada' }}</p>
-          </div>
-
-          @if (producto.certificateUrl) {
-            <a
-              [href]="producto.certificateUrl"
-              target="_blank"
-              class="certificate-link"
-            >
-              Ver certificado ecológico
-            </a>
-          }
+      @if (producto.certificadoUrl) {
+      <div class="certificate-box">
+        <div>
+          <span class="certificate-label">Certificado ecologico verificado</span>
+          <p class="certificate-text">Documento revisado por administracion.</p>
         </div>
+        <a
+          [href]="producto.certificadoUrl"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn-certificate"
+        >
+          Ver PDF
+        </a>
+      </div>
       }
 
       <div class="stock-info">
@@ -90,70 +67,4 @@
   } @else {
   <p class="not-found">Cargando producto o producto no encontrado...</p>
   }
-
-  <div class="reviews-section">
-    <h2>Reseñas del producto</h2>
-
-    @if (authService.currentUser) {
-      <div class="review-form">
-        <h3>Escribe tu valoración</h3>
-
-        <label for="rating">Puntuación</label>
-        <select id="rating" [(ngModel)]="newRating">
-          <option [value]="5">5 estrellas</option>
-          <option [value]="4">4 estrellas</option>
-          <option [value]="3">3 estrellas</option>
-          <option [value]="2">2 estrellas</option>
-          <option [value]="1">1 estrella</option>
-        </select>
-
-        <label for="comment">Comentario</label>
-        <textarea
-          id="comment"
-          [(ngModel)]="newComment"
-          placeholder="Cuenta tu experiencia con este productor..."
-          rows="4">
-      </textarea>
-
-        <button class="btn-review" (click)="enviarReview()">
-          Enviar reseña
-        </button>
-
-        @if (reviewMessage) {
-          <p class="review-success">{{ reviewMessage }}</p>
-        }
-
-        @if (reviewError) {
-          <p class="review-error">{{ reviewError }}</p>
-        }
-      </div>
-    } @else {
-      <p class="login-review-msg">
-        Inicia sesión para escribir una reseña.
-      </p>
-    }
-
-    <div class="review-list">
-      @if (reviews.length > 0) {
-        @for (review of reviews; track review.id) {
-          <div class="review-card">
-            <div class="review-header">
-              <strong>{{ review.userName }}</strong>
-              <span>
-              @for (star of [1,2,3,4,5]; track star) {
-                {{ star <= review.rating ? '★' : '☆' }}
-              }
-            </span>
-            </div>
-
-            <p>{{ review.comment || 'Sin comentario.' }}</p>
-            <small>{{ review.created_at | date:'dd/MM/yyyy' }}</small>
-          </div>
-        }
-      } @else {
-        <p class="no-reviews">Todavía no hay reseñas para este producto.</p>
-      }
-    </div>
-  </div>
-
 </div>

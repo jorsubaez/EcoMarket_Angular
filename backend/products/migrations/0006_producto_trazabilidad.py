@@ -6,28 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('products', '0005_alter_producto_image'),
+        ('products', '0006_producto_fecha_cosecha_producto_finca_origen_and_more'),
     ]
 
-    operations = [
-        migrations.AddField(
-            model_name='producto',
-            name='lote',
-            field=models.CharField(blank=True, max_length=100, null=True),
-        ),
-        migrations.AddField(
-            model_name='producto',
-            name='fecha_cosecha',
-            field=models.DateField(blank=True, null=True),
-        ),
-        migrations.AddField(
-            model_name='producto',
-            name='finca_origen',
-            field=models.CharField(blank=True, max_length=150, null=True),
-        ),
-        migrations.AddField(
-            model_name='producto',
-            name='qr_image',
-            field=models.ImageField(blank=True, null=True, upload_to='qr/'),
-        ),
-    ]
+    operations = []

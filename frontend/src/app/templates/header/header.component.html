@@ -28,7 +28,7 @@
         @if (authService.session$ | async; as session) {
           <!-- Sección Admin: Se muestra si es ADMIN, staff o superuser -->
           @if (session.rol === 'ADMIN' || session.is_staff || session.is_superuser) {
-            <li><a routerLink="/admin" routerLinkActive="active">Admin</a></li>
+            <li><a routerLink="/admin" routerLinkActive="active">Panel Administrador</a></li>
           }
           <!-- Sección Productor -->
           @if (session.rol === 'PRODUCTOR') {

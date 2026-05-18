@@ -3,11 +3,11 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { forkJoin } from 'rxjs';
 
-import { AdminActionLog, AdminService, AdminUser } from '../services/admin.service';
+import { AdminActionLog, AdminContactMessage, AdminService, AdminUser } from '../services/admin.service';
 import { AuthService } from '../services/auth.service';
 import { ApiProduct } from '../services/product.service';
 
-type AdminTab = 'usuarios' | 'productos' | 'verificaciones' | 'logs';
+type AdminTab = 'usuarios' | 'productos' | 'verificaciones' | 'consultas' | 'logs';
 
 @Component({
   selector: 'app-panel-admin',
@@ -24,6 +24,7 @@ export class PanelAdmin implements OnInit {
   protected successMessage = '';
   protected users: AdminUser[] = [];
   protected products: ApiProduct[] = [];
+  protected contacts: AdminContactMessage[] = [];
   protected logs: AdminActionLog[] = [];
   protected currentUserId: number | string | null = null;
 
@@ -31,6 +32,7 @@ export class PanelAdmin implements OnInit {
     { id: 'usuarios', label: 'Usuarios' },
     { id: 'productos', label: 'Productos' },
     { id: 'verificaciones', label: 'Verificaciones' },
+    { id: 'consultas', label: 'Consultas' },
     { id: 'logs', label: 'Logs' },
   ];
 
@@ -103,6 +105,28 @@ export class PanelAdmin implements OnInit {
         this.finishAction();
       },
       error: (error) => this.handleActionError(error, 'No se pudo eliminar la cuenta.'),
+    });
+  }
+
+  protected promoteContactUser(contact: AdminContactMessage): void {
+    const user = this.findUserByEmail(contact.email);
+
+    if (!user) {
+      this.errorMessage = 'No hay ninguna cuenta registrada con ese correo.';
+      return;
+    }
+
+    this.clearMessages();
+    this.actionLoading = true;
+
+    this.adminService.updateUserRole(user.id, 'PRODUCTOR').subscribe({
+      next: (updatedUser) => {
+        this.users = this.users.map((item) => item.id === updatedUser.id ? updatedUser : item);
+        this.successMessage = `${updatedUser.email} ahora es productor.`;
+        this.reloadLogs();
+        this.finishAction();
+      },
+      error: (error) => this.handleActionError(error, 'No se pudo cambiar el cliente a productor.'),
     });
   }
 
@@ -181,6 +205,16 @@ export class PanelAdmin implements OnInit {
     return user.rol;
   }
 
+  protected findUserByEmail(email: string): AdminUser | undefined {
+    return this.users.find((user) => user.email.toLowerCase() === email.toLowerCase());
+  }
+
+  protected canPromoteContact(contact: AdminContactMessage): boolean {
+    const user = this.findUserByEmail(contact.email);
+
+    return contact.motivo === 'Quiero ser productor' && !!user && user.rol === 'CLIENTE';
+  }
+
   protected isCurrentUser(user: AdminUser): boolean {
     return String(user.id) === String(this.currentUserId);
   }
@@ -191,11 +225,13 @@ export class PanelAdmin implements OnInit {
     forkJoin({
       users: this.adminService.getUsers(),
       products: this.adminService.getProducts(),
+      contacts: this.adminService.getContacts(),
       logs: this.adminService.getLogs(),
     }).subscribe({
-      next: ({ users, products, logs }) => {
+      next: ({ users, products, contacts, logs }) => {
         this.users = users;
         this.products = products;
+        this.contacts = contacts;
         this.logs = logs;
         this.loading = false;
         this.cdr.detectChanges();

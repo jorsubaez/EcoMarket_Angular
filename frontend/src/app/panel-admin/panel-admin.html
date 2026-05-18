@@ -3,7 +3,7 @@
     <header class="admin-head">
       <div>
         <p class="eyebrow">EcoMarket</p>
-        <h1>Panel de administracion</h1>
+        <h1>Panel Administrador</h1>
         <p class="lead">Gestiona usuarios, productos y verificaciones desde la aplicacion.</p>
       </div>
       <div class="summary-strip">
@@ -205,6 +205,64 @@
                   </div>
                 </article>
               }
+            </div>
+          }
+        </section>
+      }
+
+      @if (activeTab === 'consultas') {
+        <section class="admin-card">
+          <div class="card-head">
+            <div>
+              <h2>Consultas recibidas</h2>
+              <p>Revisa mensajes de contacto y convierte clientes en productores cuando corresponda.</p>
+            </div>
+          </div>
+
+          @if (!contacts.length) {
+            <p class="state-message">Aun no hay consultas registradas.</p>
+          } @else {
+            <div class="table-wrap">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Contacto</th>
+                    <th>Motivo</th>
+                    <th>Mensaje</th>
+                    <th>Fecha</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (contact of contacts; track contact.id) {
+                    <tr>
+                      <td>
+                        <strong>{{ contact.nombre }}</strong>
+                        <span>{{ contact.email }}</span>
+                      </td>
+                      <td>{{ contact.motivo }}</td>
+                      <td>{{ contact.mensaje }}</td>
+                      <td>{{ formatDate(contact.created_at) }}</td>
+                      <td class="actions-cell">
+                        @if (canPromoteContact(contact)) {
+                          <button
+                            class="btn-mini"
+                            type="button"
+                            [disabled]="actionLoading"
+                            (click)="promoteContactUser(contact)"
+                          >
+                            Cambiar a productor
+                          </button>
+                        } @else if (findUserByEmail(contact.email)?.rol === 'PRODUCTOR') {
+                          <span class="muted action-note">Ya es productor</span>
+                        } @else {
+                          <span class="muted action-note">Sin accion</span>
+                        }
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
             </div>
           }
         </section>

@@ -1,6 +1,7 @@
 from django.urls import path
 from .views import (
     AdminActionLogListView,
+    AdminContactMessageListView,
     AdminProductDetailView,
     AdminProductListView,
     AdminUserDetailView,
@@ -30,6 +31,7 @@ urlpatterns = [
     path('admin/users/<int:user_id>/', AdminUserDetailView.as_view(), name='admin_user_detail'),
     path('admin/products/', AdminProductListView.as_view(), name='admin_products'),
     path('admin/products/<int:product_id>/', AdminProductDetailView.as_view(), name='admin_product_detail'),
+    path('admin/contacts/', AdminContactMessageListView.as_view(), name='admin_contacts'),
     path('admin/logs/', AdminActionLogListView.as_view(), name='admin_action_logs'),
 ]
 

@@ -108,6 +108,47 @@
   margin-bottom: 2rem;
 }
 
+.certificate-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid #cfe0d1;
+  border-radius: 8px;
+  background: #f7fbf6;
+}
+
+.certificate-label {
+  display: block;
+  color: #205c2b;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.certificate-text {
+  margin: 0.25rem 0 0;
+  color: #5f6f60;
+  font-size: 0.9rem;
+}
+
+.btn-certificate {
+  flex: 0 0 auto;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  background-color: #2a7a38;
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background-color 0.2s;
+}
+
+.btn-certificate:hover {
+  background-color: #1e5a28;
+}
+
 .stock-info {
   display: flex;
   align-items: center;
@@ -197,6 +238,11 @@
 
   .img-wrapper {
     min-height: 300px;
+  }
+
+  .certificate-box {
+    align-items: flex-start;
+    flex-direction: column;
   }
 }
 

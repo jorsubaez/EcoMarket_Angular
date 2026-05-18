@@ -188,14 +188,23 @@ class AdminUserDetailView(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
 
-        state = 'activada' if user.is_active else 'desactivada'
-        log_admin_action(
-            request.user,
-            'USER_STATUS_UPDATED',
-            'USER',
-            user.id,
-            f'Cuenta {state}: {user.email}'
-        )
+        if 'rol' in request.data:
+            log_admin_action(
+                request.user,
+                'USER_ROLE_UPDATED',
+                'USER',
+                user.id,
+                f'Rol actualizado a {user.rol}: {user.email}'
+            )
+        else:
+            state = 'activada' if user.is_active else 'desactivada'
+            log_admin_action(
+                request.user,
+                'USER_STATUS_UPDATED',
+                'USER',
+                user.id,
+                f'Cuenta {state}: {user.email}'
+            )
 
         return Response(serializer.data)
 
@@ -229,6 +238,14 @@ class AdminUserDetailView(APIView):
         )
 
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class AdminContactMessageListView(generics.ListAPIView):
+    serializer_class = ContactMessageSerializer
+    permission_classes = (IsPlatformAdmin,)
+
+    def get_queryset(self):
+        return ContactMessage.objects.all().order_by('-created_at')[:100]
 
 
 class AdminProductListView(generics.ListAPIView):

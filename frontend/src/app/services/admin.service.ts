@@ -33,6 +33,15 @@ export interface AdminActionLog {
   created_at: string;
 }
 
+export interface AdminContactMessage {
+  id: number;
+  nombre: string;
+  email: string;
+  motivo: string;
+  mensaje: string;
+  created_at: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -48,6 +57,12 @@ export class AdminService {
   updateUserStatus(userId: number, isActive: boolean): Observable<AdminUser> {
     return this.http.patch<AdminUser>(`${this.apiUrl}/users/${userId}/`, {
       is_active: isActive,
+    });
+  }
+
+  updateUserRole(userId: number, rol: 'CLIENTE' | 'PRODUCTOR'): Observable<AdminUser> {
+    return this.http.patch<AdminUser>(`${this.apiUrl}/users/${userId}/`, {
+      rol,
     });
   }
 
@@ -71,5 +86,9 @@ export class AdminService {
 
   getLogs(): Observable<AdminActionLog[]> {
     return this.http.get<AdminActionLog[]>(`${this.apiUrl}/logs/`);
+  }
+
+  getContacts(): Observable<AdminContactMessage[]> {
+    return this.http.get<AdminContactMessage[]>(`${this.apiUrl}/contacts/`);
   }
 }

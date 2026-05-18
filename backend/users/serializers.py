@@ -36,6 +36,17 @@ class ContactMessageSerializer(serializers.ModelSerializer):
         model = ContactMessage
         fields = '__all__'
 
+    def validate(self, attrs):
+        motivo = attrs.get('motivo', '')
+        email = attrs.get('email', '')
+
+        if motivo == 'Quiero ser productor' and not User.objects.filter(email__iexact=email).exists():
+            raise serializers.ValidationError({
+                'email': 'Para solicitar el alta como productor primero debes tener una cuenta registrada.'
+            })
+
+        return attrs
+
 
 class AddressSerializer(serializers.ModelSerializer):
     class Meta:
@@ -76,12 +87,20 @@ class AdminUserSerializer(serializers.ModelSerializer):
         )
         read_only_fields = (
             'id', 'username', 'email', 'first_name', 'last_name', 'full_name',
-            'rol', 'telefono', 'direccion', 'provincia', 'is_staff',
+            'telefono', 'direccion', 'provincia', 'is_staff',
             'is_superuser', 'date_joined', 'last_login'
         )
 
     def get_full_name(self, obj):
         return obj.get_full_name() or obj.username
+
+    def validate_rol(self, value):
+        valid_roles = {choice[0] for choice in User.ROLE_CHOICES}
+
+        if value not in valid_roles:
+            raise serializers.ValidationError('Rol no valido.')
+
+        return value
 
 
 class AdminActionLogSerializer(serializers.ModelSerializer):
