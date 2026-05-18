@@ -13,6 +13,7 @@ export interface Producto {
   nombre: string;
   origen: string;
   productor: string;
+  ownerId?: number;
   categoria?: string;
   precio: number;
   unidad: string;
@@ -30,6 +31,8 @@ export interface Producto {
   averageRating?: number;
   reviewsCount?: number;
 }
+
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-catalogo',
@@ -80,6 +83,7 @@ export class Catalogo implements OnInit {
     private http: HttpClient,
     private reviewService: ReviewService,
     private ngZone: NgZone,
+    private router: Router,
   ) {}
 
   ngOnInit() {
@@ -89,6 +93,7 @@ export class Catalogo implements OnInit {
         nombre: item.name,
         origen: item.origin,
         productor: item.ownerName || 'Productor anonimo',
+        ownerId: item.ownerId as number,
         categoria: this.inferirCategoria(item),
         precio: typeof item.price === 'string' ? parseFloat(item.price) : item.price,
         unidad: item.unit,
@@ -162,6 +167,26 @@ export class Catalogo implements OnInit {
     this.reviewMessage = '';
     this.reviewError = '';
     document.body.style.overflow = 'auto';
+  }
+
+  verPerfilProductor(ownerId?: number, event?: Event) {
+    if (event) {
+      event.stopPropagation();
+    }
+    
+    if (!ownerId) return;
+
+    if (!this.authService.currentUser) {
+      alert('Debes iniciar sesión para ver el perfil del productor.');
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    if (this.selectedProducto) {
+      this.cerrarModal();
+    }
+    
+    this.router.navigate(['/productor', ownerId]);
   }
 
   async cargarReviews(productId: number) {

@@ -13,6 +13,7 @@ import { ConfirmarPedidoComponent } from './confirmar-pedido/confirmar-pedido';
 import { PagoPedidoComponent } from './pago-pedido/pago-pedido';
 import { PanelAdmin } from './panel-admin/panel-admin';
 import { adminGuard } from './guards/admin.guard';
+import { PerfilProductor } from './perfil-productor/perfil-productor';
 
 export const routes: Routes = [
   { path: '', component: Inicio },
@@ -21,6 +22,7 @@ export const routes: Routes = [
   { path: 'detalle', component: Detalle },
   { path: 'login', component: LoginComponent },
   { path: 'productores', component: Productores },
+  { path: 'productor/:id', component: PerfilProductor },
   { path: 'registro', component: RegistroComponent },
   { path: 'perfil', component: Perfil },
   { path: 'panel-productor', component: PanelProductor },

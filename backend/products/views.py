@@ -116,6 +116,10 @@ class ReviewViewSet(viewsets.ModelViewSet):
         if product_id:
             queryset = queryset.filter(product_id=product_id)
 
+        producer_id = self.request.query_params.get('producer')
+        if producer_id:
+            queryset = queryset.filter(product__owner_id=producer_id)
+
         return queryset
 
     def perform_create(self, serializer):

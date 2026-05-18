@@ -73,6 +73,61 @@ class ProducerListView(generics.ListAPIView):
     permission_classes = (permissions.AllowAny,)
     serializer_class = UserSerializer
 
+
+class ProducerProfileView(APIView):
+    """
+    HU16 – Public producer profile.
+    Returns producer info, their products (with ratings), and all reviews.
+    Accessible by any authenticated user.
+    """
+    permission_classes = (permissions.AllowAny,)
+
+    def get(self, request, producer_id):
+        try:
+            producer = User.objects.get(id=producer_id, rol='PRODUCTOR')
+        except User.DoesNotExist:
+            return Response(
+                {'detail': 'Productor no encontrado.'},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        products = Producto.objects.filter(
+            owner=producer,
+            verification_status='VERIFICADO',
+        ).order_by('-id')
+
+        products_data = ProductoSerializer(
+            products, many=True, context={'request': request}
+        ).data
+
+        from products.models import Review
+        reviews = Review.objects.filter(
+            product__owner=producer,
+        ).select_related('user', 'product').order_by('-created_at')
+
+        from products.serializers import ReviewSerializer
+        reviews_data = ReviewSerializer(reviews, many=True).data
+
+        # Aggregate rating across ALL producer reviews
+        total_ratings = sum(r.rating for r in reviews)
+        review_count = reviews.count()
+        average_rating = round(total_ratings / review_count, 1) if review_count else 0
+
+        full_name = f"{producer.first_name} {producer.last_name}".strip()
+
+        return Response({
+            'id': producer.id,
+            'name': full_name or producer.username,
+            'email': producer.email,
+            'provincia': producer.provincia or '',
+            'date_joined': producer.date_joined,
+            'average_rating': average_rating,
+            'total_reviews': review_count,
+            'total_products': products.count(),
+            'products': products_data,
+            'reviews': reviews_data,
+        })
+
 class UserDetailView(generics.RetrieveUpdateAPIView):
     serializer_class = UserSerializer
     permission_classes = (permissions.IsAuthenticated,)

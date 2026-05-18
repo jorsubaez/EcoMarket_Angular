@@ -272,6 +272,27 @@
   margin: 0 0 0.3rem;
 }
 
+.clickable-producer {
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.clickable-producer:hover {
+  color: #2a7a38;
+}
+
+.clickable-producer strong,
+.clickable-producer span {
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  transition: text-decoration-color 0.2s;
+}
+
+.clickable-producer:hover strong,
+.clickable-producer:hover span {
+  text-decoration-color: #2a7a38;
+}
+
 .precio-stock-container {
   display: flex;
   justify-content: space-between;

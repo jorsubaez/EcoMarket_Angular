@@ -129,7 +129,12 @@
           <h3 class="producto-nombre">{{ producto.nombre }}</h3>
           <p class="producto-categoria">{{ producto.categoria }}</p>
           <p class="producto-detalle">Origen: {{ producto.origen }}</p>
-          <p class="producto-detalle">Productor: {{ producto.productor }}</p>
+          <p class="producto-detalle" 
+             (click)="verPerfilProductor(producto.ownerId, $event)"
+             [class.clickable-producer]="authService.currentUser"
+             title="Ver perfil del productor">
+            Productor: <strong>{{ producto.productor }}</strong>
+          </p>
 
           <div class="precio-stock-container">
             <span class="precio">
@@ -207,8 +212,11 @@
               <strong>Origen:</strong> {{ selectedProducto.origen }}
             </p>
 
-            <p class="modal-productor">
-              <strong>Productor:</strong> {{ selectedProducto.productor }}
+            <p class="modal-productor" 
+               (click)="verPerfilProductor(selectedProducto.ownerId, $event)"
+               [class.clickable-producer]="authService.currentUser"
+               title="Ver perfil del productor">
+              <strong>Productor:</strong> <span>{{ selectedProducto.productor }}</span>
             </p>
 
             <div class="rating-summary">

@@ -44,7 +44,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
+   # 'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -147,6 +147,10 @@ AUTH_USER_MODEL = 'users.CustomUser'
 
 # CORS
 CORS_ALLOW_ALL_ORIGINS = True # Change in production
+from corsheaders.defaults import default_headers
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    'ngrok-skip-browser-warning',
+]
 
 # REST Framework
 REST_FRAMEWORK = {
