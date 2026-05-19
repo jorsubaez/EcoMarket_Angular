@@ -102,6 +102,7 @@ class SubscriptionSerializer(serializers.ModelSerializer):
     size_display = serializers.CharField(source='get_size_display', read_only=True)
     frequency_display = serializers.CharField(source='get_frequency_display', read_only=True)
     status_display = serializers.CharField(source='get_status_display', read_only=True)
+    delivery_day_display = serializers.CharField(source='get_delivery_day_display', read_only=True)
     items = SubscriptionItemSerializer(many=True, read_only=True)
 
     class Meta:
@@ -114,6 +115,8 @@ class SubscriptionSerializer(serializers.ModelSerializer):
             'frequency_display',
             'status',
             'status_display',
+            'delivery_day',
+            'delivery_day_display',
             'created_at',
             'updated_at',
             'last_processed_at',

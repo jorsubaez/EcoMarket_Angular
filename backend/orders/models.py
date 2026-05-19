@@ -99,6 +99,16 @@ class Subscription(models.Model):
         ('CANCELLED', 'Cancelada'),
     ]
 
+    DELIVERY_DAY_CHOICES = [
+        ('MONDAY', 'Lunes'),
+        ('TUESDAY', 'Martes'),
+        ('WEDNESDAY', 'Miércoles'),
+        ('THURSDAY', 'Jueves'),
+        ('FRIDAY', 'Viernes'),
+        ('SATURDAY', 'Sábado'),
+        ('SUNDAY', 'Domingo'),
+    ]
+
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -108,13 +118,14 @@ class Subscription(models.Model):
     size = models.CharField(max_length=20, choices=SIZE_CHOICES)
     frequency = models.CharField(max_length=20, choices=FREQUENCY_CHOICES)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='ACTIVE')
+    delivery_day = models.CharField(max_length=10, choices=DELIVERY_DAY_CHOICES, default='MONDAY')
     
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     last_processed_at = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
-        return f"Suscripción {self.get_size_display()} {self.get_frequency_display()} - {self.user.email} ({self.get_status_display()})"
+        return f"Suscripción {self.get_size_display()} {self.get_frequency_display()} - {self.user.email} ({self.get_status_display()}) los {self.get_delivery_day_display()}"
 
 class SubscriptionItem(models.Model):
     subscription = models.ForeignKey(

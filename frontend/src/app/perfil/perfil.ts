@@ -94,6 +94,7 @@ export class Perfil implements OnInit {
   protected readonly subscriptionForm = this.fb.nonNullable.group({
     size: ['MEDIUM', [Validators.required]],
     frequency: ['WEEKLY', [Validators.required]],
+    delivery_day: ['MONDAY', [Validators.required]],
   });
 
   protected readonly addressForm = this.fb.nonNullable.group({
@@ -333,7 +334,7 @@ export class Perfil implements OnInit {
       await firstValueFrom(this.orderService.createSubscription(data));
       this.successMessage = 'Suscripción creada correctamente. Te hemos enviado un email.';
       this.showNewSubscriptionForm = false;
-      this.subscriptionForm.reset({ size: 'MEDIUM', frequency: 'WEEKLY' });
+      this.subscriptionForm.reset({ size: 'MEDIUM', frequency: 'WEEKLY', delivery_day: 'MONDAY' });
       this.loadSubscriptions();
     } catch {
       this.errorMessage = 'Error al crear la suscripción.';
